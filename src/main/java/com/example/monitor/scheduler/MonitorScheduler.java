@@ -6,6 +6,7 @@ import com.example.monitor.monitoring.MonitorHashMap;
 import com.example.monitor.monitoring.Product;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.NoSuchWindowException;
 import org.openqa.selenium.WebElement;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -53,7 +54,13 @@ public class MonitorScheduler {
                     log.info("PAGE: " + i + "새 상품 없음");
                 }
             }
-        } catch (Exception e) {
+        }catch (NoSuchWindowException e){
+            e.printStackTrace();
+            log.error("Chrome Driver Down!!");
+            monitorCore.getMonitoringLock().unlock();
+
+        }
+        catch (Exception e) {
             log.error("자동 로그아웃");
             monitorCore.getMonitoringLock().unlock();
             // 모니터링 다시 시작

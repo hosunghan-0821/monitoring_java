@@ -10,6 +10,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -31,6 +32,12 @@ public class MonitorCore {
     private ChromeDriver driver;
     private WebDriverWait wait;
 
+    @Value("${user.id}")
+    private String userId;
+
+    @Value("${user.pw}")
+    private String userPw;
+
     public void setChromeDriver(ChromeDriver driver) {
         assert (driver != null);
         this.driver = driver;
@@ -50,10 +57,10 @@ public class MonitorCore {
 
         driver.get("https://b2bfashion.online/");
         WebElement id = driver.findElement(By.id(ID_FORM));
-        id.sendKeys("dopeesince2022@gmail.com");
+        id.sendKeys(userId);
 
         WebElement password = driver.findElement(By.id(PASS_FORM));
-        password.sendKeys("dopeesince2022@gmail.com");
+        password.sendKeys(userPw);
 
         WebElement loginButton = driver.findElement(By.id(SUBMIT_FORM));
         loginButton.click();

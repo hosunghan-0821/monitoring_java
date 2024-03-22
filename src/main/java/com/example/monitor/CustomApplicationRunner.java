@@ -34,24 +34,30 @@ public class CustomApplicationRunner implements ApplicationRunner {
         monitorCore.setChromeDriver(chromeDriverManager.getChromeDriver());
         monitorCore.setWebDriverWait(chromeDriverManager.getWebDriverWait());
 
-        //로그인
-        monitorCore.login();
+        try {
+            //로그인
+            monitorCore.login();
 
+            for (int i = 1; i < 3; i++) {
+                //페이지 이동
+                monitorCore.changeUrl(ALL_CATEGORIES_URL + "?page=" + i);
 
-        for (int i = 1; i < 3; i++) {
-            //페이지 이동
-            monitorCore.changeUrl(ALL_CATEGORIES_URL + "?page=" + i);
+                //하위 데이터
+                List<WebElement> productDataDivs = monitorCore.getInnerProductDivs();
 
-            //하위 데이터
-            List<WebElement> productDataDivs = monitorCore.getInnerProductDivs();
+                //상품 하위 데이터 조회
+                List<Product> productData = monitorCore.getProductData(productDataDivs);
 
-            //상품 하위 데이터 조회
-            List<Product> productData = monitorCore.getProductData(productDataDivs);
-
-            //정보가져오기
-            monitorCore.loadData(productData);
+                //정보가져오기
+                monitorCore.loadData(productData);
+            }
+        } catch (Exception e) {
+            log.error("Data Load Error");
+            e.printStackTrace();
+        } finally {
+            monitorCore.getMonitoringLock().unlock();
         }
 
-        monitorCore.getMonitoringLock().unlock();
+
     }
 }
