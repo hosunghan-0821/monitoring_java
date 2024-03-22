@@ -1,4 +1,4 @@
-package com.example.monitor;
+package com.example.monitor.monitoring;
 
 import lombok.AccessLevel;
 import lombok.Builder;
