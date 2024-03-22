@@ -60,30 +60,7 @@ public class DiscordBot extends ListenerAdapter {
             log.info("ID :" +  textChannel.getId()+"NAME: "+ textChannel.getName() );
             channelHashMap.put(textChannel.getName(),textChannel.getId());
         }
-
     }
-
-
-    @Override
-    public void onMessageReceived(MessageReceivedEvent event) {
-        super.onMessageReceived(event);
-        User user = event.getAuthor();
-        TextChannel textChannel = event.getChannel().asTextChannel();
-        Message message = event.getMessage();
-
-        String plainMessage = message.getContentDisplay();
-        log.info("get Message : " + message.getContentDisplay());
-        if (user.isBot()) {
-            return;
-        } else {
-            if (message.getContentDisplay().startsWith("!")) {
-                plainMessage = plainMessage.replace("!", "");
-                String returnMessage = makeReturnMessage(event, plainMessage);
-                textChannel.sendMessage(returnMessage).queue();
-            }
-        }
-    }
-
     public void sendMessage(String channelName,String message){
 
         final String id = channelHashMap.get(channelName);
@@ -104,9 +81,8 @@ public class DiscordBot extends ListenerAdapter {
         // Embed 생성
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("새 상품 알림!");
-        embed.setDescription("상품품번 : \t" + product.getId() + "\n" + "상품브랜드 : \t"+ product.getName());
+        embed.setDescription("상품품번 : \t" + product.getId() + "\n" + "상품브랜드 : \t"+ product.getName() + "\n 가격정보 : \t" + product.getPrice());
         embed.setColor(Color.GREEN); // Embed 색상 설정
-
 
         embed.addField("사이트 바로가기", "[줄리앙 바로가기](https://b2bfashion.online/)", false); // false는 필드가 인라인으로 표시되지 않도록 설정합니다.
 
