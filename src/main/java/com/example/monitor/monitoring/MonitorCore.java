@@ -48,9 +48,10 @@ public class MonitorCore {
         this.wait = wait;
     }
 
-    public void changeUrl(String url){
+    public void changeUrl(String url) {
         driver.get(url);
     }
+
     public void login() {
         assert (driver != null);
         assert (wait != null);
@@ -66,13 +67,6 @@ public class MonitorCore {
         loginButton.click();
     }
 
-    public void findAllCategories() {
-        assert (driver != null);
-        assert (wait != null);
-
-        WebElement allCategories = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(FIND_ALL_CATEGORIES)));
-        ((JavascriptExecutor) driver).executeScript(CLICK_BUTTON_WITH_SCRIPTS, allCategories);
-    }
 
     public List<WebElement> getInnerProductDivs() {
         WebElement topDiv = wait.until(ExpectedConditions.presenceOfElementLocated(By.id(PRODUCT_TOP_DIV)));
@@ -89,8 +83,24 @@ public class MonitorCore {
             WebElement reference = child.findElement(By.xpath(PRODUCT_ID));
 
             String imageSrc = image.getAttribute("src");
+            List<WebElement> priceElementList = child.findElements(By.xpath(".//p[@class='price']"));
+            String priceString = "가격정보 없음";
 
-            Product product = Product.builder().name(name.getText()).Id(reference.getText()).imageSrc(imageSrc).build();
+            if (!priceElementList.isEmpty()) {
+                priceString = priceElementList.get(0).getText();
+            } else {
+                List<WebElement> originlPriceList = child.findElements(By.xpath(".//span[@class='price']"));
+                if (!originlPriceList.isEmpty()) {
+                    priceString = originlPriceList.get(0).getText();
+                }
+            }
+
+            Product product = Product.builder()
+                    .name(name.getText())
+                    .Id(reference.getText())
+                    .imageSrc(imageSrc)
+                    .price(priceString)
+                    .build();
             productList.add(product);
 
 //            log.info("image link = " + imageSrc);
@@ -107,16 +117,16 @@ public class MonitorCore {
         HashMap<String, Product> productHashMap = monitorHashMap.getProductHashMap();
         for (Product product : productData) {
             if (!productHashMap.containsKey(product.getId())) {
-                 productHashMap.put(product.getId(),product);
+                productHashMap.put(product.getId(), product);
             } else {
                 log.error("Load 시 겹치는 ID 존재 확인 필요 상품정보 " + product.toString());
             }
         }
 
-        log.info("현재 적재된 상품개수: " +  productHashMap.size());
+        log.info("현재 적재된 상품개수: " + productHashMap.size());
     }
 
-    public List<Product> findNewProduct(List<Product> productData){
+    public List<Product> findNewProduct(List<Product> productData) {
         HashMap<String, Product> productHashMap = monitorHashMap.getProductHashMap();
         List<Product> newProductList = new ArrayList<>();
 
