@@ -90,12 +90,12 @@ public class MonitorCore {
 
             String imageSrc = image.getAttribute("src");
 
-            Product product = Product.builder().Id(name.getText()).Id(reference.getText()).imageSrc(imageSrc).build();
+            Product product = Product.builder().name(name.getText()).Id(reference.getText()).imageSrc(imageSrc).build();
             productList.add(product);
 
-            log.info("image link = " + imageSrc);
-            log.info("name = " + name.getText());
-            log.info("reference = " + reference.getText());
+//            log.info("image link = " + imageSrc);
+//            log.info("name = " + name.getText());
+//            log.info("reference = " + reference.getText());
 
         }
 
@@ -112,6 +112,8 @@ public class MonitorCore {
                 log.error("Load 시 겹치는 ID 존재 확인 필요 상품정보 " + product.toString());
             }
         }
+
+        log.info("현재 적재된 상품개수: " +  productHashMap.size());
     }
 
     public List<Product> findNewProduct(List<Product> productData){
