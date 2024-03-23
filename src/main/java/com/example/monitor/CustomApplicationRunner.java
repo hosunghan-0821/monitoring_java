@@ -1,6 +1,5 @@
 package com.example.monitor;
 
-import com.example.monitor.chrome.ChromeDriverManager;
 import com.example.monitor.chrome.ChromeDriverTool;
 import com.example.monitor.chrome.ChromeDriverToolFactory;
 import com.example.monitor.monitoring.MonitorCore;
@@ -15,10 +14,8 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.concurrent.ThreadPoolExecutor;
 
-import static com.example.monitor.monitoring.ElementFindString.ALL_CATEGORIES_URL;
-import static com.example.monitor.monitoring.ElementFindString.PROMO_URL;
+import static com.example.monitor.monitoring.ElementFindString.*;
 
 @Slf4j
 @Component
@@ -27,22 +24,19 @@ public class CustomApplicationRunner implements ApplicationRunner {
 
     private final ChromeDriverToolFactory chromeDriverToolFactory;
 
-    private final ChromeDriverManager chromeDriverManager;
-
     private final MonitorCore monitorCore;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-        chromeDriverToolFactory.makeChromeDriverTool("ALL_CATEGORIES");
-        chromeDriverToolFactory.makeChromeDriverTool("PROMO");
+        chromeDriverToolFactory.makeChromeDriverTool(ALL_CATEGORIES);
+        chromeDriverToolFactory.makeChromeDriverTool(PROMO);
 
         log.info("Load Data From Site");
 
-
         try {
             //로그인
-            ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool("ALL_CATEGORIES");
+            ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES);
             ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
             WebDriverWait wait = chromeDriverTool.getWebDriverWait();
             monitorCore.login(chromeDriver);
@@ -59,9 +53,11 @@ public class CustomApplicationRunner implements ApplicationRunner {
 
                 //정보가져오기
                 monitorCore.loadData(chromeDriverTool.getDataHashMap(),productData);
-                chromeDriverTool.isLoadData(true);
+
             }
-            System.out.println("ALl CATEGORIES HASH MAP" + chromeDriverTool.getDataHashMap().size());
+            //로드체크
+            chromeDriverTool.isLoadData(true);
+            log.info("ALl CATEGORIES HASH MAP" + chromeDriverTool.getDataHashMap().size());
         } catch (Exception e) {
             log.error("All Category Data Load Error");
             e.printStackTrace();
@@ -69,7 +65,7 @@ public class CustomApplicationRunner implements ApplicationRunner {
 
         try {
             //로그인
-            ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool("PROMO");
+            ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(PROMO);
             ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
             WebDriverWait wait = chromeDriverTool.getWebDriverWait();
             monitorCore.login(chromeDriver);
@@ -86,9 +82,11 @@ public class CustomApplicationRunner implements ApplicationRunner {
 
                 //정보가져오기
                 monitorCore.loadData(chromeDriverTool.getDataHashMap(),productData);
-                chromeDriverTool.isLoadData(true);
+
             }
-            System.out.println("PROMO HASH MAP"+chromeDriverTool.getDataHashMap().size());
+            //Load 확인
+            chromeDriverTool.isLoadData(true);
+            log.info("PROMO HASH MAP"+chromeDriverTool.getDataHashMap().size());
         } catch (Exception e) {
             log.error("PROMO Data Load Error");
             e.printStackTrace();

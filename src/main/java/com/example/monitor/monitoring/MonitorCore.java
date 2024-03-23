@@ -1,11 +1,11 @@
 package com.example.monitor.monitoring;
 
-import com.example.monitor.chrome.ChromeDriverManager;
+import com.example.monitor.chrome.ChromeDriverTool;
+import com.example.monitor.discord.DiscordBot;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.NoSuchWindowException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -16,8 +16,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import static com.example.monitor.monitoring.ElementFindString.*;
 
@@ -26,26 +24,72 @@ import static com.example.monitor.monitoring.ElementFindString.*;
 @RequiredArgsConstructor
 public class MonitorCore {
 
-    private final MonitorHashMap monitorHashMap;
 
-    private final ReentrantLock monitoringLock = new ReentrantLock();
-    private ChromeDriver driver;
-    private WebDriverWait wait;
-
+    private final DiscordBot discordBot;
     @Value("${user.id}")
     private String userId;
 
     @Value("${user.pw}")
     private String userPw;
 
-    public void setChromeDriver(ChromeDriver driver) {
-        assert (driver != null);
-        this.driver = driver;
-    }
 
-    public void setWebDriverWait(WebDriverWait wait) {
-        assert (wait != null);
-        this.wait = wait;
+    public void runFindProductLogic(ChromeDriverTool chromeDriverTool, String pageUrl, String category) {
+        ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
+        WebDriverWait wait = chromeDriverTool.getWebDriverWait();
+        HashMap<String, Product> dataHashMap = chromeDriverTool.getDataHashMap();
+
+        if (!chromeDriverTool.isLoadData()) {
+            log.error("Data Load 중...");
+            return;
+        }
+        log.info("== " + category + " DATA IS LOADED ==");
+        log.info("== " + category + " FIND NEW PRODUCT ==");
+        List<Product> findProductList = new ArrayList<>();
+
+        try {
+            for (int i = 1; i < 3; i++) {
+                //페이지 이동
+                changeUrl(chromeDriver, pageUrl + "?page=" + i);
+
+                //하위 데이터
+                List<WebElement> productDataDivs = getInnerProductDivs(wait);
+
+                //상품 하위 데이터 조회
+                List<Product> productData = getProductData(productDataDivs);
+
+                //데이터 누적 HashMap 수정을 위해서
+                findProductList.addAll(productData);
+
+                //정보가져오기
+                List<Product> newProductList = findNewProduct(dataHashMap, productData);
+
+                if (productData.size() != 48) {
+                    log.info("한 페이지에 size 개수 변동 확인요망! 현재사이즈 = " + newProductList.size());
+                }
+                if (!newProductList.isEmpty()) {
+                    //새상품 Discord에 알림 보내면 끝
+                    for (Product product : newProductList) {
+                        product.setCategory(category);
+                        discordBot.sendNewProductInfo("모니터링", product);
+                        log.info("New Product = " + product);
+                    }
+                } else {
+                    log.info("PAGE-" + i + ":새 상품 없음");
+                }
+            }
+            // 이후에 HashMap 재 정립
+            dataHashMap.clear();
+            loadData(dataHashMap, findProductList);
+
+        } catch (NoSuchWindowException e) {
+            log.error("Chrome Driver Down!!");
+            return;
+        } catch (Exception e) {
+            log.error("자동 로그아웃");
+            // 모니터링 다시 시작
+            login(chromeDriver);
+        }
+        log.info("END:  == FIND NEW PRODUCT ==");
     }
 
     public void changeUrl(ChromeDriver driver, String url) {
@@ -113,7 +157,7 @@ public class MonitorCore {
 
     }
 
-    public void loadData(HashMap<String, Product> productHashMap,List<Product> productData) {
+    public void loadData(HashMap<String, Product> productHashMap, List<Product> productData) {
 
         for (Product product : productData) {
             if (!productHashMap.containsKey(product.getId())) {
@@ -126,8 +170,7 @@ public class MonitorCore {
         log.info("현재 적재된 상품개수: " + productHashMap.size());
     }
 
-    public List<Product> findNewProduct(List<Product> productData) {
-        HashMap<String, Product> productHashMap = monitorHashMap.getProductHashMap();
+    public List<Product> findNewProduct(HashMap<String, Product> productHashMap, List<Product> productData) {
         List<Product> newProductList = new ArrayList<>();
 
         for (Product product : productData) {
@@ -140,7 +183,4 @@ public class MonitorCore {
         return newProductList;
     }
 
-    public ReentrantLock getMonitoringLock() {
-        return monitoringLock;
-    }
 }

@@ -35,7 +35,7 @@ import java.util.Map;
 @Component
 public class DiscordBot extends ListenerAdapter {
 
-    private Map<String,String> channelHashMap= new HashMap<>();
+    private Map<String, String> channelHashMap = new HashMap<>();
     private JDA jda;
     @Value("${discord.bot.token}")
     private String discordBotToken;
@@ -56,24 +56,24 @@ public class DiscordBot extends ListenerAdapter {
 
         List<TextChannel> textChannels = jda.getTextChannels();
         //In-Memory로 들고 있는게 낫지 않은가?
-        for(TextChannel textChannel: textChannels){
-            log.info("ID :" +  textChannel.getId()+"NAME: "+ textChannel.getName() );
-            channelHashMap.put(textChannel.getName(),textChannel.getId());
+        for (TextChannel textChannel : textChannels) {
+            log.info("ID :" + textChannel.getId() + "NAME: " + textChannel.getName());
+            channelHashMap.put(textChannel.getName(), textChannel.getId());
         }
     }
-    public void sendMessage(String channelName,String message){
+
+    public void sendMessage(String channelName, String message) {
 
         final String id = channelHashMap.get(channelName);
         final TextChannel textChannel = jda.getTextChannelById(id);
-        if(textChannel!=null){
+        if (textChannel != null) {
             textChannel.sendMessage(message).queue();
-        }
-        else{
-            log.error("유효하지 않은 채널이름 : {}",channelName);
+        } else {
+            log.error("유효하지 않은 채널이름 : {}", channelName);
         }
     }
 
-    public void sendNewProductInfo(String channelName, Product product){
+    public void sendNewProductInfo(String channelName, Product product) {
         final String id = channelHashMap.get(channelName);
         final TextChannel textChannel = jda.getTextChannelById(id);
         assert (textChannel != null);
@@ -81,7 +81,11 @@ public class DiscordBot extends ListenerAdapter {
         // Embed 생성
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("새 상품 알림!");
-        embed.setDescription("상품품번 : \t" + product.getId() + "\n" + "상품브랜드 : \t"+ product.getName() + "\n 가격정보 : \t" + product.getPrice());
+        embed.setDescription(
+                "상품 카테고리 : " + product.getCategory() + "\n" +
+                        "상품품번 : " + product.getId() + "\n" +
+                        "상품브랜드 : " + product.getName() + "\n\n" +
+                        "가격정보 \n" + product.getPrice());
         embed.setColor(Color.GREEN); // Embed 색상 설정
 
         embed.addField("사이트 바로가기", "[줄리앙 바로가기](https://b2bfashion.online/)", false); // false는 필드가 인라인으로 표시되지 않도록 설정합니다.

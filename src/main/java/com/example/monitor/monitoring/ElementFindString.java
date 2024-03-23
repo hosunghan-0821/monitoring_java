@@ -2,6 +2,9 @@ package com.example.monitor.monitoring;
 
 public class ElementFindString {
 
+    //Category 작업단위
+    public static final String ALL_CATEGORIES ="all_categories";
+    public static final String PROMO= "promo";
 
     //로그인 관련
     public static final String ID_FORM = "email";
