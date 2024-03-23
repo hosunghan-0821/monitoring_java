@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.example.monitor.discord.DiscordString.ALL_CATEGORIES_CHANNEL;
+import static com.example.monitor.discord.DiscordString.PROMO_CHANNEL;
 import static com.example.monitor.monitoring.ElementFindString.*;
 
 @Slf4j
@@ -34,7 +36,7 @@ public class MonitorScheduler {
     @Scheduled(initialDelay = 60000, fixedDelay = 60000)// 1분마다 실행
     public void monitoring() {
         ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES);
-        monitorCore.runFindProductLogic(chromeDriverTool, ALL_CATEGORIES_URL, ALL_CATEGORIES);
+        monitorCore.runFindProductLogic(chromeDriverTool, ALL_CATEGORIES_URL, ALL_CATEGORIES, ALL_CATEGORIES_CHANNEL);
 
     }
 
@@ -42,6 +44,6 @@ public class MonitorScheduler {
     public void monitorCategoryPromo() {
 
         ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(PROMO);
-        monitorCore.runFindProductLogic(chromeDriverTool,PROMO_URL,PROMO);
+        monitorCore.runFindProductLogic(chromeDriverTool, PROMO_URL, PROMO, PROMO_CHANNEL);
     }
 }

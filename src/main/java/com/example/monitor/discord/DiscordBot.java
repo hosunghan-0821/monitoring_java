@@ -62,6 +62,32 @@ public class DiscordBot extends ListenerAdapter {
         }
     }
 
+
+    @Override
+    public void onMessageReceived(MessageReceivedEvent event) {
+        super.onMessageReceived(event);
+
+        User user = event.getAuthor();
+        TextChannel textChannel = event.getChannel().asTextChannel();
+        if (textChannel.getName().equals("환율계산기")) {
+            Message message = event.getMessage();
+
+            String plainMessage = message.getContentDisplay();
+
+            if (user.isBot()) {
+                return;
+            } else {
+                log.info(user.getName() + " 's Message : " + message.getContentDisplay());
+                if (message.getContentDisplay().startsWith("!")) {
+                    plainMessage = plainMessage.replace("!", "");
+                    String returnMessage = makeReturnMessage(event, plainMessage);
+                    textChannel.sendMessage(returnMessage).queue();
+                }
+            }
+        }
+    }
+
+
     public void sendMessage(String channelName, String message) {
 
         final String id = channelHashMap.get(channelName);
@@ -98,10 +124,7 @@ public class DiscordBot extends ListenerAdapter {
 
     private String makeReturnMessage(MessageReceivedEvent event, String message) {
 
-        /*
-         * 주문정보 Return 하는 것 만들기
-         *
-         * */
+
         //여기서 주문정보 get 하는것 정도는 충분히 가능할거 같다.
         User user = event.getAuthor();
         String returnMessage = "";

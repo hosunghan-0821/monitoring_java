@@ -33,7 +33,7 @@ public class MonitorCore {
     private String userPw;
 
 
-    public void runFindProductLogic(ChromeDriverTool chromeDriverTool, String pageUrl, String category) {
+    public void runFindProductLogic(ChromeDriverTool chromeDriverTool, String pageUrl, String category,String discordChannelName) {
         ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
         WebDriverWait wait = chromeDriverTool.getWebDriverWait();
         HashMap<String, Product> dataHashMap = chromeDriverTool.getDataHashMap();
@@ -70,7 +70,7 @@ public class MonitorCore {
                     //새상품 Discord에 알림 보내면 끝
                     for (Product product : newProductList) {
                         product.setCategory(category);
-                        discordBot.sendNewProductInfo("모니터링", product);
+                        discordBot.sendNewProductInfo(discordChannelName, product);
                         log.info("New Product = " + product);
                     }
                 } else {
@@ -89,6 +89,7 @@ public class MonitorCore {
             // 모니터링 다시 시작
             login(chromeDriver);
         }
+
         log.info("END:  == FIND NEW PRODUCT ==");
     }
 
