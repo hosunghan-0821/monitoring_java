@@ -39,10 +39,8 @@ public class MonitorScheduler {
         monitorCore.runFindProductLogic(chromeDriverTool, ALL_CATEGORIES_URL, ALL_CATEGORIES, ALL_CATEGORIES_CHANNEL);
 
     }
-
-    @Scheduled(initialDelay = 60000, fixedDelay = 60000)// 10분마다 실행
+    @Scheduled(initialDelay = 60000, fixedDelay = 600000)// 10분마다 실행
     public void monitorCategoryPromo() {
-
         ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(PROMO);
         monitorCore.runFindProductLogic(chromeDriverTool, PROMO_URL, PROMO, PROMO_CHANNEL);
     }
