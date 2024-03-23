@@ -48,13 +48,13 @@ public class MonitorCore {
         this.wait = wait;
     }
 
-    public void changeUrl(String url) {
+    public void changeUrl(ChromeDriver driver, String url) {
         driver.get(url);
     }
 
-    public void login() {
+    public void login(ChromeDriver driver) {
         assert (driver != null);
-        assert (wait != null);
+
 
         driver.get("https://b2bfashion.online/");
         WebElement id = driver.findElement(By.id(ID_FORM));
@@ -68,7 +68,7 @@ public class MonitorCore {
     }
 
 
-    public List<WebElement> getInnerProductDivs() {
+    public List<WebElement> getInnerProductDivs(WebDriverWait wait) {
         WebElement topDiv = wait.until(ExpectedConditions.presenceOfElementLocated(By.id(PRODUCT_TOP_DIV)));
         return topDiv.findElements(By.xpath(CHILD_DIV));
     }
@@ -113,8 +113,8 @@ public class MonitorCore {
 
     }
 
-    public void loadData(List<Product> productData) {
-        HashMap<String, Product> productHashMap = monitorHashMap.getProductHashMap();
+    public void loadData(HashMap<String, Product> productHashMap,List<Product> productData) {
+
         for (Product product : productData) {
             if (!productHashMap.containsKey(product.getId())) {
                 productHashMap.put(product.getId(), product);
