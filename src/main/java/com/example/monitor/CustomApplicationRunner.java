@@ -6,6 +6,7 @@ import com.example.monitor.monitoring.MonitorCore;
 import com.example.monitor.monitoring.Product;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -31,6 +32,22 @@ public class CustomApplicationRunner implements ApplicationRunner {
 
         chromeDriverToolFactory.makeChromeDriverTool(ALL_CATEGORIES);
         chromeDriverToolFactory.makeChromeDriverTool(PROMO);
+
+//        chromeDriverToolFactory.makeChromeDriverTool("test");
+//        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool("test");
+//        ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
+//        chromeDriver.get("https://www.thedoublef.com/bu_en/customer/account/login/referer/aHR0cHM6Ly93d3cudGhlZG91YmxlZi5jb20vYnVfZW4v/");
+//        WebElement element = chromeDriver.findElement(By.id("CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll"));
+//        element.click();
+//
+//        WebElement loginElement = chromeDriver.findElement(By.id("email"));
+//        loginElement.sendKeys("dopeesince2022@gmail.com");
+//
+//        WebElement pwElement = chromeDriver.findElement(By.id("pass"));
+//        pwElement.sendKeys("DOPEESHOE99!");
+//
+//        WebElement button = chromeDriver.findElement(By.xpath("//Button[@class='btn btn-primary btn-animation w-full lg:w-2/3 mt-5']"));
+//        button.click();
 
         log.info("Load Data From Site");
 

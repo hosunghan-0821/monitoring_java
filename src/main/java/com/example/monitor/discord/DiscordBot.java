@@ -1,7 +1,9 @@
 package com.example.monitor.discord;
 
+import com.example.monitor.exchange.ExchangeCore;
 import com.example.monitor.monitoring.Product;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -31,12 +33,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.monitor.discord.DiscordString.EXCHANGE_CHANNEL;
+
 @Slf4j
+@RequiredArgsConstructor
 @Component
 public class DiscordBot extends ListenerAdapter {
 
     private Map<String, String> channelHashMap = new HashMap<>();
     private JDA jda;
+
+    private final ExchangeCore exchangeCore;
     @Value("${discord.bot.token}")
     private String discordBotToken;
 
@@ -69,7 +76,7 @@ public class DiscordBot extends ListenerAdapter {
 
         User user = event.getAuthor();
         TextChannel textChannel = event.getChannel().asTextChannel();
-        if (textChannel.getName().equals("환율계산기")) {
+        if (textChannel.getName().equals(EXCHANGE_CHANNEL)) {
             Message message = event.getMessage();
 
             String plainMessage = message.getContentDisplay();
@@ -80,8 +87,10 @@ public class DiscordBot extends ListenerAdapter {
                 log.info(user.getName() + " 's Message : " + message.getContentDisplay());
                 if (message.getContentDisplay().startsWith("!")) {
                     plainMessage = plainMessage.replace("!", "");
-                    String returnMessage = makeReturnMessage(event, plainMessage);
-                    textChannel.sendMessage(returnMessage).queue();
+                    exchangeCore.getExchangeRateInfo();
+
+//                    String returnMessage = makeReturnMessage(event, plainMessage);
+//                    textChannel.sendMessage(returnMessage).queue();
                 }
             }
         }
