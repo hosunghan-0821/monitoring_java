@@ -46,12 +46,15 @@ public class CustomApplicationRunner implements ApplicationRunner {
         chromeDriverToolFactory.makeChromeDriverTool(ALL_CATEGORIES);
         chromeDriverToolFactory.makeChromeDriverTool(PROMO);
 
+
         ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F);
 
         Thread doubleFThread = new Thread(new Runnable() {
             @Override
             public void run() {
+                log.info("============================ Load DOUBLE_F Product Start ============================");
                 doubleFMonitorCore.runLoadLogic(chromeDriverTool);
+                log.info("============================ Load DOUBLE_F Product Finish ============================");
             }
         });
         doubleFThread.start();
@@ -60,7 +63,7 @@ public class CustomApplicationRunner implements ApplicationRunner {
         Thread julianThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                log.info("Load All Cate Data From Site");
+                log.info("============================ Load Julian Product Start ============================");
                 try {
                     //로그인
                     ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES);
@@ -84,7 +87,7 @@ public class CustomApplicationRunner implements ApplicationRunner {
                     }
                     //로드체크
                     chromeDriverTool.isLoadData(true);
-                    log.info("ALl CATEGORIES HASH MAP" + chromeDriverTool.getDataHashMap().size());
+                    log.info("== ALL CATEGORIES LOAD DATA FINISH ==");
                 } catch (Exception e) {
                     log.error("All Category Data Load Error");
                     e.printStackTrace();
@@ -114,11 +117,13 @@ public class CustomApplicationRunner implements ApplicationRunner {
                     }
                     //Load 확인
                     chromeDriverTool.isLoadData(true);
-                    log.info("PROMO HASH MAP" + chromeDriverTool.getDataHashMap().size());
+                    log.info("== PROMO LOAD DATA FINISH ==");
                 } catch (Exception e) {
-                    log.error("PROMO Data Load Error");
+                    log.error("== PROMO LOAD DATA ERROR ==");
                     e.printStackTrace();
                 }
+
+                log.info("============================ Load Julian Product Finish ============================");
             }
         });
 

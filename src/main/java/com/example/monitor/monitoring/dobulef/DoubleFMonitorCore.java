@@ -46,7 +46,7 @@ public class DoubleFMonitorCore {
 
         driver.get(DOUBLE_F_MAIN_PAGE);
 
-        log.info(" === DOUBLE_F LOAD DATA START===");
+
         //쿠키허용
         acceptCookie(wait);
 
@@ -58,7 +58,7 @@ public class DoubleFMonitorCore {
         loadData(driver, wait, manBrandNameList, "man");
 
         chromeDriverTool.isLoadData(true);
-        log.info(" === DOUBLE_F LOAD DATA FINISH===");
+
     }
 
     public void runFindProductLogic(ChromeDriverTool chromeDriverTool) {
@@ -177,7 +177,7 @@ public class DoubleFMonitorCore {
             WebElement topDiv = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(TOP_DIV_XPATH)));
             productList = topDiv.findElements(By.xpath(CHILD_DIV));
         } catch (Exception e) {
-            log.error("Redirection 가능성 or 페이지 변동에 의한 오류");
+            log.error("logout Redirection  or error");
             login(driver, wait);
             return pageProductList;
         }
@@ -201,7 +201,6 @@ public class DoubleFMonitorCore {
                 WebElement discountPercentage = product.findElement(By.xpath(PRODUCT_DISCOUNT_XPATH));
                 productDiscountPercentage = discountPercentage.getText();
             } catch (Exception e) {
-                log.info(productName + " 의 할인정보가 없습니다.");
             }
 
             // 상품 가격 정보

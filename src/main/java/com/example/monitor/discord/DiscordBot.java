@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.example.monitor.discord.DiscordString.EXCHANGE_CHANNEL;
-import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F_MAIN_PAGE;
+
 
 @Slf4j
 @RequiredArgsConstructor

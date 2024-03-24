@@ -26,19 +26,19 @@ public class MonitorScheduler {
     private final ChromeDriverToolFactory chromeDriverToolFactory;
 
 
-    @Scheduled(initialDelay = 60000, fixedDelay = 60000)// 1분마다 실행
+    @Scheduled(initialDelay = 60000 * 2, fixedDelay = 60000)// 1분마다 실행
     public void monitorJulianAllCategories() {
         ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES);
         julianMonitorCore.runFindProductLogic(chromeDriverTool, ALL_CATEGORIES_URL, ALL_CATEGORIES, ALL_CATEGORIES_CHANNEL);
 
     }
-    @Scheduled(initialDelay = 60000, fixedDelay = 60000 * 10)// 10분마다 실행
+    @Scheduled(initialDelay = 60000 * 2, fixedDelay = 60000 * 10)// 10분마다 실행
     public void monitorJulianPromo() {
         ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(PROMO);
         julianMonitorCore.runFindProductLogic(chromeDriverTool, PROMO_URL, PROMO, PROMO_CHANNEL);
     }
 
-    @Scheduled(initialDelay = 60000, fixedDelay = 60000 * 15)// 15분마다 실행
+    @Scheduled(initialDelay = 60000 * 3, fixedDelay = 60000 * 15)// 15분마다 실행
     public void monitorDoubleF(){
         ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F);
         doubleFMonitorCore.runFindProductLogic(chromeDriverTool);

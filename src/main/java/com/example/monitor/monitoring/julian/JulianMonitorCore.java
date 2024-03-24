@@ -73,8 +73,6 @@ public class JulianMonitorCore {
                         discordBot.sendNewProductInfo(discordChannelName, julianProduct);
                         log.info("New Product = " + julianProduct);
                     }
-                } else {
-                    log.info("PAGE-" + i + ":새 상품 없음");
                 }
             }
             // 이후에 HashMap 재 정립
@@ -167,8 +165,6 @@ public class JulianMonitorCore {
                 log.error("Load 시 겹치는 ID 존재 확인 필요 상품정보 " + julianProduct.toString());
             }
         }
-
-        log.info("현재 적재된 상품개수: " + productHashMap.size());
     }
 
     public List<JulianProduct> findNewProduct(HashMap<String, JulianProduct> productHashMap, List<JulianProduct> julianProductData) {
