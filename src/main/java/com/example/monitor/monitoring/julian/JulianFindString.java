@@ -1,6 +1,6 @@
-package com.example.monitor.monitoring;
+package com.example.monitor.monitoring.julian;
 
-public class ElementFindString {
+public class JulianFindString {
 
     //Category 작업단위
     public static final String ALL_CATEGORIES ="all_categories";
@@ -31,7 +31,7 @@ public class ElementFindString {
     public static final String PRODUCT_ID = ".//div[@class='produt_reference']";
 
     //생성자 생성 금지
-    private ElementFindString() {
+    private JulianFindString() {
 
     }
 }

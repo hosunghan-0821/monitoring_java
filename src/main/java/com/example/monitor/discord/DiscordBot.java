@@ -1,7 +1,7 @@
 package com.example.monitor.discord;
 
 import com.example.monitor.exchange.ExchangeCore;
-import com.example.monitor.monitoring.Product;
+import com.example.monitor.monitoring.julian.JulianProduct;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,20 +10,11 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.LayoutComponent;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
-import net.dv8tion.jda.api.utils.FileUpload;
-import net.dv8tion.jda.api.utils.data.DataObject;
-import net.dv8tion.jda.api.utils.messages.MessageCreateData;
-import net.dv8tion.jda.internal.interactions.component.ButtonImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -108,7 +99,7 @@ public class DiscordBot extends ListenerAdapter {
         }
     }
 
-    public void sendNewProductInfo(String channelName, Product product) {
+    public void sendNewProductInfo(String channelName, JulianProduct julianProduct) {
         final String id = channelHashMap.get(channelName);
         final TextChannel textChannel = jda.getTextChannelById(id);
         assert (textChannel != null);
@@ -117,16 +108,16 @@ public class DiscordBot extends ListenerAdapter {
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("새 상품 알림!");
         embed.setDescription(
-                "상품 카테고리 : " + product.getCategory() + "\n" +
-                        "상품품번 : " + product.getId() + "\n" +
-                        "상품브랜드 : " + product.getName() + "\n\n" +
-                        "가격정보 \n" + product.getPrice());
+                "상품 카테고리 : " + julianProduct.getCategory() + "\n" +
+                        "상품품번 : " + julianProduct.getId() + "\n" +
+                        "상품브랜드 : " + julianProduct.getName() + "\n\n" +
+                        "가격정보 \n" + julianProduct.getPrice());
         embed.setColor(Color.GREEN); // Embed 색상 설정
 
         embed.addField("사이트 바로가기", "[줄리앙 바로가기](https://b2bfashion.online/)", false); // false는 필드가 인라인으로 표시되지 않도록 설정합니다.
 
         // 이미지 추가
-        embed.setImage(product.getImageSrc()); // 웹 이미지 사용
+        embed.setImage(julianProduct.getImageSrc()); // 웹 이미지 사용
         textChannel.sendMessageEmbeds(embed.build()).queue();
     }
 

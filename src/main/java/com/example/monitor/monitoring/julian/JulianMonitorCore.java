@@ -1,4 +1,4 @@
-package com.example.monitor.monitoring;
+package com.example.monitor.monitoring.julian;
 
 import com.example.monitor.chrome.ChromeDriverTool;
 import com.example.monitor.discord.DiscordBot;
@@ -17,26 +17,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.example.monitor.monitoring.ElementFindString.*;
+import static com.example.monitor.monitoring.julian.JulianFindString.*;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class MonitorCore {
+public class JulianMonitorCore {
 
 
     private final DiscordBot discordBot;
-    @Value("${user.id}")
+    @Value("${julian.user.id}")
     private String userId;
 
-    @Value("${user.pw}")
+    @Value("${julian.user.pw}")
     private String userPw;
 
 
     public void runFindProductLogic(ChromeDriverTool chromeDriverTool, String pageUrl, String category,String discordChannelName) {
         ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
         WebDriverWait wait = chromeDriverTool.getWebDriverWait();
-        HashMap<String, Product> dataHashMap = chromeDriverTool.getDataHashMap();
+        HashMap<String, JulianProduct> dataHashMap = chromeDriverTool.getDataHashMap();
 
         if (!chromeDriverTool.isLoadData()) {
             log.error("Data Load 중...");
@@ -44,7 +44,7 @@ public class MonitorCore {
         }
         log.info("== " + category + " DATA IS LOADED ==");
         log.info("== " + category + " FIND NEW PRODUCT ==");
-        List<Product> findProductList = new ArrayList<>();
+        List<JulianProduct> findJulianProductList = new ArrayList<>();
 
         try {
             for (int i = 1; i < 3; i++) {
@@ -55,23 +55,23 @@ public class MonitorCore {
                 List<WebElement> productDataDivs = getInnerProductDivs(wait);
 
                 //상품 하위 데이터 조회
-                List<Product> productData = getProductData(productDataDivs);
+                List<JulianProduct> julianProductData = getProductData(productDataDivs);
 
                 //데이터 누적 HashMap 수정을 위해서
-                findProductList.addAll(productData);
+                findJulianProductList.addAll(julianProductData);
 
                 //정보가져오기
-                List<Product> newProductList = findNewProduct(dataHashMap, productData);
+                List<JulianProduct> newJulianProductList = findNewProduct(dataHashMap, julianProductData);
 
-                if (productData.size() != 48) {
-                    log.info("한 페이지에 size 개수 변동 확인요망! 현재사이즈 = " + newProductList.size());
+                if (julianProductData.size() != 48) {
+                    log.info("한 페이지에 size 개수 변동 확인요망! 현재사이즈 = " + newJulianProductList.size());
                 }
-                if (!newProductList.isEmpty()) {
+                if (!newJulianProductList.isEmpty()) {
                     //새상품 Discord에 알림 보내면 끝
-                    for (Product product : newProductList) {
-                        product.setCategory(category);
-                        discordBot.sendNewProductInfo(discordChannelName, product);
-                        log.info("New Product = " + product);
+                    for (JulianProduct julianProduct : newJulianProductList) {
+                        julianProduct.setCategory(category);
+                        discordBot.sendNewProductInfo(discordChannelName, julianProduct);
+                        log.info("New Product = " + julianProduct);
                     }
                 } else {
                     log.info("PAGE-" + i + ":새 상품 없음");
@@ -79,7 +79,7 @@ public class MonitorCore {
             }
             // 이후에 HashMap 재 정립
             dataHashMap.clear();
-            loadData(dataHashMap, findProductList);
+            loadData(dataHashMap, findJulianProductList);
 
         } catch (NoSuchWindowException e) {
             log.error("Chrome Driver Down!!");
@@ -118,9 +118,9 @@ public class MonitorCore {
         return topDiv.findElements(By.xpath(CHILD_DIV));
     }
 
-    public List<Product> getProductData(List<WebElement> childDivs) {
+    public List<JulianProduct> getProductData(List<WebElement> childDivs) {
 
-        List<Product> productList = new ArrayList<>();
+        List<JulianProduct> julianProductList = new ArrayList<>();
 
         for (WebElement child : childDivs) {
             WebElement image = child.findElement(By.xpath(PRODUCT_IMAGE));
@@ -140,13 +140,13 @@ public class MonitorCore {
                 }
             }
 
-            Product product = Product.builder()
+            JulianProduct julianProduct = JulianProduct.builder()
                     .name(name.getText())
                     .Id(reference.getText())
                     .imageSrc(imageSrc)
                     .price(priceString)
                     .build();
-            productList.add(product);
+            julianProductList.add(julianProduct);
 
 //            log.info("image link = " + imageSrc);
 //            log.info("name = " + name.getText());
@@ -154,34 +154,34 @@ public class MonitorCore {
 
         }
 
-        return productList;
+        return julianProductList;
 
     }
 
-    public void loadData(HashMap<String, Product> productHashMap, List<Product> productData) {
+    public void loadData(HashMap<String, JulianProduct> productHashMap, List<JulianProduct> julianProductData) {
 
-        for (Product product : productData) {
-            if (!productHashMap.containsKey(product.getId())) {
-                productHashMap.put(product.getId(), product);
+        for (JulianProduct julianProduct : julianProductData) {
+            if (!productHashMap.containsKey(julianProduct.getId())) {
+                productHashMap.put(julianProduct.getId(), julianProduct);
             } else {
-                log.error("Load 시 겹치는 ID 존재 확인 필요 상품정보 " + product.toString());
+                log.error("Load 시 겹치는 ID 존재 확인 필요 상품정보 " + julianProduct.toString());
             }
         }
 
         log.info("현재 적재된 상품개수: " + productHashMap.size());
     }
 
-    public List<Product> findNewProduct(HashMap<String, Product> productHashMap, List<Product> productData) {
-        List<Product> newProductList = new ArrayList<>();
+    public List<JulianProduct> findNewProduct(HashMap<String, JulianProduct> productHashMap, List<JulianProduct> julianProductData) {
+        List<JulianProduct> newJulianProductList = new ArrayList<>();
 
-        for (Product product : productData) {
-            if (!productHashMap.containsKey(product.getId())) {
-                System.out.println("새로운 상품 등장" + product);
-                newProductList.add(product);
+        for (JulianProduct julianProduct : julianProductData) {
+            if (!productHashMap.containsKey(julianProduct.getId())) {
+                System.out.println("새로운 상품 등장" + julianProduct);
+                newJulianProductList.add(julianProduct);
             }
         }
 
-        return newProductList;
+        return newJulianProductList;
     }
 
 }

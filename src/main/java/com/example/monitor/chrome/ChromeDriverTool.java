@@ -1,7 +1,7 @@
 package com.example.monitor.chrome;
 
 
-import com.example.monitor.monitoring.Product;
+import com.example.monitor.monitoring.julian.JulianProduct;
 import lombok.Getter;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -16,12 +16,12 @@ public class ChromeDriverTool {
 
     private final WebDriverWait webDriverWait;
 
-    private final HashMap<String, Product> dataHashMap;
+    private final HashMap<String, JulianProduct> dataHashMap;
 
     private final ReentrantLock functionLock;
 
     private boolean isLoadData = false;
-    public ChromeDriverTool(ChromeDriver chromeDriver, WebDriverWait webDriverWait, HashMap<String,Product> dataHashMap) {
+    public ChromeDriverTool(ChromeDriver chromeDriver, WebDriverWait webDriverWait, HashMap<String, JulianProduct> dataHashMap) {
         this.chromeDriver = chromeDriver;
         this.webDriverWait = webDriverWait;
         this.dataHashMap = dataHashMap;
