@@ -21,6 +21,7 @@ public class ChromeDriverTool {
     private final ReentrantLock functionLock;
 
     private boolean isLoadData = false;
+
     public ChromeDriverTool(ChromeDriver chromeDriver, WebDriverWait webDriverWait, HashMap<String, JulianProduct> dataHashMap) {
         this.chromeDriver = chromeDriver;
         this.webDriverWait = webDriverWait;

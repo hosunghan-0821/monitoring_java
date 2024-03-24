@@ -176,7 +176,7 @@ public class JulianMonitorCore {
 
         for (JulianProduct julianProduct : julianProductData) {
             if (!productHashMap.containsKey(julianProduct.getId())) {
-                System.out.println("새로운 상품 등장" + julianProduct);
+                log.info("새로운 상품 등장" + julianProduct);
                 newJulianProductList.add(julianProduct);
             }
         }

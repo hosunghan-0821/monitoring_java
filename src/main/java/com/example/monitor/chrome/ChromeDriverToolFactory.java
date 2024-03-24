@@ -13,17 +13,17 @@ import java.util.HashMap;
 @Component
 public class ChromeDriverToolFactory {
 
-    private final HashMap<String, ChromeDriverTool> factroyHashMap = new HashMap<String, ChromeDriverTool>();
+    private final HashMap<String, ChromeDriverTool> factoryHashMap = new HashMap<String, ChromeDriverTool>();
 
     public ChromeDriverTool getChromeDriverTool(String key) {
-        return factroyHashMap.get(key);
+        return factoryHashMap.get(key);
     }
     public void makeChromeDriverTool(String key) {
         ChromeDriver chromeDriver = new ChromeDriver(setOptions());
         WebDriverWait wait = new WebDriverWait(chromeDriver, Duration.ofMillis(5000)); // 최대 5초 대기
         ChromeDriverTool chromeDriverTool = new ChromeDriverTool(chromeDriver, wait, new HashMap<>());
 
-        factroyHashMap.put(key, chromeDriverTool);
+        factoryHashMap.put(key, chromeDriverTool);
     }
 
     private ChromeOptions setOptions() {

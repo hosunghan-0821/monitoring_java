@@ -1,6 +1,7 @@
 package com.example.monitor.discord;
 
 import com.example.monitor.exchange.ExchangeCore;
+import com.example.monitor.monitoring.dobulef.DoubleFProduct;
 import com.example.monitor.monitoring.julian.JulianProduct;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.example.monitor.discord.DiscordString.EXCHANGE_CHANNEL;
+import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F_MAIN_PAGE;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -121,6 +123,50 @@ public class DiscordBot extends ListenerAdapter {
         textChannel.sendMessageEmbeds(embed.build()).queue();
     }
 
+    public void sendNewProductInfo(String channelName, DoubleFProduct doubleFProduct,String url) {
+        final String id = channelHashMap.get(channelName);
+        final TextChannel textChannel = jda.getTextChannelById(id);
+        assert (textChannel != null);
+
+        // Embed 생성
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("새 상품 알림!");
+        embed.setDescription(
+                "상품 이름 : " + doubleFProduct.getNameId() + "\n" +
+                        "할인율 : " + doubleFProduct.getDiscountPercentage() + "\n" +
+                        "상품브랜드 : " + doubleFProduct.getBrand() + "\n\n" +
+                        "가격정보 \n" + doubleFProduct.getPrice());
+        embed.setColor(Color.GREEN); // Embed 색상 설정
+
+        embed.addField("사이트 바로가기", "[DOUBLEF 바로가기](" + url + ")", false); // false는 필드가 인라인으로 표시되지 않도록 설정합니다.
+
+
+        textChannel.sendMessageEmbeds(embed.build()).queue();
+    }
+
+    public void sendDiscountChangeInfo(String channelName, DoubleFProduct doubleFProduct,String url, String beforeDiscount) {
+        final String id = channelHashMap.get(channelName);
+        final TextChannel textChannel = jda.getTextChannelById(id);
+        assert (textChannel != null);
+
+        // Embed 생성
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("할인율 바뀌었습니다!!!!");
+        embed.setDescription(
+                "상품 이름 : " + doubleFProduct.getNameId() + "\n" +
+                        "이전 할인율 : " + beforeDiscount + "\n" +
+                        "현재 할인율 : " + doubleFProduct.getDiscountPercentage() + "\n" +
+                        "상품브랜드 : " + doubleFProduct.getBrand() + "\n\n" +
+                        "가격정보 \n" + doubleFProduct.getPrice());
+
+        embed.setColor(Color.BLUE); // Embed 색상 설정
+
+        embed.addField("사이트 바로가기", "[DOUBLEF 바로가기](" + url + ")", false); // false는 필드가 인라인으로 표시되지 않도록 설정합니다.
+
+
+        textChannel.sendMessageEmbeds(embed.build()).queue();
+    }
+
 
     private String makeReturnMessage(MessageReceivedEvent event, String message) {
 
@@ -144,4 +190,6 @@ public class DiscordBot extends ListenerAdapter {
         }
         return returnMessage;
     }
+
+
 }
