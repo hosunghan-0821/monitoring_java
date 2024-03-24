@@ -4,33 +4,33 @@ public class DoubleFFindString {
 
     public static final String[] manBrandNameList =
             {
-                    "balenciaga"
-//                    "adidas",
-//                    "ami-paris",
-//                    "a-p-c",
-//                    "asics",
-//                    "bottega-veneta",
-//                    "gucci",
-//                    "hoka-one-one",
-//                    "maison-kitsune",
-//                    "maison-margiela",
-//                    "mihara-yasuhiro",
-//                    "moncler",
-//                    "new-balance",
-//                    "rick-owens",
-//                    "saintlaurent",
-//                    "salomon",
-//                    "stone-island",
-//                    "the-north-face",
-//                    "thom-browne"
+                    "balenciaga",
+                    "adidas",
+                    "ami-paris",
+                    "a-p-c",
+                    "asics",
+                    "bottega-veneta",
+                    "gucci",
+                    "hoka-one-one",
+                    "maison-kitsune",
+                    "maison-margiela",
+                    "mihara-yasuhiro",
+                    "moncler",
+                    "new-balance",
+                    "rick-owens",
+                    "saintlaurent",
+                    "salomon",
+                    "stone-island",
+                    "the-north-face",
+                    "thom-browne"
             };
     public static final String[] womanBrandNameList = {
-            "chloe"
-//            "jacquemus",
-//            "kenzo",
-//            "miu-miu",
-//            "prada",
-//            "vivienne-westwood"
+            "chloe",
+            "jacquemus",
+            "kenzo",
+            "miu-miu",
+            "prada",
+            "vivienne-westwood"
     };
 
     //
