@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 
 @Component
 public class ChromeDriverToolFactory {
@@ -21,7 +22,7 @@ public class ChromeDriverToolFactory {
     public void makeChromeDriverTool(String key) {
         ChromeDriver chromeDriver = new ChromeDriver(setOptions());
         WebDriverWait wait = new WebDriverWait(chromeDriver, Duration.ofMillis(5000)); // 최대 5초 대기
-        ChromeDriverTool chromeDriverTool = new ChromeDriverTool(chromeDriver, wait, new HashMap<>());
+        ChromeDriverTool chromeDriverTool = new ChromeDriverTool(chromeDriver, wait, new HashMap<>(),new HashSet<>());
 
         factoryHashMap.put(key, chromeDriverTool);
     }

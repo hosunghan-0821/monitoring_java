@@ -7,6 +7,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Getter
@@ -18,17 +20,17 @@ public class ChromeDriverTool {
 
     private final HashMap<String, JulianProduct> dataHashMap;
 
-    private final ReentrantLock functionLock;
+    private final HashSet<String> productKeySet;
 
     private boolean isLoadData = false;
 
     private boolean isRunning = true;
 
-    public ChromeDriverTool(ChromeDriver chromeDriver, WebDriverWait webDriverWait, HashMap<String, JulianProduct> dataHashMap) {
+    public ChromeDriverTool(ChromeDriver chromeDriver, WebDriverWait webDriverWait, HashMap<String, JulianProduct> dataHashMap, HashSet<String> productKeySet) {
         this.chromeDriver = chromeDriver;
         this.webDriverWait = webDriverWait;
         this.dataHashMap = dataHashMap;
-        functionLock = new ReentrantLock();
+        this.productKeySet = productKeySet;
     }
 
     public void isLoadData(boolean bool){

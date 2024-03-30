@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import static com.example.monitor.monitoring.julian.JulianFindString.*;
@@ -37,7 +38,7 @@ public class JulianMonitorCore {
         ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
         WebDriverWait wait = chromeDriverTool.getWebDriverWait();
         HashMap<String, JulianProduct> dataHashMap = chromeDriverTool.getDataHashMap();
-
+        HashSet<String> dataKeySet = chromeDriverTool.getProductKeySet();
         if ( !chromeDriverTool.isLoadData() || !chromeDriverTool.isRunning()) {
             log.error("Data Load or isRunning OFF");
             return;
@@ -67,8 +68,18 @@ public class JulianMonitorCore {
                     log.info("한 페이지에 size 개수 변동 확인요망! 현재사이즈 = " + newJulianProductList.size());
                 }
                 if (!newJulianProductList.isEmpty()) {
-                    //새상품 Discord에 알림 보내면 끝
+
                     for (JulianProduct julianProduct : newJulianProductList) {
+
+                        //새 상품 set에 있다면, 알람x 보내면 안됨.
+                        if(dataKeySet.contains(julianProduct.getId())){
+                            log.info("이전에 알람 보냈던 제품 PASS");
+                            continue;
+                        }
+
+                        //새 상품 set에 없다면, 알람 보내고, 보낸걸 기록
+                        dataKeySet.add(julianProduct.getId());
+
                         julianProduct.setCategory(category);
                         discordBot.sendNewProductInfo(discordChannelName, julianProduct);
                         log.info("New Product = " + julianProduct);

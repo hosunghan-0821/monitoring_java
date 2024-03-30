@@ -44,5 +44,16 @@ public class MonitorScheduler {
         doubleFMonitorCore.runFindProductLogic(chromeDriverTool);
     }
 
+    @Scheduled(initialDelay = 60000, fixedDelay = 60000 * 60 * 24 * 3)// 3일마다 실행
+    public void clearKeySet(){
+        ChromeDriverTool allCategories = chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES);
+        ChromeDriverTool promo = chromeDriverToolFactory.getChromeDriverTool(PROMO);
+        log.info("새 등록 상품 풀 초기화 (중복방지용) : All Categories, Promo");
+        allCategories.getProductKeySet().clear();
+        promo.getProductKeySet().clear();
+
+
+
+    }
 
 }
