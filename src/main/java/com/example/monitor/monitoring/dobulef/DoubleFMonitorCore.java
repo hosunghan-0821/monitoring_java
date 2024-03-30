@@ -62,14 +62,15 @@ public class DoubleFMonitorCore {
     }
 
     public void runFindProductLogic(ChromeDriverTool chromeDriverTool) {
-        log.info("DOUBLE_F FIND NEW PRODUCT START==");
+
         ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
         WebDriverWait wait = chromeDriverTool.getWebDriverWait();
 
-        if (!chromeDriverTool.isLoadData()) {
-            log.error("Data Load 중...");
+        if (!chromeDriverTool.isLoadData() || !chromeDriverTool.isRunning()) {
+            log.error("Data Load or isRunning OFF");
             return;
         }
+        log.info("DOUBLE_F FIND NEW PRODUCT START==");
         findDifferentAndAlarm(chromeDriver, wait, womanBrandNameList, "woman");
         findDifferentAndAlarm(chromeDriver, wait, manBrandNameList, "man");
         log.info("DOUBLE_F FIND NEW PRODUCT FINISH ==");

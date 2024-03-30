@@ -38,8 +38,8 @@ public class JulianMonitorCore {
         WebDriverWait wait = chromeDriverTool.getWebDriverWait();
         HashMap<String, JulianProduct> dataHashMap = chromeDriverTool.getDataHashMap();
 
-        if (!chromeDriverTool.isLoadData()) {
-            log.error("Data Load 중...");
+        if ( !chromeDriverTool.isLoadData() || !chromeDriverTool.isRunning()) {
+            log.error("Data Load or isRunning OFF");
             return;
         }
         log.info("== " + category + " DATA IS LOADED ==");

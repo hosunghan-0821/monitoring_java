@@ -43,4 +43,6 @@ public class MonitorScheduler {
         ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F);
         doubleFMonitorCore.runFindProductLogic(chromeDriverTool);
     }
+
+
 }

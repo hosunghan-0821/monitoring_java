@@ -1,5 +1,7 @@
 package com.example.monitor.discord;
 
+import com.example.monitor.chrome.ChromeDriverTool;
+import com.example.monitor.chrome.ChromeDriverToolFactory;
 import com.example.monitor.exchange.ExchangeCore;
 import com.example.monitor.monitoring.dobulef.DoubleFProduct;
 import com.example.monitor.monitoring.julian.JulianProduct;
@@ -25,7 +27,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.monitor.discord.DiscordString.EXCHANGE_CHANNEL;
+import static com.example.monitor.discord.DiscordString.*;
+import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F;
+import static com.example.monitor.monitoring.julian.JulianFindString.ALL_CATEGORIES;
+import static com.example.monitor.monitoring.julian.JulianFindString.PROMO;
 
 
 @Slf4j
@@ -33,10 +38,15 @@ import static com.example.monitor.discord.DiscordString.EXCHANGE_CHANNEL;
 @Component
 public class DiscordBot extends ListenerAdapter {
 
+
+    private final DiscordMessageProcessor discordMessageProcessor;
+
     private Map<String, String> channelHashMap = new HashMap<>();
+
+    private ChromeDriverToolFactory chromeDriverToolFactory;
     private JDA jda;
 
-    private final ExchangeCore exchangeCore;
+
     @Value("${discord.bot.token}")
     private String discordBotToken;
 
@@ -62,31 +72,41 @@ public class DiscordBot extends ListenerAdapter {
         }
     }
 
+    public void setChromeDriverTool(ChromeDriverToolFactory chromeDriverToolFactory) {
+        this.chromeDriverToolFactory = chromeDriverToolFactory;
+    }
+
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         super.onMessageReceived(event);
 
         User user = event.getAuthor();
-        TextChannel textChannel = event.getChannel().asTextChannel();
-        if (textChannel.getName().equals(EXCHANGE_CHANNEL)) {
-            Message message = event.getMessage();
 
-            String plainMessage = message.getContentDisplay();
-
-            if (user.isBot()) {
-                return;
-            } else {
-                log.info(user.getName() + " 's Message : " + message.getContentDisplay());
-                if (message.getContentDisplay().startsWith("!")) {
-                    plainMessage = plainMessage.replace("!", "");
-                    exchangeCore.getExchangeRateInfo();
-
-//                    String returnMessage = makeReturnMessage(event, plainMessage);
-//                    textChannel.sendMessage(returnMessage).queue();
-                }
-            }
+        //로봇이 보낸건 무시.
+        if (user.isBot() && !event.getMessage().toString().startsWith("!")) {
+            return;
         }
+
+        TextChannel textChannel = event.getChannel().asTextChannel();
+
+        String channelName = textChannel.getName();
+        String returnMessage = "";
+        switch (channelName) {
+            case ALL_CATEGORIES_CHANNEL:
+                returnMessage = discordMessageProcessor.responseServerRunning(ALL_CATEGORIES,event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES));
+                break;
+            case PROMO_CHANNEL:
+                returnMessage = discordMessageProcessor.responseServerRunning(PROMO,event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(PROMO));
+                break;
+            case DOUBLE_F_DISCOUNT_CHANNEL,DOUBLE_F_NEW_PRODUCT_CHANNEL:
+                returnMessage = discordMessageProcessor.responseServerRunning(DOUBLE_F,event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F));
+                break;
+            default:
+                break;
+        }
+        textChannel.sendMessage(returnMessage).queue();
+
     }
 
 
@@ -123,7 +143,7 @@ public class DiscordBot extends ListenerAdapter {
         textChannel.sendMessageEmbeds(embed.build()).queue();
     }
 
-    public void sendNewProductInfo(String channelName, DoubleFProduct doubleFProduct,String url) {
+    public void sendNewProductInfo(String channelName, DoubleFProduct doubleFProduct, String url) {
         final String id = channelHashMap.get(channelName);
         final TextChannel textChannel = jda.getTextChannelById(id);
         assert (textChannel != null);
@@ -144,7 +164,7 @@ public class DiscordBot extends ListenerAdapter {
         textChannel.sendMessageEmbeds(embed.build()).queue();
     }
 
-    public void sendDiscountChangeInfo(String channelName, DoubleFProduct doubleFProduct,String url, String beforeDiscount) {
+    public void sendDiscountChangeInfo(String channelName, DoubleFProduct doubleFProduct, String url, String beforeDiscount) {
         final String id = channelHashMap.get(channelName);
         final TextChannel textChannel = jda.getTextChannelById(id);
         assert (textChannel != null);

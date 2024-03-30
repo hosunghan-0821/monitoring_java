@@ -22,6 +22,8 @@ public class ChromeDriverTool {
 
     private boolean isLoadData = false;
 
+    private boolean isRunning = true;
+
     public ChromeDriverTool(ChromeDriver chromeDriver, WebDriverWait webDriverWait, HashMap<String, JulianProduct> dataHashMap) {
         this.chromeDriver = chromeDriver;
         this.webDriverWait = webDriverWait;
@@ -32,4 +34,6 @@ public class ChromeDriverTool {
     public void isLoadData(boolean bool){
         isLoadData = bool;
     }
+
+    public void isRunning(boolean bool) {isRunning = bool;}
 }

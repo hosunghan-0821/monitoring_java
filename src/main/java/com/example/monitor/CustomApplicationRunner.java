@@ -2,6 +2,7 @@ package com.example.monitor;
 
 import com.example.monitor.chrome.ChromeDriverTool;
 import com.example.monitor.chrome.ChromeDriverToolFactory;
+import com.example.monitor.discord.DiscordBot;
 import com.example.monitor.monitoring.dobulef.DoubleFBrandHashMap;
 import com.example.monitor.monitoring.dobulef.DoubleFMonitorCore;
 import com.example.monitor.monitoring.julian.JulianMonitorCore;
@@ -38,6 +39,8 @@ public class CustomApplicationRunner implements ApplicationRunner {
 
     private final DoubleFMonitorCore doubleFMonitorCore;
 
+    private final DiscordBot discordBot;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
@@ -45,13 +48,13 @@ public class CustomApplicationRunner implements ApplicationRunner {
         chromeDriverToolFactory.makeChromeDriverTool(DOUBLE_F);
         chromeDriverToolFactory.makeChromeDriverTool(ALL_CATEGORIES);
         chromeDriverToolFactory.makeChromeDriverTool(PROMO);
+        discordBot.setChromeDriverTool(chromeDriverToolFactory);
 
-
-        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F);
 
         Thread doubleFThread = new Thread(new Runnable() {
             @Override
             public void run() {
+                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F);
                 log.info("============================ Load DOUBLE_F Product Start ============================");
                 doubleFMonitorCore.runLoadLogic(chromeDriverTool);
                 log.info("============================ Load DOUBLE_F Product Finish ============================");
