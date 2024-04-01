@@ -9,7 +9,8 @@ import lombok.ToString;
 @ToString
 public class DoubleFProduct {
 
-    private String nameId;
+    private String id;
+    private String name;
     private String discountPercentage;
     private String brand;
     private String price;

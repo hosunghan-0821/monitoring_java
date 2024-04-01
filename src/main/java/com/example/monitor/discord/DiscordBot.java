@@ -152,7 +152,7 @@ public class DiscordBot extends ListenerAdapter {
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("새 상품 알림!");
         embed.setDescription(
-                "상품 이름 : " + doubleFProduct.getNameId() + "\n" +
+                "상품 이름 : " + doubleFProduct.getName() + "\n" +
                         "할인율 : " + doubleFProduct.getDiscountPercentage() + "\n" +
                         "상품브랜드 : " + doubleFProduct.getBrand() + "\n\n" +
                         "가격정보 \n" + doubleFProduct.getPrice());
@@ -173,7 +173,7 @@ public class DiscordBot extends ListenerAdapter {
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("할인율 바뀌었습니다!!!!");
         embed.setDescription(
-                "상품 이름 : " + doubleFProduct.getNameId() + "\n" +
+                "상품 이름 : " + doubleFProduct.getName() + "\n" +
                         "이전 할인율 : " + beforeDiscount + "\n" +
                         "현재 할인율 : " + doubleFProduct.getDiscountPercentage() + "\n" +
                         "상품브랜드 : " + doubleFProduct.getBrand() + "\n\n" +

@@ -120,13 +120,13 @@ public class DoubleFMonitorCore {
             Map<String, DoubleFProduct> eachBrandHashMap = doubleFBrandHashMap.getBrandHashMap(brandName);
 
             for (DoubleFProduct product : pageProductData) {
-                if (!eachBrandHashMap.containsKey(product.getNameId())) {
+                if (!eachBrandHashMap.containsKey(product.getId())) {
                     //새로운 재품일 경우
                     log.info("새로운 제품" + product);
                     discordBot.sendNewProductInfo(DOUBLE_F_NEW_PRODUCT_CHANNEL, product, url);
                 } else {
                     //포함 되어있고,할인 퍼센테이지가 다를 경우
-                    DoubleFProduct beforeProduct = eachBrandHashMap.get(product.getNameId());
+                    DoubleFProduct beforeProduct = eachBrandHashMap.get(product.getId());
                     if (!beforeProduct.getDiscountPercentage().equals(product.getDiscountPercentage())) {
                         log.info("할인율 변경" + beforeProduct.getDiscountPercentage() + " -> " + product.getDiscountPercentage());
                         discordBot.sendDiscountChangeInfo(DOUBLE_F_DISCOUNT_CHANNEL, product, url, beforeProduct.getDiscountPercentage());
@@ -138,7 +138,7 @@ public class DoubleFMonitorCore {
             if (pageProductData.size() > 0) {
                 eachBrandHashMap.clear();
                 for (DoubleFProduct product : pageProductData) {
-                    eachBrandHashMap.put(product.getNameId(), product);
+                    eachBrandHashMap.put(product.getId(), product);
                 }
             }
 
@@ -160,7 +160,7 @@ public class DoubleFMonitorCore {
             //상품 정보 존재할 경우
             Map<String, DoubleFProduct> eachBrandHashMap = doubleFBrandHashMap.getBrandHashMap(brandName);
             for (DoubleFProduct product : pageProductData) {
-                eachBrandHashMap.put(product.getNameId(), product);
+                eachBrandHashMap.put(product.getId(), product);
             }
 
         }
@@ -188,7 +188,15 @@ public class DoubleFMonitorCore {
             String productName = "상품이름 정보 없습니다.";
             String productDiscountPercentage = "0%";
             String productPrice = "";
+            String productId = "";
 
+            try {
+                WebElement productIdElement = product.findElement(By.xpath(".//div[@class='price-box price-final_price']"));
+                productId = productIdElement.getAttribute("data-price-box");
+            } catch (Exception e) {
+                log.error("** 확인요망 ** 상품ID 가 없습니다. 누락됩니다.");
+                continue;
+            }
             // 상품이름 정보
             try {
                 WebElement productNameElement = product.findElement(By.xpath(PRODUCT_NAME_XPATH));
@@ -216,7 +224,8 @@ public class DoubleFMonitorCore {
                 log.info(productName + " 의 가격 정보가 없습니다.");
             }
             DoubleFProduct doubleFProduct = DoubleFProduct.builder()
-                    .nameId(productName)
+                    .id(productId)
+                    .name(productName)
                     .brand(brandName)
                     .price(productPrice)
                     .discountPercentage(productDiscountPercentage)
