@@ -141,6 +141,7 @@ public class DiscordBot extends ListenerAdapter {
         // 이미지 추가
         embed.setImage(julianProduct.getImageSrc()); // 웹 이미지 사용
         textChannel.sendMessageEmbeds(embed.build()).queue();
+        textChannel.sendMessage(julianProduct.getId()).queue(); // 품번도 같이 전송
     }
 
     public void sendNewProductInfo(String channelName, DoubleFProduct doubleFProduct, String url) {
