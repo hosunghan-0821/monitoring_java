@@ -4,12 +4,21 @@ public class DoubleFFindString {
 
     public static final String[] manBrandNameList =
             {
-                    "balenciaga",
+                    "acne",
                     "adidas",
+                    "adidas-y-3",
                     "ami-paris",
                     "a-p-c",
                     "asics",
+                    "autry",
+                    "balenciaga",
+                    "barbour",
+                    "birkenstock",
                     "bottega-veneta",
+                    "burberry",
+                    "c-p-company",
+                    "carhartt-wip",
+                    "drkshdw",
                     "gucci",
                     "hoka-one-one",
                     "maison-kitsune",
@@ -17,21 +26,42 @@ public class DoubleFFindString {
                     "mihara-yasuhiro",
                     "moncler",
                     "new-balance",
+                    "prada",
                     "rick-owens",
                     "saintlaurent",
                     "salomon",
                     "stone-island",
                     "the-north-face",
-                    "thom-browne"
+                    "thom-browne",
+                    "ugg"
             };
     public static final String[] womanBrandNameList = {
+            "acne",
+            "adidas",
+            "ami-paris",
+            "a-p-c",
+            "autry",
+            "balenciaga",
+            "burberry",
+            "canada-goose",
+            "celine",
             "chloe",
+            "courreges",
+            "gucci",
             "jacquemus",
             "kenzo",
+            "maison-margiela",
             "miu-miu",
+            "new-balance",
             "prada",
+            "salomon",
+            "saintlaurent",
+            "the-north-face",
+            "thom-browne",
             "vivienne-westwood"
     };
+    public static final String MANS_PREFIX = "man";
+    public static final String WOMANS_PREFIX = "woman";
 
     //
     public static final String DOUBLE_F ="doublef";

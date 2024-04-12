@@ -6,8 +6,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.example.monitor.monitoring.dobulef.DoubleFFindString.manBrandNameList;
-import static com.example.monitor.monitoring.dobulef.DoubleFFindString.womanBrandNameList;
+import static com.example.monitor.monitoring.dobulef.DoubleFFindString.*;
 
 @Component
 public class DoubleFBrandHashMap {
@@ -17,15 +16,15 @@ public class DoubleFBrandHashMap {
     public DoubleFBrandHashMap() {
         doubleFHashMap = new HashMap<>();
         for (String brandName : manBrandNameList) {
-            doubleFHashMap.put(brandName, new HashMap<>());
+            doubleFHashMap.put(MANS_PREFIX + brandName, new HashMap<>());
         }
         for (String brandName : womanBrandNameList) {
-            doubleFHashMap.put(brandName, new HashMap<>());
+            doubleFHashMap.put(WOMANS_PREFIX+ brandName, new HashMap<>());
         }
     }
 
-    public Map<String, DoubleFProduct> getBrandHashMap(String brandName) {
-        return doubleFHashMap.get(brandName);
+    public Map<String, DoubleFProduct> getBrandHashMap(String sexPrefix,String brandName) {
+        return doubleFHashMap.get(sexPrefix+brandName);
     }
 
 

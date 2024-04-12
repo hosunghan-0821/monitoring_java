@@ -54,8 +54,8 @@ public class DoubleFMonitorCore {
         login(driver, wait);
 
         //데이터 로드
-        loadData(driver, wait, womanBrandNameList, "woman");
-        loadData(driver, wait, manBrandNameList, "man");
+        loadData(driver, wait, womanBrandNameList, WOMANS_PREFIX);
+        loadData(driver, wait, manBrandNameList, MANS_PREFIX);
 
         chromeDriverTool.isLoadData(true);
 
@@ -71,8 +71,8 @@ public class DoubleFMonitorCore {
             return;
         }
         log.info("DOUBLE_F FIND NEW PRODUCT START==");
-        findDifferentAndAlarm(chromeDriver, wait, womanBrandNameList, "woman");
-        findDifferentAndAlarm(chromeDriver, wait, manBrandNameList, "man");
+        findDifferentAndAlarm(chromeDriver, wait, womanBrandNameList, WOMANS_PREFIX);
+        findDifferentAndAlarm(chromeDriver, wait, manBrandNameList, MANS_PREFIX);
         log.info("DOUBLE_F FIND NEW PRODUCT FINISH ==");
     }
 
@@ -107,17 +107,17 @@ public class DoubleFMonitorCore {
 
     }
 
-    private void findDifferentAndAlarm(ChromeDriver driver, WebDriverWait wait, String[] brandNameList, String type) {
+    private void findDifferentAndAlarm(ChromeDriver driver, WebDriverWait wait, String[] brandNameList, String sexPrefix) {
         for (int i = 0; i < brandNameList.length; i++) {
 
             //페이지 URL 만들기
             String brandName = brandNameList[i];
-            String url = makeBrandUrl(brandName, type);
+            String url = makeBrandUrl(brandName, sexPrefix);
 
             List<DoubleFProduct> pageProductData = getPageProductData(driver, wait, url, brandName);
 
             //상품 정보 존재할 경우
-            Map<String, DoubleFProduct> eachBrandHashMap = doubleFBrandHashMap.getBrandHashMap(brandName);
+            Map<String, DoubleFProduct> eachBrandHashMap = doubleFBrandHashMap.getBrandHashMap(sexPrefix,brandName);
 
             for (DoubleFProduct product : pageProductData) {
                 if (!eachBrandHashMap.containsKey(product.getId())) {
@@ -147,18 +147,18 @@ public class DoubleFMonitorCore {
     }
 
 
-    public void loadData(ChromeDriver driver, WebDriverWait wait, String[] brandNameList, String type) {
+    public void loadData(ChromeDriver driver, WebDriverWait wait, String[] brandNameList, String sexPrefix) {
 
         for (int i = 0; i < brandNameList.length; i++) {
 
             //페이지 URL 만들기
             String brandName = brandNameList[i];
-            String url = makeBrandUrl(brandName, type);
+            String url = makeBrandUrl(brandName, sexPrefix);
 
             List<DoubleFProduct> pageProductData = getPageProductData(driver, wait, url, brandName);
 
             //상품 정보 존재할 경우
-            Map<String, DoubleFProduct> eachBrandHashMap = doubleFBrandHashMap.getBrandHashMap(brandName);
+            Map<String, DoubleFProduct> eachBrandHashMap = doubleFBrandHashMap.getBrandHashMap(sexPrefix,brandName);
             for (DoubleFProduct product : pageProductData) {
                 eachBrandHashMap.put(product.getId(), product);
             }
@@ -190,6 +190,7 @@ public class DoubleFMonitorCore {
             String productPrice = "";
             String productId = "";
 
+            //상품 id
             try {
                 WebElement productIdElement = product.findElement(By.xpath(".//div[@class='price-box price-final_price']"));
                 productId = productIdElement.getAttribute("data-price-box");
@@ -203,7 +204,7 @@ public class DoubleFMonitorCore {
                 productName = productNameElement.getText();
             } catch (Exception e) {
                 log.error("** 확인요망 **" + brandName + "의 상품에 이름이 없습니다. 홈페이지 및 프로그램 확인 바랍니다.");
-                //discordError 알림 만들자
+
             }
             // 상품할인율 정보
             try {
@@ -236,7 +237,7 @@ public class DoubleFMonitorCore {
     }
 
 
-    private String makeBrandUrl(String brandName, String type) {
-        return "https://www.thedoublef.com/bu_en/" + type + "/designers/" + brandName + "/";
+    private String makeBrandUrl(String brandName, String sexPrefix) {
+        return "https://www.thedoublef.com/bu_en/" + sexPrefix + "/designers/" + brandName + "/";
     }
 }
