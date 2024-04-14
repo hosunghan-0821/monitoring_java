@@ -55,9 +55,9 @@ public class CustomApplicationRunner implements ApplicationRunner {
             @Override
             public void run() {
                 ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F);
-                log.info("============================ Load DOUBLE_F Product Start ============================");
+                log.info(DOUBLE_F_LOG_PREFIX + "============================ Load DOUBLE_F Product Start ============================");
                 doubleFMonitorCore.runLoadLogic(chromeDriverTool);
-                log.info("============================ Load DOUBLE_F Product Finish ============================");
+                log.info(DOUBLE_F_LOG_PREFIX + "============================ Load DOUBLE_F Product Finish ============================");
             }
         });
         doubleFThread.start();
@@ -66,7 +66,7 @@ public class CustomApplicationRunner implements ApplicationRunner {
         Thread julianThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                log.info("============================ Load Julian Product Start ============================");
+                log.info(JULIAN_LOG_PREFIX+ "============================ Load Julian Product Start ============================");
                 try {
                     //로그인
                     ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES);
@@ -90,9 +90,9 @@ public class CustomApplicationRunner implements ApplicationRunner {
                     }
                     //로드체크
                     chromeDriverTool.isLoadData(true);
-                    log.info("== ALL CATEGORIES LOAD DATA FINISH ==");
+                    log.info(JULIAN_LOG_PREFIX + "== ALL CATEGORIES LOAD DATA FINISH ==");
                 } catch (Exception e) {
-                    log.error("All Category Data Load Error");
+                    log.error(JULIAN_LOG_PREFIX + "All Category Data Load Error");
                     e.printStackTrace();
                 }
 
@@ -120,13 +120,13 @@ public class CustomApplicationRunner implements ApplicationRunner {
                     }
                     //Load 확인
                     chromeDriverTool.isLoadData(true);
-                    log.info("== PROMO LOAD DATA FINISH ==");
+                    log.info(JULIAN_LOG_PREFIX + "== PROMO LOAD DATA FINISH ==");
                 } catch (Exception e) {
-                    log.error("== PROMO LOAD DATA ERROR ==");
+                    log.error(JULIAN_LOG_PREFIX + "== PROMO LOAD DATA ERROR ==");
                     e.printStackTrace();
                 }
 
-                log.info("============================ Load Julian Product Finish ============================");
+                log.info(JULIAN_LOG_PREFIX + "============================ Load Julian Product Finish ============================");
             }
         });
 

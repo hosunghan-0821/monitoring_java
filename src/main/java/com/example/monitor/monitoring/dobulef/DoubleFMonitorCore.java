@@ -21,7 +21,6 @@ import java.util.Map;
 import static com.example.monitor.discord.DiscordString.DOUBLE_F_DISCOUNT_CHANNEL;
 import static com.example.monitor.discord.DiscordString.DOUBLE_F_NEW_PRODUCT_CHANNEL;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.*;
-import static com.example.monitor.monitoring.julian.JulianFindString.CHILD_DIV;
 
 @Slf4j
 @Component
@@ -67,13 +66,13 @@ public class DoubleFMonitorCore {
         WebDriverWait wait = chromeDriverTool.getWebDriverWait();
 
         if (!chromeDriverTool.isLoadData() || !chromeDriverTool.isRunning()) {
-            log.error("Data Load or isRunning OFF");
+            log.error(DOUBLE_F_LOG_PREFIX + "Data Load or isRunning OFF");
             return;
         }
-        log.info("DOUBLE_F FIND NEW PRODUCT START==");
+        log.info(DOUBLE_F_LOG_PREFIX+ "DOUBLE_F FIND NEW PRODUCT START==");
         findDifferentAndAlarm(chromeDriver, wait, womanBrandNameList, WOMANS_PREFIX);
         findDifferentAndAlarm(chromeDriver, wait, manBrandNameList, MANS_PREFIX);
-        log.info("DOUBLE_F FIND NEW PRODUCT FINISH ==");
+        log.info(DOUBLE_F_LOG_PREFIX+ "DOUBLE_F FIND NEW PRODUCT FINISH ==");
     }
 
 
@@ -122,13 +121,13 @@ public class DoubleFMonitorCore {
             for (DoubleFProduct product : pageProductData) {
                 if (!eachBrandHashMap.containsKey(product.getId())) {
                     //새로운 재품일 경우
-                    log.info("새로운 제품" + product);
+                    log.info(DOUBLE_F_LOG_PREFIX + "새로운 제품" + product);
                     discordBot.sendNewProductInfo(DOUBLE_F_NEW_PRODUCT_CHANNEL, product, url);
                 } else {
                     //포함 되어있고,할인 퍼센테이지가 다를 경우
                     DoubleFProduct beforeProduct = eachBrandHashMap.get(product.getId());
                     if (!beforeProduct.getDiscountPercentage().equals(product.getDiscountPercentage())) {
-                        log.info("할인율 변경" + beforeProduct.getDiscountPercentage() + " -> " + product.getDiscountPercentage());
+                        log.info(DOUBLE_F_LOG_PREFIX + "할인율 변경" + beforeProduct.getDiscountPercentage() + " -> " + product.getDiscountPercentage());
                         discordBot.sendDiscountChangeInfo(DOUBLE_F_DISCOUNT_CHANNEL, product, url, beforeProduct.getDiscountPercentage());
                     }
                 }
@@ -178,7 +177,7 @@ public class DoubleFMonitorCore {
             WebElement topDiv = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(TOP_DIV_XPATH)));
             productList = topDiv.findElements(By.xpath(CHILD_PRODUCT_DIV));
         } catch (Exception e) {
-            log.error(DOUBLE_F_LOG_PREFIX + "logout Redirection  or error");
+            log.error(DOUBLE_F_LOG_PREFIX + "logout Redirection  or FIND PRODUCT ERROR");
             login(driver, wait);
             return pageProductList;
         }
@@ -196,7 +195,8 @@ public class DoubleFMonitorCore {
                 WebElement productIdElement = product.findElement(By.xpath(".//div[@class='price-box price-final_price']"));
                 productId = productIdElement.getAttribute("data-price-box");
             } catch (Exception e) {
-                log.error("** 확인요망 ** 상품ID 가 없습니다. 누락됩니다.");
+                log.error(DOUBLE_F_LOG_PREFIX + "** 확인요망 ** url ="+ url+ " 상품중 상품ID 가 없습니다. 누락됩니다.");
+                log.error(DOUBLE_F_LOG_PREFIX + "상세정보 총 상품개수 " + productList.size()+ "에러 index" + productList.indexOf(product));
                 continue;
             }
             // 상품이름 정보
@@ -204,7 +204,7 @@ public class DoubleFMonitorCore {
                 WebElement productNameElement = product.findElement(By.xpath(PRODUCT_NAME_XPATH));
                 productName = productNameElement.getText();
             } catch (Exception e) {
-                log.error("** 확인요망 **" + brandName + "의 상품에 이름이 없습니다. 홈페이지 및 프로그램 확인 바랍니다.");
+                log.error(DOUBLE_F_LOG_PREFIX+ "** 확인요망 **" + brandName + "의 상품에 이름이 없습니다. 홈페이지 및 프로그램 확인 바랍니다.");
 
             }
             // 상품할인율 정보
@@ -223,7 +223,7 @@ public class DoubleFMonitorCore {
                 productPrice = productPrice.strip();
 
             } catch (Exception e) {
-                log.info(productName + " 의 가격 정보가 없습니다.");
+                log.info(DOUBLE_F_LOG_PREFIX + productName + " 의 가격 정보가 없습니다.");
             }
             DoubleFProduct doubleFProduct = DoubleFProduct.builder()
                     .id(productId)

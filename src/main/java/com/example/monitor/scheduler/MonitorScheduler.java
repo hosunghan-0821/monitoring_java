@@ -48,7 +48,7 @@ public class MonitorScheduler {
     public void clearKeySet(){
         ChromeDriverTool allCategories = chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES);
         ChromeDriverTool promo = chromeDriverToolFactory.getChromeDriverTool(PROMO);
-        log.info("새 등록 상품 풀 초기화 (중복방지용) : All Categories, Promo");
+        log.info(JULIAN_LOG_PREFIX + "새 등록 상품 풀 초기화 (중복방지용) : All Categories, Promo");
         allCategories.getProductKeySet().clear();
         promo.getProductKeySet().clear();
 

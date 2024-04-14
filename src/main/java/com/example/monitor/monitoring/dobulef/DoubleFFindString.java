@@ -63,6 +63,8 @@ public class DoubleFFindString {
     public static final String MANS_PREFIX = "man";
     public static final String WOMANS_PREFIX = "woman";
 
+    public static final String DOUBLE_F_LOG_PREFIX = "[DOUBLE_F] : \t";
+
     //
     public static final String DOUBLE_F ="doublef";
 

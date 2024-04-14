@@ -24,6 +24,7 @@ public class JulianFindString {
     public static final String PRODUCT_TOP_DIV = "box-product-grid";
     public static final String CHILD_DIV = "./div";
 
+    public static final String JULIAN_LOG_PREFIX = "[JULIAN] : \t";
     public static final String PRODUCT_IMAGE = ".//img[@class='img-responsive']";
 
     public static final String PRODUCT_NAME = ".//div[@class='product_name']";

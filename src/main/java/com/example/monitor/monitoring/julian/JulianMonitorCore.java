@@ -40,11 +40,10 @@ public class JulianMonitorCore {
         HashMap<String, JulianProduct> dataHashMap = chromeDriverTool.getDataHashMap();
         HashSet<String> dataKeySet = chromeDriverTool.getProductKeySet();
         if ( !chromeDriverTool.isLoadData() || !chromeDriverTool.isRunning()) {
-            log.error("Data Load or isRunning OFF");
+            log.error(JULIAN_LOG_PREFIX + "Data Load or isRunning OFF");
             return;
         }
-        log.info("== " + category + " DATA IS LOADED ==");
-        log.info("== " + category + " FIND NEW PRODUCT ==");
+        log.info(JULIAN_LOG_PREFIX+ "START: " + category + " FIND NEW PRODUCT ");
         List<JulianProduct> findJulianProductList = new ArrayList<>();
 
         try {
@@ -65,7 +64,7 @@ public class JulianMonitorCore {
                 List<JulianProduct> newJulianProductList = findNewProduct(dataHashMap, julianProductData);
 
                 if (julianProductData.size() != 48) {
-                    log.info("한 페이지에 size 개수 변동 확인요망! 현재사이즈 = " + newJulianProductList.size());
+                    log.info(JULIAN_LOG_PREFIX + "한 페이지에 size 개수 변동 확인요망! 현재사이즈 = " + newJulianProductList.size());
                 }
                 if (!newJulianProductList.isEmpty()) {
 
@@ -73,7 +72,7 @@ public class JulianMonitorCore {
 
                         //새 상품 set에 있다면, 알람x 보내면 안됨.
                         if(dataKeySet.contains(julianProduct.getId())){
-                            log.info("이전에 알람 보냈던 제품 PASS");
+                            log.info(JULIAN_LOG_PREFIX  + "이전에 알람 보냈던 제품 PASS 상품ID " +julianProduct.getId());
                             continue;
                         }
 
@@ -82,7 +81,7 @@ public class JulianMonitorCore {
 
                         julianProduct.setCategory(category);
                         discordBot.sendNewProductInfo(discordChannelName, julianProduct);
-                        log.info("New Product = " + julianProduct);
+                        log.info(JULIAN_LOG_PREFIX + "New Product = " + julianProduct);
                     }
                 }
             }
@@ -91,15 +90,15 @@ public class JulianMonitorCore {
             loadData(dataHashMap, findJulianProductList);
 
         } catch (NoSuchWindowException e) {
-            log.error("Chrome Driver Down!!");
+            log.error(JULIAN_LOG_PREFIX + "Chrome Driver Down!!");
             return;
         } catch (Exception e) {
-            log.error("자동 로그아웃");
+            log.error(JULIAN_LOG_PREFIX + "자동 로그아웃");
             // 모니터링 다시 시작
             login(chromeDriver);
         }
 
-        log.info("END:  == FIND NEW PRODUCT ==");
+        log.info(JULIAN_LOG_PREFIX + "END:  FIND NEW PRODUCT FINISH");
     }
 
     public void changeUrl(ChromeDriver driver, String url) {
@@ -173,7 +172,7 @@ public class JulianMonitorCore {
             if (!productHashMap.containsKey(julianProduct.getId())) {
                 productHashMap.put(julianProduct.getId(), julianProduct);
             } else {
-                log.error("Load 시 겹치는 ID 존재 확인 필요 상품정보 " + julianProduct.toString());
+                log.error(JULIAN_LOG_PREFIX + "Load 시 겹치는 ID 존재 확인 필요 상품정보 " + julianProduct.toString());
             }
         }
     }
@@ -183,7 +182,7 @@ public class JulianMonitorCore {
 
         for (JulianProduct julianProduct : julianProductData) {
             if (!productHashMap.containsKey(julianProduct.getId())) {
-                log.info("새로운 상품 등장" + julianProduct);
+                log.info(JULIAN_LOG_PREFIX + "새로운 상품 등장" + julianProduct);
                 newJulianProductList.add(julianProduct);
             }
         }
