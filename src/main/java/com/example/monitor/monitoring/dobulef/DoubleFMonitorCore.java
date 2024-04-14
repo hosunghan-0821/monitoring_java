@@ -176,12 +176,13 @@ public class DoubleFMonitorCore {
         List<DoubleFProduct> pageProductList = new ArrayList<>();
         try {
             WebElement topDiv = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(TOP_DIV_XPATH)));
-            productList = topDiv.findElements(By.xpath(CHILD_DIV));
+            productList = topDiv.findElements(By.xpath(CHILD_PRODUCT_DIV));
         } catch (Exception e) {
-            log.error("logout Redirection  or error");
+            log.error(DOUBLE_F_LOG_PREFIX + "logout Redirection  or error");
             login(driver, wait);
             return pageProductList;
         }
+
 
         //상품 정보 로드
         for (WebElement product : productList) {

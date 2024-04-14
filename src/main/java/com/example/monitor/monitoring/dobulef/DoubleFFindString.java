@@ -76,6 +76,8 @@ public class DoubleFFindString {
     //쿠키 관련
     public static final String DF_COOKIE_ID = "CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll";
 
+    public static final String CHILD_PRODUCT_DIV = ".//div[@class='w-full item product product-item gallery col-span-2 md:col-span-3 flex transition-all transform translate-y-0 duration-300 ease-in-out']";
+
     //프로덕트
     public static final String TOP_DIV_XPATH = "//div[@class='grid grid-cols-4 gap-5 md:gap-4 md:gap-y-16 md:grid-cols-12 lg:gap-5-5 opacity-100 transition-opacity duration-500 items-container items-stretch']";
 
