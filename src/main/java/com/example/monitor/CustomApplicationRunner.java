@@ -51,6 +51,7 @@ public class CustomApplicationRunner implements ApplicationRunner {
         discordBot.setChromeDriverTool(chromeDriverToolFactory);
 
 
+        /*
         Thread doubleFThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -61,8 +62,9 @@ public class CustomApplicationRunner implements ApplicationRunner {
             }
         });
         doubleFThread.start();
+        */
 
-
+        /*
         Thread julianThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -130,7 +132,9 @@ public class CustomApplicationRunner implements ApplicationRunner {
             }
         });
 
+
         julianThread.start();
+        */
 
 
     }
