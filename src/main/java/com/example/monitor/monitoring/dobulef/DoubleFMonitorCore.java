@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -69,10 +70,10 @@ public class DoubleFMonitorCore {
             log.error(DOUBLE_F_LOG_PREFIX + "Data Load or isRunning OFF");
             return;
         }
-        log.info(DOUBLE_F_LOG_PREFIX+ "DOUBLE_F FIND NEW PRODUCT START==");
+        log.info(DOUBLE_F_LOG_PREFIX + "DOUBLE_F FIND NEW PRODUCT START==");
         findDifferentAndAlarm(chromeDriver, wait, womanBrandNameList, WOMANS_PREFIX);
         findDifferentAndAlarm(chromeDriver, wait, manBrandNameList, MANS_PREFIX);
-        log.info(DOUBLE_F_LOG_PREFIX+ "DOUBLE_F FIND NEW PRODUCT FINISH ==");
+        log.info(DOUBLE_F_LOG_PREFIX + "DOUBLE_F FIND NEW PRODUCT FINISH ==");
     }
 
 
@@ -116,7 +117,7 @@ public class DoubleFMonitorCore {
             List<DoubleFProduct> pageProductData = getPageProductData(driver, wait, url, brandName);
 
             //상품 정보 존재할 경우
-            Map<String, DoubleFProduct> eachBrandHashMap = doubleFBrandHashMap.getBrandHashMap(sexPrefix,brandName);
+            Map<String, DoubleFProduct> eachBrandHashMap = doubleFBrandHashMap.getBrandHashMap(sexPrefix, brandName);
 
             for (DoubleFProduct product : pageProductData) {
                 if (!eachBrandHashMap.containsKey(product.getId())) {
@@ -128,6 +129,7 @@ public class DoubleFMonitorCore {
                     DoubleFProduct beforeProduct = eachBrandHashMap.get(product.getId());
                     if (!beforeProduct.getDiscountPercentage().equals(product.getDiscountPercentage())) {
                         log.info(DOUBLE_F_LOG_PREFIX + "할인율 변경" + beforeProduct.getDiscountPercentage() + " -> " + product.getDiscountPercentage());
+                        getDetailProductInfo(driver,wait,product);
                         discordBot.sendDiscountChangeInfo(DOUBLE_F_DISCOUNT_CHANNEL, product, url, beforeProduct.getDiscountPercentage());
                     }
                 }
@@ -157,7 +159,7 @@ public class DoubleFMonitorCore {
             List<DoubleFProduct> pageProductData = getPageProductData(driver, wait, url, brandName);
 
             //상품 정보 존재할 경우
-            Map<String, DoubleFProduct> eachBrandHashMap = doubleFBrandHashMap.getBrandHashMap(sexPrefix,brandName);
+            Map<String, DoubleFProduct> eachBrandHashMap = doubleFBrandHashMap.getBrandHashMap(sexPrefix, brandName);
             for (DoubleFProduct product : pageProductData) {
                 eachBrandHashMap.put(product.getId(), product);
             }
@@ -165,7 +167,7 @@ public class DoubleFMonitorCore {
         }
     }
 
-    private List<DoubleFProduct> getPageProductData(ChromeDriver driver, WebDriverWait wait, String url, String brandName) {
+    public List<DoubleFProduct> getPageProductData(ChromeDriver driver, WebDriverWait wait, String url, String brandName) {
 
         //페이지로 이동
         driver.get(url);
@@ -189,14 +191,17 @@ public class DoubleFMonitorCore {
             String productDiscountPercentage = "0%";
             String productPrice = "";
             String productId = "";
+            String productLink = "";
+            String productSkU = "";
+            String productColorCode = "";
 
             //상품 id
             try {
                 WebElement productIdElement = product.findElement(By.xpath(".//div[@class='price-box price-final_price']"));
                 productId = productIdElement.getAttribute("data-price-box");
             } catch (Exception e) {
-                log.error(DOUBLE_F_LOG_PREFIX + "** 확인요망 ** url ="+ url+ " 상품중 상품ID 가 없습니다. 누락됩니다.");
-                log.error(DOUBLE_F_LOG_PREFIX + "상세정보 총 상품개수 " + productList.size()+ "에러 index" + productList.indexOf(product));
+                log.error(DOUBLE_F_LOG_PREFIX + "** 확인요망 ** url =" + url + " 상품중 상품ID 가 없습니다. 누락됩니다.");
+                log.error(DOUBLE_F_LOG_PREFIX + "상세정보 총 상품개수 " + productList.size() + "에러 index" + productList.indexOf(product));
                 continue;
             }
             // 상품이름 정보
@@ -204,7 +209,7 @@ public class DoubleFMonitorCore {
                 WebElement productNameElement = product.findElement(By.xpath(PRODUCT_NAME_XPATH));
                 productName = productNameElement.getText();
             } catch (Exception e) {
-                log.error(DOUBLE_F_LOG_PREFIX+ "** 확인요망 **" + brandName + "의 상품에 이름이 없습니다. 홈페이지 및 프로그램 확인 바랍니다.");
+                log.error(DOUBLE_F_LOG_PREFIX + "** 확인요망 **" + brandName + "의 상품에 이름이 없습니다. 홈페이지 및 프로그램 확인 바랍니다.");
 
             }
             // 상품할인율 정보
@@ -225,16 +230,91 @@ public class DoubleFMonitorCore {
             } catch (Exception e) {
                 log.info(DOUBLE_F_LOG_PREFIX + productName + " 의 가격 정보가 없습니다.");
             }
+            // 상품 링크 정보
+            try {
+                WebElement webElement = product.findElement(By.xpath(".//h4[@class='product-card__name truncate ... font-light text-xs tracking-1-08 leading-snug mb-5px']//a"));
+                productLink = webElement.getAttribute("href");
+
+                int indexOfProductData = productLink.lastIndexOf(brandName) + brandName.length() + 1;
+                String tempData = productLink.substring(indexOfProductData);
+                String[] splitData = tempData.split("-");
+
+                productSkU = splitData[0];
+                productColorCode = splitData[splitData.length - 1].replace("/","");
+
+
+            } catch (Exception e) {
+                log.info(DOUBLE_F_LOG_PREFIX + productName + " 의 링크 정보가 없습니다.");
+            }
+
             DoubleFProduct doubleFProduct = DoubleFProduct.builder()
                     .id(productId)
                     .name(productName)
                     .brand(brandName)
                     .price(productPrice)
                     .discountPercentage(productDiscountPercentage)
+                    .productLink(productLink)
+                    .SKU(productSkU)
+                    .colorCode(productColorCode)
                     .build();
+
+
             pageProductList.add(doubleFProduct);
         }
         return pageProductList;
+    }
+
+    //일단보류.. 링크에 다 존재해서
+    private void getDetailProductInfo(ChromeDriver driver, WebDriverWait wait, DoubleFProduct product) {
+
+        boolean isGetData = false;
+
+        //실패하면 최소 2번 해당 상품 데이터 조회 시도.
+        try {
+            for (int j = 1; j <= 2; j++) {
+                driver.get(product.getProductLink());
+
+                WebElement styleDetailsToggle = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@class='title pre-arrow-right text-md font-medium py-5-5 cursor-pointer']")));
+                styleDetailsToggle.click();
+                Thread.sleep(j * 1000);
+
+                List<WebElement> productDetailElements = driver.findElements(By.xpath("//div[@class='product-description text-sm leading-relaxed']//p//span"));
+
+                int totalElementLength = productDetailElements.size();
+
+                for (int k = 0 ; k <totalElementLength; k += 2){
+                    if (!productDetailElements.get(k).getText().isEmpty()) {
+                        //상품정보 로드
+                        if (productDetailElements.get(k).getText().equals("Product SKU:")) {
+                            //set product SKU (REAL ID)
+                            product.addSKU(productDetailElements.get(k+1).getText().split("/")[0]);
+                            log.debug("상품 품번" +productDetailElements.get(k+1).getText().split("/")[0]);
+                        } else if (productDetailElements.get(k).getText().equals("Color code:")) {
+                            product.addColorCode(productDetailElements.get(k+1).getText());
+                            log.debug("칼라 코드" + productDetailElements.get(k+1).getText());
+                        } else {
+                            log.debug("Material" + productDetailElements.get(k+1).getText());
+                        }
+                        isGetData = true;
+                    } else {
+                        break;
+                    }
+                }
+                if (isGetData) {
+                    break;
+                } else {
+                    log.error(DOUBLE_F_LOG_PREFIX + " 데이터 상세 조회 실패 재시도 ");
+                    Thread.sleep(1000);
+                }
+            }
+        } catch (Exception e) {
+            log.error(DOUBLE_F_LOG_PREFIX + "Product : + " + product.toString()+ " 상세조회 에러");
+            log.error(DOUBLE_F_LOG_PREFIX + Arrays.toString(e.getStackTrace()));
+        }
+        if (!isGetData) {
+            log.error(DOUBLE_F_LOG_PREFIX + "Product : + " + product.toString()+ " 상세조회 에러");
+        }
+
     }
 
 

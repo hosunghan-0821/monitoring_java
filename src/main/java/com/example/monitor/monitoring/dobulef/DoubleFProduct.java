@@ -14,5 +14,8 @@ public class DoubleFProduct {
     private String discountPercentage;
     private String brand;
     private String price;
+    private String productLink;
+    private String SKU;
+    private String colorCode;
 
 }

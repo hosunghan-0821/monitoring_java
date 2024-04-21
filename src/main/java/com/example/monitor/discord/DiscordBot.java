@@ -163,6 +163,9 @@ public class DiscordBot extends ListenerAdapter {
 
 
         textChannel.sendMessageEmbeds(embed.build()).queue();
+
+        textChannel.sendMessage(doubleFProduct.getSKU()).queue();
+        textChannel.sendMessage(doubleFProduct.getColorCode()).queue();
     }
 
     public void sendDiscountChangeInfo(String channelName, DoubleFProduct doubleFProduct, String url, String beforeDiscount) {
