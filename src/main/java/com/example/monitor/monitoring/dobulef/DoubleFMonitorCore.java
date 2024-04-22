@@ -8,14 +8,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -124,13 +122,14 @@ public class DoubleFMonitorCore {
                 if (!eachBrandHashMap.containsKey(product.getId())) {
                     //새로운 재품일 경우
                     log.info(DOUBLE_F_LOG_PREFIX + "새로운 제품" + product);
+                    getDetailProductInfo(driver,wait,product);
                     discordBot.sendNewProductInfo(DOUBLE_F_NEW_PRODUCT_CHANNEL, product, url);
                 } else {
                     //포함 되어있고,할인 퍼센테이지가 다를 경우
                     DoubleFProduct beforeProduct = eachBrandHashMap.get(product.getId());
                     if (!beforeProduct.getDiscountPercentage().equals(product.getDiscountPercentage())) {
                         log.info(DOUBLE_F_LOG_PREFIX + "할인율 변경" + beforeProduct.getDiscountPercentage() + " -> " + product.getDiscountPercentage());
-
+                        getDetailProductInfo(driver,wait,product);
                         discordBot.sendDiscountChangeInfo(DOUBLE_F_DISCOUNT_CHANNEL, product, url, beforeProduct.getDiscountPercentage());
                     }
                 }
@@ -255,7 +254,7 @@ public class DoubleFMonitorCore {
                     .price(productPrice)
                     .discountPercentage(productDiscountPercentage)
                     .productLink(productLink)
-                    .SKU(productSkU)
+                    .sku(productSkU)
                     .colorCode(productColorCode)
                     .build();
 
@@ -267,16 +266,13 @@ public class DoubleFMonitorCore {
 
 
 
-    //일단보류.. 링크에 다 존재해서
+
     public void getDetailProductInfo(ChromeDriver driver, WebDriverWait wait, DoubleFProduct product) {
 
         boolean isGetData = false;
 
-
         driver.get(product.getProductLink());
-
         WebElement styleDetailsToggle = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@class='title pre-arrow-right text-md font-medium py-5-5']//span[text()='Composition and care']")));
-        driver.manage().window().maximize();
         driver.executeScript("arguments[0].click();", styleDetailsToggle);
         //실패하면 최소 2번 해당 상품 데이터 조회 시도.
         try {
@@ -286,42 +282,17 @@ public class DoubleFMonitorCore {
                 WebElement element = driver.findElement(By.xpath("//div[@class='content overflow-hidden border-b transition-all max-h-0 duration-500 text-sm leading-relaxed']"));
                 List<WebElement> productDataList = element.findElements(By.xpath("./div"));
 
-
-      
-
                 for(WebElement productData : productDataList) {
 
                     if (!productData.getText().isEmpty()){
-                        log.info(productData.getText());
+                        if (productData.getText().equals("Made in Italy")) {
+                            product.updateMadeBy("Italy");
+                        }
                         isGetData = true;
                     } else {
-                        log.info("error");
+                        log.info(DOUBLE_F_LOG_PREFIX + "**확인요망** get Data 원산지 error ");
                     }
                 }
-
-
-
-//                List<WebElement> productDetailElements = driver.findElements(By.xpath("//div[@class='product-description text-sm leading-relaxed']//p//span"));
-//                int totalElementLength = productDetailElements.size();
-//
-//                for (int k = 0 ; k <totalElementLength; k += 2){
-//                    if (!productDetailElements.get(k).getText().isEmpty()) {
-//                        //상품정보 로드
-//                        if (productDetailElements.get(k).getText().equals("Product SKU:")) {
-//                            //set product SKU (REAL ID)
-//                            //product.addSKU(productDetailElements.get(k+1).getText().split("/")[0]);
-//                            log.debug("상품 품번" +productDetailElements.get(k+1).getText().split("/")[0]);
-//                        } else if (productDetailElements.get(k).getText().equals("Color code:")) {
-//                            //product.addColorCode(productDetailElements.get(k+1).getText());
-//                            log.debug("칼라 코드" + productDetailElements.get(k+1).getText());
-//                        } else {
-//                            log.debug("Material" + productDetailElements.get(k+1).getText());
-//                        }
-//                        isGetData = true;
-//                    } else {
-//                        break;
-//                    }
-//                }
                 if (isGetData) {
                     break;
                 } else {

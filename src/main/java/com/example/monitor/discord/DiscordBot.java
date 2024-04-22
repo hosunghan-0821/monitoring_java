@@ -1,9 +1,6 @@
 package com.example.monitor.discord;
 
-import com.example.monitor.chrome.ChromeDriverTool;
 import com.example.monitor.chrome.ChromeDriverToolFactory;
-import com.example.monitor.exchange.ExchangeCore;
-import com.example.monitor.monitoring.biffi.BiffiFindString;
 import com.example.monitor.monitoring.biffi.BiffiProduct;
 import com.example.monitor.monitoring.dobulef.DoubleFProduct;
 import com.example.monitor.monitoring.julian.JulianProduct;
@@ -14,7 +11,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -184,7 +180,10 @@ public class DiscordBot extends ListenerAdapter {
                 "상품 이름 : " + doubleFProduct.getName() + "\n" +
                         "할인율 : " + doubleFProduct.getDiscountPercentage() + "\n" +
                         "상품브랜드 : " + doubleFProduct.getBrand() + "\n\n" +
-                        "가격정보 \n" + doubleFProduct.getPrice());
+                        "가격정보 \n" + doubleFProduct.getPrice() + "\n\n" +
+                        "원산지 \n"+ doubleFProduct.getMadeBy() + "\n\n");
+
+
         embed.setColor(Color.GREEN); // Embed 색상 설정
 
         embed.addField("사이트 바로가기", "[DOUBLEF 바로가기](" + url + ")", false); // false는 필드가 인라인으로 표시되지 않도록 설정합니다.
@@ -192,7 +191,7 @@ public class DiscordBot extends ListenerAdapter {
 
         textChannel.sendMessageEmbeds(embed.build()).queue();
 
-        textChannel.sendMessage(doubleFProduct.getSKU()).queue();
+        textChannel.sendMessage(doubleFProduct.getSku()).queue();
         textChannel.sendMessage(doubleFProduct.getColorCode()).queue();
     }
 
@@ -233,7 +232,8 @@ public class DiscordBot extends ListenerAdapter {
                         "이전 할인율 : " + beforeDiscount + "\n" +
                         "현재 할인율 : " + doubleFProduct.getDiscountPercentage() + "\n" +
                         "상품브랜드 : " + doubleFProduct.getBrand() + "\n\n" +
-                        "가격정보 \n" + doubleFProduct.getPrice());
+                        "가격정보 \n" + doubleFProduct.getPrice() + "\n\n" +
+                        "원산지 \n" + doubleFProduct.getMadeBy());
 
         embed.setColor(Color.BLUE); // Embed 색상 설정
 

@@ -172,8 +172,6 @@ public class BiffiMonitorCore {
             WebElement topDiv = driver.findElement(By.id("catalogogen"));
             List<WebElement> productElements = topDiv.findElements(By.xpath("./div"));
 
-            log.info("총 개수 =" + productElements.size());
-
             for (WebElement productElement : productElements) {
                 try {
                     String id = productElement.getAttribute("id");

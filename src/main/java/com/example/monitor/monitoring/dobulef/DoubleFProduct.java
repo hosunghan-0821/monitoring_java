@@ -15,7 +15,11 @@ public class DoubleFProduct {
     private String brand;
     private String price;
     private String productLink;
-    private String SKU;
+    private String sku;
     private String colorCode;
+    private String madeBy;
 
+    public void updateMadeBy(String italy) {
+        this.madeBy = italy;
+    }
 }
