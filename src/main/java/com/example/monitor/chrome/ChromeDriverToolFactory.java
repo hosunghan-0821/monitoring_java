@@ -31,6 +31,7 @@ public class ChromeDriverToolFactory {
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--no-sandbox");
+        options.addArguments("headless");
         options.addArguments("window-size=1920x1080");
         options.addArguments("start-maximized");
         options.setExperimentalOption("excludeSwitches", Collections.singletonList("enable-automation"));

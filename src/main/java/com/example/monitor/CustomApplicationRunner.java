@@ -50,13 +50,33 @@ public class CustomApplicationRunner implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
 
 
-//        chromeDriverToolFactory.makeChromeDriverTool(DOUBLE_F);
+        chromeDriverToolFactory.makeChromeDriverTool(DOUBLE_F);
 //        chromeDriverToolFactory.makeChromeDriverTool(ALL_CATEGORIES);
 //        chromeDriverToolFactory.makeChromeDriverTool(PROMO);
-
-        chromeDriverToolFactory.makeChromeDriverTool(BIFFI);
+//       chromeDriverToolFactory.makeChromeDriverTool(BIFFI);
         discordBot.setChromeDriverTool(chromeDriverToolFactory);
 
+
+        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F);
+
+        ChromeDriver driver = chromeDriverTool.getChromeDriver();
+        WebDriverWait wait = chromeDriverTool.getWebDriverWait();
+        driver.get(DOUBLE_F_MAIN_PAGE);
+
+        doubleFMonitorCore.acceptCookie(wait);
+        doubleFMonitorCore.login(driver,wait);
+        doubleFMonitorCore.getDetailProductInfo(
+                driver,
+                wait,
+                DoubleFProduct.builder()
+                        .productLink("https://www.thedoublef.com/bu_en/gg-black-rubber-card-holder-gucci-771315aac0l-o-guc-1000/")
+                        .build()
+        );
+
+
+
+
+        /*
         Thread biffiThread =new Thread(new Runnable() {
             @Override
             public void run() {
@@ -71,7 +91,7 @@ public class CustomApplicationRunner implements ApplicationRunner {
         biffiThread.start();
 
 
-
+        */
         /*
         Thread doubleFThread = new Thread(new Runnable() {
             @Override

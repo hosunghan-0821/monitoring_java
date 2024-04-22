@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
@@ -264,42 +265,63 @@ public class DoubleFMonitorCore {
         return pageProductList;
     }
 
+
+
     //일단보류.. 링크에 다 존재해서
-    private void getDetailProductInfo(ChromeDriver driver, WebDriverWait wait, DoubleFProduct product) {
+    public void getDetailProductInfo(ChromeDriver driver, WebDriverWait wait, DoubleFProduct product) {
 
         boolean isGetData = false;
 
+
+        driver.get(product.getProductLink());
+
+        WebElement styleDetailsToggle = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@class='title pre-arrow-right text-md font-medium py-5-5']//span[text()='Composition and care']")));
+        driver.manage().window().maximize();
+        driver.executeScript("arguments[0].click();", styleDetailsToggle);
         //실패하면 최소 2번 해당 상품 데이터 조회 시도.
         try {
             for (int j = 1; j <= 2; j++) {
-                driver.get(product.getProductLink());
+                Thread.sleep( 1000);
 
-                WebElement styleDetailsToggle = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@class='title pre-arrow-right text-md font-medium py-5-5 cursor-pointer']")));
-                styleDetailsToggle.click();
-                Thread.sleep(j * 1000);
+                WebElement element = driver.findElement(By.xpath("//div[@class='content overflow-hidden border-b transition-all max-h-0 duration-500 text-sm leading-relaxed']"));
+                List<WebElement> productDataList = element.findElements(By.xpath("./div"));
 
-                List<WebElement> productDetailElements = driver.findElements(By.xpath("//div[@class='product-description text-sm leading-relaxed']//p//span"));
 
-                int totalElementLength = productDetailElements.size();
+      
 
-                for (int k = 0 ; k <totalElementLength; k += 2){
-                    if (!productDetailElements.get(k).getText().isEmpty()) {
-                        //상품정보 로드
-                        if (productDetailElements.get(k).getText().equals("Product SKU:")) {
-                            //set product SKU (REAL ID)
-                            //product.addSKU(productDetailElements.get(k+1).getText().split("/")[0]);
-                            log.debug("상품 품번" +productDetailElements.get(k+1).getText().split("/")[0]);
-                        } else if (productDetailElements.get(k).getText().equals("Color code:")) {
-                            //product.addColorCode(productDetailElements.get(k+1).getText());
-                            log.debug("칼라 코드" + productDetailElements.get(k+1).getText());
-                        } else {
-                            log.debug("Material" + productDetailElements.get(k+1).getText());
-                        }
+                for(WebElement productData : productDataList) {
+
+                    if (!productData.getText().isEmpty()){
+                        log.info(productData.getText());
                         isGetData = true;
                     } else {
-                        break;
+                        log.info("error");
                     }
                 }
+
+
+
+//                List<WebElement> productDetailElements = driver.findElements(By.xpath("//div[@class='product-description text-sm leading-relaxed']//p//span"));
+//                int totalElementLength = productDetailElements.size();
+//
+//                for (int k = 0 ; k <totalElementLength; k += 2){
+//                    if (!productDetailElements.get(k).getText().isEmpty()) {
+//                        //상품정보 로드
+//                        if (productDetailElements.get(k).getText().equals("Product SKU:")) {
+//                            //set product SKU (REAL ID)
+//                            //product.addSKU(productDetailElements.get(k+1).getText().split("/")[0]);
+//                            log.debug("상품 품번" +productDetailElements.get(k+1).getText().split("/")[0]);
+//                        } else if (productDetailElements.get(k).getText().equals("Color code:")) {
+//                            //product.addColorCode(productDetailElements.get(k+1).getText());
+//                            log.debug("칼라 코드" + productDetailElements.get(k+1).getText());
+//                        } else {
+//                            log.debug("Material" + productDetailElements.get(k+1).getText());
+//                        }
+//                        isGetData = true;
+//                    } else {
+//                        break;
+//                    }
+//                }
                 if (isGetData) {
                     break;
                 } else {
@@ -308,8 +330,8 @@ public class DoubleFMonitorCore {
                 }
             }
         } catch (Exception e) {
-            log.error(DOUBLE_F_LOG_PREFIX + "Product : + " + product.toString()+ " 상세조회 에러");
-            log.error(DOUBLE_F_LOG_PREFIX + Arrays.toString(e.getStackTrace()));
+            log.error(DOUBLE_F_LOG_PREFIX + " 상세조회 에러 : " + "Product : + " + product.toString());
+            e.printStackTrace();
         }
         if (!isGetData) {
             log.error(DOUBLE_F_LOG_PREFIX + "Product : + " + product.toString()+ " 상세조회 에러");
