@@ -9,4 +9,8 @@ public class DiscordString {
     public static final String DOUBLE_F_NEW_PRODUCT_CHANNEL = "더블에프_new_product";
 
     public static final String DOUBLE_F_DISCOUNT_CHANNEL ="더블에프_discount_change";
+
+    public static final String BIFFI_NEW_PRODUCT_CHANNEL = "비피_new_product";
+
+    public static final String BIFFI_DISCOUNT_CHANNEL = "비피_discount_change";
 }

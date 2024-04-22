@@ -129,7 +129,7 @@ public class DoubleFMonitorCore {
                     DoubleFProduct beforeProduct = eachBrandHashMap.get(product.getId());
                     if (!beforeProduct.getDiscountPercentage().equals(product.getDiscountPercentage())) {
                         log.info(DOUBLE_F_LOG_PREFIX + "할인율 변경" + beforeProduct.getDiscountPercentage() + " -> " + product.getDiscountPercentage());
-                        getDetailProductInfo(driver,wait,product);
+
                         discordBot.sendDiscountChangeInfo(DOUBLE_F_DISCOUNT_CHANNEL, product, url, beforeProduct.getDiscountPercentage());
                     }
                 }
@@ -287,10 +287,10 @@ public class DoubleFMonitorCore {
                         //상품정보 로드
                         if (productDetailElements.get(k).getText().equals("Product SKU:")) {
                             //set product SKU (REAL ID)
-                            product.addSKU(productDetailElements.get(k+1).getText().split("/")[0]);
+                            //product.addSKU(productDetailElements.get(k+1).getText().split("/")[0]);
                             log.debug("상품 품번" +productDetailElements.get(k+1).getText().split("/")[0]);
                         } else if (productDetailElements.get(k).getText().equals("Color code:")) {
-                            product.addColorCode(productDetailElements.get(k+1).getText());
+                            //product.addColorCode(productDetailElements.get(k+1).getText());
                             log.debug("칼라 코드" + productDetailElements.get(k+1).getText());
                         } else {
                             log.debug("Material" + productDetailElements.get(k+1).getText());

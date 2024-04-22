@@ -3,6 +3,7 @@ package com.example.monitor.discord;
 import com.example.monitor.chrome.ChromeDriverTool;
 import com.example.monitor.chrome.ChromeDriverToolFactory;
 import com.example.monitor.exchange.ExchangeCore;
+import com.example.monitor.monitoring.biffi.BiffiProduct;
 import com.example.monitor.monitoring.dobulef.DoubleFProduct;
 import com.example.monitor.monitoring.julian.JulianProduct;
 import jakarta.annotation.PostConstruct;
@@ -121,6 +122,28 @@ public class DiscordBot extends ListenerAdapter {
         }
     }
 
+    public void sendNewProductInfo(String channelName, BiffiProduct biffiProduct,String url){
+        final String id = channelHashMap.get(channelName);
+        final TextChannel textChannel = jda.getTextChannelById(id);
+        assert (textChannel != null);
+
+        // Embed 생성
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("새 상품 알림!");
+        embed.setDescription(
+                        "상품품번 : " + biffiProduct.getSku() + "\n" +
+                        "상품브랜드 : " + biffiProduct.getBrand() + "\n\n" +
+                        "가격정보 \n" + biffiProduct.getPrice());
+        embed.setColor(Color.magenta); // Embed 색상 설정
+
+        embed.addField("사이트 바로가기", "[BIFFI 바로가기](" + url + ")", false); // false는 필드가 인라인으로 표시되지 않도록 설정합니다.
+
+        embed.setImage(biffiProduct.getImgUrl()); // 웹 이미지 사용
+        textChannel.sendMessageEmbeds(embed.build()).queue();
+        textChannel.sendMessage(biffiProduct.getSku()).queue(); // 품번도 같이 전송
+
+    }
+
     public void sendNewProductInfo(String channelName, JulianProduct julianProduct) {
         final String id = channelHashMap.get(channelName);
         final TextChannel textChannel = jda.getTextChannelById(id);
@@ -166,6 +189,30 @@ public class DiscordBot extends ListenerAdapter {
 
         textChannel.sendMessage(doubleFProduct.getSKU()).queue();
         textChannel.sendMessage(doubleFProduct.getColorCode()).queue();
+    }
+
+    public void sendDiscountChangeInfo(String channelName, BiffiProduct biffiProduct, String url, String beforeDiscount) {
+        final String id = channelHashMap.get(channelName);
+        final TextChannel textChannel = jda.getTextChannelById(id);
+        assert (textChannel != null);
+
+        // Embed 생성
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("할인율 바뀌었습니다!!!!");
+        embed.setDescription(
+                "상품 품번 : " + biffiProduct.getSku() + "\n" +
+                        "이전 할인율 : " + beforeDiscount + "\n" +
+                        "현재 할인율 : " + biffiProduct.getDiscountPercentage() + "\n" +
+                        "상품브랜드 : " + biffiProduct.getBrand() + "\n\n" +
+                        "가격정보 \n" + biffiProduct.getPrice());
+
+        embed.setColor(Color.magenta); // Embed 색상 설정
+        // 이미지 추가
+        embed.setImage(biffiProduct.getImgUrl()); // 웹 이미지 사용
+        embed.addField("사이트 바로가기", "[BIFFI 바로가기](" + url + ")", false); // false는 필드가 인라인으로 표시되지 않도록 설정합니다.
+
+        textChannel.sendMessageEmbeds(embed.build()).queue();
+
     }
 
     public void sendDiscountChangeInfo(String channelName, DoubleFProduct doubleFProduct, String url, String beforeDiscount) {

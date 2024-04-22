@@ -3,6 +3,8 @@ package com.example.monitor;
 import com.example.monitor.chrome.ChromeDriverTool;
 import com.example.monitor.chrome.ChromeDriverToolFactory;
 import com.example.monitor.discord.DiscordBot;
+import com.example.monitor.monitoring.biffi.BiffiFindString;
+import com.example.monitor.monitoring.biffi.BiffiMonitorCore;
 import com.example.monitor.monitoring.dobulef.DoubleFBrandHashMap;
 import com.example.monitor.monitoring.dobulef.DoubleFMonitorCore;
 import com.example.monitor.monitoring.julian.JulianMonitorCore;
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import static com.example.monitor.monitoring.biffi.BiffiFindString.*;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.*;
 import static com.example.monitor.monitoring.julian.JulianFindString.*;
 
@@ -39,19 +42,37 @@ public class CustomApplicationRunner implements ApplicationRunner {
 
     private final DoubleFMonitorCore doubleFMonitorCore;
 
+    private final BiffiMonitorCore biffiMonitorCore;
+
     private final DiscordBot discordBot;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
 
-        chromeDriverToolFactory.makeChromeDriverTool(DOUBLE_F);
-        chromeDriverToolFactory.makeChromeDriverTool(ALL_CATEGORIES);
-        chromeDriverToolFactory.makeChromeDriverTool(PROMO);
+//        chromeDriverToolFactory.makeChromeDriverTool(DOUBLE_F);
+//        chromeDriverToolFactory.makeChromeDriverTool(ALL_CATEGORIES);
+//        chromeDriverToolFactory.makeChromeDriverTool(PROMO);
+
+        chromeDriverToolFactory.makeChromeDriverTool(BIFFI);
         discordBot.setChromeDriverTool(chromeDriverToolFactory);
 
+        Thread biffiThread =new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                log.info(BIFFI_LOG_PREFIX + "============================ Load BIFFI Product Start ============================");
+                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(BIFFI);
+                biffiMonitorCore.runLoadLogic(chromeDriverTool);
+                log.info(BIFFI_LOG_PREFIX + "============================ Load BIFFI Product Finish ============================");
+            }
+        });
+
+        biffiThread.start();
 
 
+
+        /*
         Thread doubleFThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -62,8 +83,9 @@ public class CustomApplicationRunner implements ApplicationRunner {
             }
         });
         doubleFThread.start();
+         */
 
-
+        /*
         Thread julianThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -132,7 +154,10 @@ public class CustomApplicationRunner implements ApplicationRunner {
         });
 
 
+
+
         julianThread.start();
+        */
 
 
 
