@@ -1,7 +1,7 @@
 package com.example.monitor.monitoring.julian;
 
 import com.example.monitor.chrome.ChromeDriverTool;
-import com.example.monitor.discord.DiscordBot;
+import com.example.monitor.infra.discord.DiscordBot;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;

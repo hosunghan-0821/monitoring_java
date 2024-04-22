@@ -2,7 +2,6 @@ package com.example.monitor.scheduler;
 
 import com.example.monitor.chrome.ChromeDriverTool;
 import com.example.monitor.chrome.ChromeDriverToolFactory;
-import com.example.monitor.monitoring.biffi.BiffiFindString;
 import com.example.monitor.monitoring.biffi.BiffiMonitorCore;
 import com.example.monitor.monitoring.dobulef.DoubleFMonitorCore;
 import com.example.monitor.monitoring.julian.JulianMonitorCore;
@@ -11,8 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import static com.example.monitor.discord.DiscordString.ALL_CATEGORIES_CHANNEL;
-import static com.example.monitor.discord.DiscordString.PROMO_CHANNEL;
+import static com.example.monitor.infra.discord.DiscordString.ALL_CATEGORIES_CHANNEL;
+import static com.example.monitor.infra.discord.DiscordString.PROMO_CHANNEL;
 import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F;
 import static com.example.monitor.monitoring.julian.JulianFindString.*;

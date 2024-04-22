@@ -1,4 +1,4 @@
-package com.example.monitor.discord;
+package com.example.monitor.infra.discord;
 
 import com.example.monitor.chrome.ChromeDriverToolFactory;
 import com.example.monitor.monitoring.biffi.BiffiProduct;
@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.monitor.discord.DiscordString.*;
 import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F;
 import static com.example.monitor.monitoring.julian.JulianFindString.ALL_CATEGORIES;
@@ -92,16 +91,16 @@ public class DiscordBot extends ListenerAdapter {
         String channelName = textChannel.getName();
         String returnMessage = "";
         switch (channelName) {
-            case ALL_CATEGORIES_CHANNEL:
+            case DiscordString.ALL_CATEGORIES_CHANNEL:
                 returnMessage = discordMessageProcessor.responseServerRunning(ALL_CATEGORIES,event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES));
                 break;
-            case PROMO_CHANNEL:
+            case DiscordString.PROMO_CHANNEL:
                 returnMessage = discordMessageProcessor.responseServerRunning(PROMO,event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(PROMO));
                 break;
-            case DOUBLE_F_DISCOUNT_CHANNEL,DOUBLE_F_NEW_PRODUCT_CHANNEL:
+            case DiscordString.DOUBLE_F_DISCOUNT_CHANNEL, DiscordString.DOUBLE_F_NEW_PRODUCT_CHANNEL:
                 returnMessage = discordMessageProcessor.responseServerRunning(DOUBLE_F,event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F));
                 break;
-            case BIFFI_DISCOUNT_CHANNEL,BIFFI_NEW_PRODUCT_CHANNEL:
+            case DiscordString.BIFFI_DISCOUNT_CHANNEL, DiscordString.BIFFI_NEW_PRODUCT_CHANNEL:
                 returnMessage = discordMessageProcessor.responseServerRunning(BIFFI,event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(BIFFI));
                 break;
             default:

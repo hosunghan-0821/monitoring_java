@@ -2,29 +2,21 @@ package com.example.monitor;
 
 import com.example.monitor.chrome.ChromeDriverTool;
 import com.example.monitor.chrome.ChromeDriverToolFactory;
-import com.example.monitor.discord.DiscordBot;
-import com.example.monitor.monitoring.biffi.BiffiFindString;
+import com.example.monitor.infra.discord.DiscordBot;
 import com.example.monitor.monitoring.biffi.BiffiMonitorCore;
-import com.example.monitor.monitoring.dobulef.DoubleFBrandHashMap;
 import com.example.monitor.monitoring.dobulef.DoubleFMonitorCore;
 import com.example.monitor.monitoring.julian.JulianMonitorCore;
-import com.example.monitor.monitoring.dobulef.DoubleFFindString;
-import com.example.monitor.monitoring.dobulef.DoubleFProduct;
 import com.example.monitor.monitoring.julian.JulianProduct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import static com.example.monitor.monitoring.biffi.BiffiFindString.*;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.*;

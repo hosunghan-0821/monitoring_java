@@ -1,4 +1,4 @@
-package com.example.monitor.discord;
+package com.example.monitor.infra.discord;
 
 
 import com.example.monitor.chrome.ChromeDriverTool;

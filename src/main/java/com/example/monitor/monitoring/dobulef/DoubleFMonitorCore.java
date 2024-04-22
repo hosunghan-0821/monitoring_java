@@ -2,7 +2,7 @@ package com.example.monitor.monitoring.dobulef;
 
 
 import com.example.monitor.chrome.ChromeDriverTool;
-import com.example.monitor.discord.DiscordBot;
+import com.example.monitor.infra.discord.DiscordBot;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 
-import static com.example.monitor.discord.DiscordString.DOUBLE_F_DISCOUNT_CHANNEL;
-import static com.example.monitor.discord.DiscordString.DOUBLE_F_NEW_PRODUCT_CHANNEL;
+import static com.example.monitor.infra.discord.DiscordString.DOUBLE_F_DISCOUNT_CHANNEL;
+import static com.example.monitor.infra.discord.DiscordString.DOUBLE_F_NEW_PRODUCT_CHANNEL;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.*;
 
 @Slf4j

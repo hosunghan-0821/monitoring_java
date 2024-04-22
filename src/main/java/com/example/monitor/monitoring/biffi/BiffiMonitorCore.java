@@ -1,12 +1,10 @@
 package com.example.monitor.monitoring.biffi;
 
 import com.example.monitor.chrome.ChromeDriverTool;
-import com.example.monitor.discord.DiscordBot;
-import com.example.monitor.monitoring.dobulef.DoubleFProduct;
+import com.example.monitor.infra.discord.DiscordBot;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.checkerframework.checker.units.qual.A;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -20,10 +18,9 @@ import java.util.List;
 import java.util.Map;
 
 
-import static com.example.monitor.discord.DiscordString.BIFFI_DISCOUNT_CHANNEL;
-import static com.example.monitor.discord.DiscordString.BIFFI_NEW_PRODUCT_CHANNEL;
+import static com.example.monitor.infra.discord.DiscordString.BIFFI_DISCOUNT_CHANNEL;
+import static com.example.monitor.infra.discord.DiscordString.BIFFI_NEW_PRODUCT_CHANNEL;
 import static com.example.monitor.monitoring.biffi.BiffiFindString.*;
-import static com.example.monitor.monitoring.dobulef.DoubleFFindString.*;
 
 @Slf4j
 @Component
