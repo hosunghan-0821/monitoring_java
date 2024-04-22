@@ -61,7 +61,7 @@ public class MonitorScheduler {
 //
 //    }
 
-    @Scheduled(initialDelay = 60000 * 5, fixedDelay = 60000 * 3)// 3분마다 실행
+    @Scheduled(initialDelay = 60000 * 5, fixedDelay = 60000 * 20)// 3분마다 실행
     public void monitorBIFFI(){
         ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(BIFFI);
         biffiMonitorCore.runFindProductLogic(chromeDriverTool);

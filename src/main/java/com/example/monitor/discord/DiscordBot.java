@@ -3,6 +3,7 @@ package com.example.monitor.discord;
 import com.example.monitor.chrome.ChromeDriverTool;
 import com.example.monitor.chrome.ChromeDriverToolFactory;
 import com.example.monitor.exchange.ExchangeCore;
+import com.example.monitor.monitoring.biffi.BiffiFindString;
 import com.example.monitor.monitoring.biffi.BiffiProduct;
 import com.example.monitor.monitoring.dobulef.DoubleFProduct;
 import com.example.monitor.monitoring.julian.JulianProduct;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.example.monitor.discord.DiscordString.*;
+import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F;
 import static com.example.monitor.monitoring.julian.JulianFindString.ALL_CATEGORIES;
 import static com.example.monitor.monitoring.julian.JulianFindString.PROMO;
@@ -102,6 +104,9 @@ public class DiscordBot extends ListenerAdapter {
                 break;
             case DOUBLE_F_DISCOUNT_CHANNEL,DOUBLE_F_NEW_PRODUCT_CHANNEL:
                 returnMessage = discordMessageProcessor.responseServerRunning(DOUBLE_F,event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F));
+                break;
+            case BIFFI_DISCOUNT_CHANNEL,BIFFI_NEW_PRODUCT_CHANNEL:
+                returnMessage = discordMessageProcessor.responseServerRunning(BIFFI,event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(BIFFI));
                 break;
             default:
                 break;
