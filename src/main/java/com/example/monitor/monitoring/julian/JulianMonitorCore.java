@@ -90,9 +90,11 @@ public class JulianMonitorCore {
             loadData(dataHashMap, findJulianProductList);
 
         } catch (NoSuchWindowException e) {
+            e.printStackTrace();
             log.error(JULIAN_LOG_PREFIX + "Chrome Driver Down!!");
             return;
         } catch (Exception e) {
+            e.printStackTrace();
             log.error(JULIAN_LOG_PREFIX + "자동 로그아웃");
             // 모니터링 다시 시작
             login(chromeDriver);
@@ -108,16 +110,21 @@ public class JulianMonitorCore {
     public void login(ChromeDriver driver) {
         assert (driver != null);
 
+        try{
+            driver.get("https://b2bfashion.online/");
+            WebElement id = driver.findElement(By.id(ID_FORM));
+            id.sendKeys(userId);
 
-        driver.get("https://b2bfashion.online/");
-        WebElement id = driver.findElement(By.id(ID_FORM));
-        id.sendKeys(userId);
+            WebElement password = driver.findElement(By.id(PASS_FORM));
+            password.sendKeys(userPw);
 
-        WebElement password = driver.findElement(By.id(PASS_FORM));
-        password.sendKeys(userPw);
+            WebElement loginButton = driver.findElement(By.id(SUBMIT_FORM));
+            loginButton.click();
+        } catch (Exception e){
+            log.error(JULIAN_LOG_PREFIX+ "로그인 에러");
+            e.printStackTrace();
+        }
 
-        WebElement loginButton = driver.findElement(By.id(SUBMIT_FORM));
-        loginButton.click();
     }
 
 
@@ -182,7 +189,7 @@ public class JulianMonitorCore {
 
         for (JulianProduct julianProduct : julianProductData) {
             if (!productHashMap.containsKey(julianProduct.getId())) {
-                log.info(JULIAN_LOG_PREFIX + "새로운 상품 등장" + julianProduct);
+
                 newJulianProductList.add(julianProduct);
             }
         }
