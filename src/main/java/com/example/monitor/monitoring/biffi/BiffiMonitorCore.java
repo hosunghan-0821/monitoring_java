@@ -215,6 +215,11 @@ public class BiffiMonitorCore {
 
                     WebElement image = productElement.findElement(By.xpath(".//div[@class='cotienifoto']//a//img"));
                     String imageUrl = image.getAttribute("src");
+                    int lastIndexOf = imageUrl.lastIndexOf("?");
+                    if (lastIndexOf != -1) {
+                        imageUrl = imageUrl.substring(0,lastIndexOf);
+                    }
+
 
                     BiffiProduct biffiProduct = BiffiProduct.builder()
                             .id(id)
