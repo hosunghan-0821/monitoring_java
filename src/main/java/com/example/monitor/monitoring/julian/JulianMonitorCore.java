@@ -34,19 +34,20 @@ public class JulianMonitorCore {
     private String userPw;
 
 
-    public void runFindProductLogic(ChromeDriverTool chromeDriverTool, String pageUrl, String category,String discordChannelName) {
+    public void runFindProductLogic(ChromeDriverTool chromeDriverTool, String pageUrl, String category, String discordChannelName) {
         ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
         WebDriverWait wait = chromeDriverTool.getWebDriverWait();
         HashMap<String, JulianProduct> dataHashMap = chromeDriverTool.getDataHashMap();
         HashSet<String> dataKeySet = chromeDriverTool.getProductKeySet();
-        if ( !chromeDriverTool.isLoadData() || !chromeDriverTool.isRunning()) {
+        if (!chromeDriverTool.isLoadData() || !chromeDriverTool.isRunning()) {
             log.error(JULIAN_LOG_PREFIX + "Data Load or isRunning OFF");
             return;
         }
-        log.info(JULIAN_LOG_PREFIX+ "START: " + category + " FIND NEW PRODUCT ");
+        log.info(JULIAN_LOG_PREFIX + "START: " + category + " FIND NEW PRODUCT ");
         List<JulianProduct> findJulianProductList = new ArrayList<>();
 
         try {
+            boolean is_new_product = false;
             for (int i = 1; i < 3; i++) {
                 //페이지 이동
                 changeUrl(chromeDriver, pageUrl + "?page=" + i);
@@ -63,6 +64,7 @@ public class JulianMonitorCore {
                 //정보가져오기
                 List<JulianProduct> newJulianProductList = findNewProduct(dataHashMap, julianProductData);
 
+
                 if (julianProductData.size() != 48) {
                     log.info(JULIAN_LOG_PREFIX + "한 페이지에 size 개수 변동 확인요망! 현재사이즈 = " + newJulianProductList.size());
                 }
@@ -71,13 +73,14 @@ public class JulianMonitorCore {
                     for (JulianProduct julianProduct : newJulianProductList) {
 
                         //새 상품 set에 있다면, 알람x 보내면 안됨.
-                        if(dataKeySet.contains(julianProduct.getId())){
-                            log.info(JULIAN_LOG_PREFIX  + "이전에 알람 보냈던 제품 PASS 상품ID " +julianProduct.getId());
+                        if (dataKeySet.contains(julianProduct.getId())) {
+                            log.info(JULIAN_LOG_PREFIX + "이전에 알람 보냈던 제품 PASS 상품ID " + julianProduct.getId());
                             continue;
                         }
 
                         //새 상품 set에 없다면, 알람 보내고, 보낸걸 기록
                         dataKeySet.add(julianProduct.getId());
+                        is_new_product = true;
 
                         julianProduct.setCategory(category);
                         discordBot.sendNewProductInfo(discordChannelName, julianProduct);
@@ -88,6 +91,7 @@ public class JulianMonitorCore {
             // 이후에 HashMap 재 정립
             dataHashMap.clear();
             loadData(dataHashMap, findJulianProductList);
+
 
         } catch (NoSuchWindowException e) {
             e.printStackTrace();
@@ -110,7 +114,7 @@ public class JulianMonitorCore {
     public void login(ChromeDriver driver) {
         assert (driver != null);
 
-        try{
+        try {
             driver.get("https://b2bfashion.online/");
             WebElement id = driver.findElement(By.id(ID_FORM));
             id.sendKeys(userId);
@@ -120,8 +124,8 @@ public class JulianMonitorCore {
 
             WebElement loginButton = driver.findElement(By.id(SUBMIT_FORM));
             loginButton.click();
-        } catch (Exception e){
-            log.error(JULIAN_LOG_PREFIX+ "로그인 에러");
+        } catch (Exception e) {
+            log.error(JULIAN_LOG_PREFIX + "로그인 에러");
             e.printStackTrace();
         }
 

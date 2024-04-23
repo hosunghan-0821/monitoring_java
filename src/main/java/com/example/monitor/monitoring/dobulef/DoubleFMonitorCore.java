@@ -235,12 +235,15 @@ public class DoubleFMonitorCore {
                 WebElement webElement = product.findElement(By.xpath(".//h4[@class='product-card__name truncate ... font-light text-xs tracking-1-08 leading-snug mb-5px']//a"));
                 productLink = webElement.getAttribute("href");
 
-                int indexOfProductData = productLink.lastIndexOf(brandName) + brandName.length() + 1;
-                String tempData = productLink.substring(indexOfProductData);
-                String[] splitData = tempData.split("-");
+                // https://www.thedoublef.com/bu_en/light-blue-denim-over-shirt-acne-cb0070co-o-acne-228/
 
-                productSkU = splitData[0];
-                productColorCode = splitData[splitData.length - 1].replace("/","");
+                productLink = productLink.replaceAll("/", "");
+
+                String[] splitData = productLink.split("-");
+                if (splitData.length >= 4) {
+                    productSkU = splitData[ splitData.length - 4];
+                    productColorCode = splitData[ splitData.length - 1];
+                }
 
 
             } catch (Exception e) {
