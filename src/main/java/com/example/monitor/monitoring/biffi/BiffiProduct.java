@@ -16,6 +16,12 @@ public class BiffiProduct {
     private String brand;
     private String price;
     private String imgUrl;
+    private String productUrl;
+    private String madeNy;
     private String sku;
     private String colorCode;
+
+    public void updateMadeBy(String origin) {
+        this.madeNy = origin;
+    }
 }

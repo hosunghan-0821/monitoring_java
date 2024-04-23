@@ -5,6 +5,10 @@ import com.example.monitor.infra.discord.DiscordBot;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -88,12 +92,15 @@ public class BiffiMonitorCore {
                     //새로운 제품일 경우
                     log.info(BIFFI_LOG_PREFIX + "새로운 제품" + biffiProduct);
                     //discord bot 알람
+                    //원산지 데이터 긁어와야함.
+                    getProductOrigin(chromeDriver,wait,biffiProduct);
                     discordBot.sendNewProductInfo(BIFFI_NEW_PRODUCT_CHANNEL, biffiProduct, biffiBrandUrlList[i]);
                 } else {
                     BiffiProduct beforeProduct = eachBrandHashMap.get(biffiProduct.getId());
                     if (!beforeProduct.getDiscountPercentage().equals(biffiProduct.getDiscountPercentage())) {
                         log.info(BIFFI_LOG_PREFIX + "할인율 변경" + beforeProduct.getDiscountPercentage() + " -> " + biffiProduct.getDiscountPercentage());
                         //discord bot 알람
+                        getProductOrigin(chromeDriver,wait,biffiProduct);
                         discordBot.sendDiscountChangeInfo(BIFFI_DISCOUNT_CHANNEL, biffiProduct, biffiBrandUrlList[i],beforeProduct.getDiscountPercentage());
                     }
                 }
@@ -108,6 +115,26 @@ public class BiffiMonitorCore {
                 log.error(BIFFI_LOG_PREFIX + "biffiProduct 데이터 조회 실패 **확인요망**");
             }
         }
+    }
+
+    private void getProductOrigin(ChromeDriver driver, WebDriverWait wait, BiffiProduct biffiProduct) {
+        driver.get(biffiProduct.getProductUrl());
+        String pageSource = driver.getPageSource();
+
+        Document doc = Jsoup.parse(pageSource);
+
+        // CSS 선택자를 사용하여 요소 선택
+
+        Element select = doc.select("div.aks-accordion-row").first();
+        Elements elements = select.selectXpath("//div[@class='aks-accordion-item-content']//p");
+
+        if(elements.size() >= 3) {
+            biffiProduct.updateMadeBy(elements.get(2).text());
+        } else {
+            log.error("**page 확인 요망**" + biffiProduct.getProductUrl());
+        }
+
+
     }
 
     private void login(ChromeDriver driver, WebDriverWait wait) {
@@ -180,6 +207,8 @@ public class BiffiMonitorCore {
                     WebElement price = productElement.findElement(By.xpath(".//div[@class='prezzo']//span[@class='saldi2']"));
                     String finalPrice = price.getText();
 
+                    WebElement detailLink = productElement.findElement(By.xpath(".//p[@class='pspec']//a"));
+                    String productDetailLink = detailLink.getAttribute("href");
 
                     WebElement SKU = productElement.findElement(By.xpath(".//div[@class='testofoto']//a//p"));
                     String sku = SKU.getText();
@@ -191,6 +220,7 @@ public class BiffiMonitorCore {
                             .id(id)
                             .price(finalPrice)
                             .imgUrl(imageUrl)
+                            .productUrl(productDetailLink)
                             .sku(sku)
                             .brand(brandName)
                             .discountPercentage(discountPercentage)
@@ -198,6 +228,7 @@ public class BiffiMonitorCore {
 
                     biffiProductList.add(biffiProduct);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     log.error("상품 데이터 조회 실패 URL" + nextUrlLink + j);
                 }
             }
