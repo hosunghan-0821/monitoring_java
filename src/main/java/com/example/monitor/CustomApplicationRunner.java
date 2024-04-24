@@ -9,14 +9,17 @@ import com.example.monitor.monitoring.julian.JulianMonitorCore;
 import com.example.monitor.monitoring.julian.JulianProduct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Locale;
 
 import static com.example.monitor.monitoring.biffi.BiffiFindString.*;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.*;
@@ -47,6 +50,7 @@ public class CustomApplicationRunner implements ApplicationRunner {
         chromeDriverToolFactory.makeChromeDriverTool(PROMO);
         chromeDriverToolFactory.makeChromeDriverTool(BIFFI);
         discordBot.setChromeDriverTool(chromeDriverToolFactory);
+
 
 
         Thread biffiThread =new Thread(new Runnable() {
@@ -87,17 +91,18 @@ public class CustomApplicationRunner implements ApplicationRunner {
                     ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES);
                     ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
                     WebDriverWait wait = chromeDriverTool.getWebDriverWait();
-                    julianMonitorCore.login(chromeDriver);
+                    julianMonitorCore.login(chromeDriver,wait);
 
                     for (int i = 1; i < 3; i++) {
+                        String url = julianMonitorCore.getUrl(ALL_CATEGORIES_URL, i);
                         //페이지 이동
-                        julianMonitorCore.changeUrl(chromeDriver, ALL_CATEGORIES_URL + "?page=" + i);
+                        julianMonitorCore.changeUrl(chromeDriver, url);
 
                         //하위 데이터
                         List<WebElement> productDataDivs = julianMonitorCore.getInnerProductDivs(wait);
 
                         //상품 하위 데이터 조회
-                        List<JulianProduct> productData = julianMonitorCore.getProductData(productDataDivs);
+                        List<JulianProduct> productData = julianMonitorCore.getProductData(productDataDivs,url);
 
                         //정보가져오기
                         julianMonitorCore.loadData(chromeDriverTool.getDataHashMap(), productData);
@@ -117,17 +122,18 @@ public class CustomApplicationRunner implements ApplicationRunner {
                     ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(PROMO);
                     ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
                     WebDriverWait wait = chromeDriverTool.getWebDriverWait();
-                    julianMonitorCore.login(chromeDriver);
+                    julianMonitorCore.login(chromeDriver,wait);
 
                     for (int i = 1; i < 3; i++) {
+                        String url = julianMonitorCore.getUrl(PROMO_URL, i);
                         //페이지 이동
-                        julianMonitorCore.changeUrl(chromeDriver, PROMO_URL + "?page=" + i);
+                        julianMonitorCore.changeUrl(chromeDriver, url);
 
                         //하위 데이터
                         List<WebElement> productDataDivs = julianMonitorCore.getInnerProductDivs(wait);
 
                         //상품 하위 데이터 조회
-                        List<JulianProduct> productData = julianMonitorCore.getProductData(productDataDivs);
+                        List<JulianProduct> productData = julianMonitorCore.getProductData(productDataDivs,url);
 
                         //정보가져오기
                         julianMonitorCore.loadData(chromeDriverTool.getDataHashMap(), productData);

@@ -6,17 +6,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchWindowException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import static com.example.monitor.monitoring.julian.JulianFindString.*;
 
@@ -47,16 +46,17 @@ public class JulianMonitorCore {
         List<JulianProduct> findJulianProductList = new ArrayList<>();
 
         try {
-            boolean is_new_product = false;
             for (int i = 1; i < 3; i++) {
+                String url = getUrl(pageUrl, i);
+
                 //페이지 이동
-                changeUrl(chromeDriver, pageUrl + "?page=" + i);
+                changeUrl(chromeDriver, url);
 
                 //하위 데이터
                 List<WebElement> productDataDivs = getInnerProductDivs(wait);
 
                 //상품 하위 데이터 조회
-                List<JulianProduct> julianProductData = getProductData(productDataDivs);
+                List<JulianProduct> julianProductData = getProductData(productDataDivs,url);
 
                 //데이터 누적 HashMap 수정을 위해서
                 findJulianProductList.addAll(julianProductData);
@@ -80,8 +80,7 @@ public class JulianMonitorCore {
 
                         //새 상품 set에 없다면, 알람 보내고, 보낸걸 기록
                         dataKeySet.add(julianProduct.getId());
-                        is_new_product = true;
-
+                        getProductMadeBy(chromeDriver,wait,julianProduct);
                         julianProduct.setCategory(category);
                         discordBot.sendNewProductInfo(discordChannelName, julianProduct);
                         log.info(JULIAN_LOG_PREFIX + "New Product = " + julianProduct);
@@ -94,14 +93,14 @@ public class JulianMonitorCore {
 
 
         } catch (NoSuchWindowException e) {
-            e.printStackTrace();
+
             log.error(JULIAN_LOG_PREFIX + "Chrome Driver Down!!");
             return;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             log.error(JULIAN_LOG_PREFIX + "자동 로그아웃");
             // 모니터링 다시 시작
-            login(chromeDriver);
+            login(chromeDriver,wait);
         }
 
         log.info(JULIAN_LOG_PREFIX + "END:  FIND NEW PRODUCT FINISH");
@@ -111,11 +110,12 @@ public class JulianMonitorCore {
         driver.get(url);
     }
 
-    public void login(ChromeDriver driver) {
+    public void login(ChromeDriver driver, WebDriverWait wait) {
         assert (driver != null);
 
         try {
             driver.get("https://b2bfashion.online/");
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.id(ID_FORM)));
             WebElement id = driver.findElement(By.id(ID_FORM));
             id.sendKeys(userId);
 
@@ -124,6 +124,9 @@ public class JulianMonitorCore {
 
             WebElement loginButton = driver.findElement(By.id(SUBMIT_FORM));
             loginButton.click();
+
+            //로그인 후 멈춤
+            Thread.sleep(5000);
         } catch (Exception e) {
             log.error(JULIAN_LOG_PREFIX + "로그인 에러");
             e.printStackTrace();
@@ -137,7 +140,7 @@ public class JulianMonitorCore {
         return topDiv.findElements(By.xpath(CHILD_DIV));
     }
 
-    public List<JulianProduct> getProductData(List<WebElement> childDivs) {
+    public List<JulianProduct> getProductData(List<WebElement> childDivs,String findUrl) {
 
         List<JulianProduct> julianProductList = new ArrayList<>();
 
@@ -164,12 +167,9 @@ public class JulianMonitorCore {
                     .Id(reference.getText())
                     .imageSrc(imageSrc)
                     .price(priceString)
+                    .findUrl(findUrl)
                     .build();
             julianProductList.add(julianProduct);
-
-//            log.info("image link = " + imageSrc);
-//            log.info("name = " + name.getText());
-//            log.info("reference = " + reference.getText());
 
         }
 
@@ -201,4 +201,49 @@ public class JulianMonitorCore {
         return newJulianProductList;
     }
 
+    private void getProductMadeBy(WebDriver driver, WebDriverWait wait, JulianProduct julianProduct) {
+
+        if(!julianProduct.getFindUrl().equals(driver.getCurrentUrl())){
+            driver.get(julianProduct.getFindUrl());
+        }
+        try{
+            getInnerProductDivs(wait);
+            WebElement element = driver.findElement(By.xpath("//div[@class='produt_reference' and contains(text(),'"+julianProduct.getId()+"')]/.."));
+            //정보가져오기
+            WebElement detailLink = element.findElement(By.xpath(".//a[@class='button-action quick-view']"));
+            //해당상품으로 이동
+            Actions actions =new Actions(driver);
+            actions.moveToElement(detailLink);
+            actions.click().perform();
+
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@class='name']")));
+            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[@class='close']//span")));
+            List<WebElement> productDataList = driver.findElements(By.xpath("//li[@class='name']"));
+            for (WebElement productDataElement :productDataList) {
+                String text = productDataElement.getText();
+                text = text.toLowerCase(Locale.ENGLISH);
+                if (text.contains("made in")) {
+                    String madeBy = text.split(":")[1].strip();
+                    julianProduct.setMadeBy(madeBy);
+                }
+            }
+            //닫기버튼
+            driver.findElement(By.xpath("//button[@class='close']//span")).click();
+        } catch(Exception e){
+            log.error(JULIAN_LOG_PREFIX + "원산지 못찾는 에러\n"+ "상품정보 "+julianProduct.toString());
+            log.error(e.toString());
+        }
+
+
+    }
+
+    public String getUrl(String pageUrl,int i) {
+        String findUrl;
+        if (i == 1) {
+            findUrl = pageUrl;
+        } else {
+            findUrl = pageUrl + "?page=" + i;
+        }
+        return findUrl;
+    }
 }

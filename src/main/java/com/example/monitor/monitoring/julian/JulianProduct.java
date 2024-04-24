@@ -10,6 +10,10 @@ public class JulianProduct {
     private String Id;
     private String imageSrc;
     private String price;
+
+    @Setter
+    private String madeBy;
+    private String findUrl;
     @Setter
     private String category;
 

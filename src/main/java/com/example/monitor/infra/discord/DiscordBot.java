@@ -89,24 +89,28 @@ public class DiscordBot extends ListenerAdapter {
         TextChannel textChannel = event.getChannel().asTextChannel();
 
         String channelName = textChannel.getName();
-        String returnMessage = "";
+        String returnMessage = null;
         switch (channelName) {
             case DiscordString.ALL_CATEGORIES_CHANNEL:
-                returnMessage = discordMessageProcessor.responseServerRunning(ALL_CATEGORIES,event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES));
+                returnMessage = discordMessageProcessor.responseServerRunning(ALL_CATEGORIES, event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES));
                 break;
             case DiscordString.PROMO_CHANNEL:
-                returnMessage = discordMessageProcessor.responseServerRunning(PROMO,event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(PROMO));
+                returnMessage = discordMessageProcessor.responseServerRunning(PROMO, event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(PROMO));
                 break;
             case DiscordString.DOUBLE_F_DISCOUNT_CHANNEL, DiscordString.DOUBLE_F_NEW_PRODUCT_CHANNEL:
-                returnMessage = discordMessageProcessor.responseServerRunning(DOUBLE_F,event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F));
+                returnMessage = discordMessageProcessor.responseServerRunning(DOUBLE_F, event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F));
                 break;
             case DiscordString.BIFFI_DISCOUNT_CHANNEL, DiscordString.BIFFI_NEW_PRODUCT_CHANNEL:
-                returnMessage = discordMessageProcessor.responseServerRunning(BIFFI,event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(BIFFI));
+                returnMessage = discordMessageProcessor.responseServerRunning(BIFFI, event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(BIFFI));
+
                 break;
             default:
                 break;
         }
-        textChannel.sendMessage(returnMessage).queue();
+        if (returnMessage != null) {
+            textChannel.sendMessage(returnMessage).queue();
+        }
+
 
     }
 
@@ -122,7 +126,7 @@ public class DiscordBot extends ListenerAdapter {
         }
     }
 
-    public void sendNewProductInfo(String channelName, BiffiProduct biffiProduct,String url){
+    public void sendNewProductInfo(String channelName, BiffiProduct biffiProduct, String url) {
         final String id = channelHashMap.get(channelName);
         final TextChannel textChannel = jda.getTextChannelById(id);
         assert (textChannel != null);
@@ -131,7 +135,7 @@ public class DiscordBot extends ListenerAdapter {
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("새 상품 알림!");
         embed.setDescription(
-                        "상품품번 : " + biffiProduct.getSku() + "\n" +
+                "상품품번 : " + biffiProduct.getSku() + "\n" +
                         "상품브랜드 : " + biffiProduct.getBrand() + "\n\n" +
                         "가격정보 \n" + biffiProduct.getPrice());
         embed.setColor(Color.magenta); // Embed 색상 설정
@@ -156,7 +160,8 @@ public class DiscordBot extends ListenerAdapter {
                 "상품 카테고리 : " + julianProduct.getCategory() + "\n" +
                         "상품품번 : " + julianProduct.getId() + "\n" +
                         "상품브랜드 : " + julianProduct.getName() + "\n\n" +
-                        "가격정보 \n" + julianProduct.getPrice());
+                        "가격정보 \n" + julianProduct.getPrice() + "\n\n" +
+                        "원산지" + julianProduct.getMadeBy());
         embed.setColor(Color.GREEN); // Embed 색상 설정
 
         embed.addField("사이트 바로가기", "[줄리앙 바로가기](https://b2bfashion.online/)", false); // false는 필드가 인라인으로 표시되지 않도록 설정합니다.
@@ -180,7 +185,7 @@ public class DiscordBot extends ListenerAdapter {
                         "할인율 : " + doubleFProduct.getDiscountPercentage() + "\n" +
                         "상품브랜드 : " + doubleFProduct.getBrand() + "\n\n" +
                         "가격정보 \n" + doubleFProduct.getPrice() + "\n\n" +
-                        "원산지 \n"+ doubleFProduct.getMadeBy() + "\n\n");
+                        "원산지 \n" + doubleFProduct.getMadeBy() + "\n\n");
 
 
         embed.setColor(Color.GREEN); // Embed 색상 설정
@@ -189,9 +194,8 @@ public class DiscordBot extends ListenerAdapter {
 
 
         textChannel.sendMessageEmbeds(embed.build()).queue();
+        textChannel.sendMessage(doubleFProduct.getSku() + " " + doubleFProduct.getColorCode()).queue();
 
-        textChannel.sendMessage(doubleFProduct.getSku()).queue();
-        textChannel.sendMessage(doubleFProduct.getColorCode()).queue();
     }
 
     public void sendDiscountChangeInfo(String channelName, BiffiProduct biffiProduct, String url, String beforeDiscount) {
@@ -238,8 +242,8 @@ public class DiscordBot extends ListenerAdapter {
 
         embed.addField("사이트 바로가기", "[DOUBLEF 바로가기](" + url + ")", false); // false는 필드가 인라인으로 표시되지 않도록 설정합니다.
 
-
         textChannel.sendMessageEmbeds(embed.build()).queue();
+        textChannel.sendMessage(doubleFProduct.getSku() + " " + doubleFProduct.getColorCode()).queue();
     }
 
 

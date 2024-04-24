@@ -122,14 +122,14 @@ public class DoubleFMonitorCore {
                 if (!eachBrandHashMap.containsKey(product.getId())) {
                     //새로운 재품일 경우
                     log.info(DOUBLE_F_LOG_PREFIX + "새로운 제품" + product);
-                    getDetailProductInfo(driver,wait,product);
+                    getDetailProductInfo(driver, wait, product);
                     discordBot.sendNewProductInfo(DOUBLE_F_NEW_PRODUCT_CHANNEL, product, url);
                 } else {
                     //포함 되어있고,할인 퍼센테이지가 다를 경우
                     DoubleFProduct beforeProduct = eachBrandHashMap.get(product.getId());
                     if (!beforeProduct.getDiscountPercentage().equals(product.getDiscountPercentage())) {
                         log.info(DOUBLE_F_LOG_PREFIX + "할인율 변경" + beforeProduct.getDiscountPercentage() + " -> " + product.getDiscountPercentage());
-                        getDetailProductInfo(driver,wait,product);
+                        getDetailProductInfo(driver, wait, product);
                         discordBot.sendDiscountChangeInfo(DOUBLE_F_DISCOUNT_CHANNEL, product, url, beforeProduct.getDiscountPercentage());
                     }
                 }
@@ -241,8 +241,8 @@ public class DoubleFMonitorCore {
 
                 String[] splitData = productLink.split("-");
                 if (splitData.length >= 4) {
-                    productSkU = splitData[ splitData.length - 4];
-                    productColorCode = splitData[ splitData.length - 1];
+                    productSkU = splitData[splitData.length - 4];
+                    productColorCode = splitData[splitData.length - 1];
                 }
 
 
@@ -268,8 +268,6 @@ public class DoubleFMonitorCore {
     }
 
 
-
-
     public void getDetailProductInfo(ChromeDriver driver, WebDriverWait wait, DoubleFProduct product) {
 
         boolean isGetData = false;
@@ -280,16 +278,20 @@ public class DoubleFMonitorCore {
         //실패하면 최소 2번 해당 상품 데이터 조회 시도.
         try {
             for (int j = 1; j <= 2; j++) {
-                Thread.sleep( 1000);
+                Thread.sleep(1000);
 
                 WebElement element = driver.findElement(By.xpath("//div[@class='content overflow-hidden border-b transition-all max-h-0 duration-500 text-sm leading-relaxed']"));
                 List<WebElement> productDataList = element.findElements(By.xpath("./div"));
 
-                for(WebElement productData : productDataList) {
+                for (WebElement productData : productDataList) {
 
-                    if (!productData.getText().isEmpty()){
-                        if (productData.getText().equals("Made in Italy")) {
-                            product.updateMadeBy("Italy");
+                    if (!productData.getText().isEmpty()) {
+                        if (productData.getText().contains("Made in")) {
+                            String[] split = productData.getText().split(" ");
+                            if (split.length >= 3) {
+                                String madeBy = split[2];
+                                product.updateMadeBy(madeBy);
+                            }
                         }
                         isGetData = true;
                     } else {
@@ -308,7 +310,7 @@ public class DoubleFMonitorCore {
             e.printStackTrace();
         }
         if (!isGetData) {
-            log.error(DOUBLE_F_LOG_PREFIX + "Product : + " + product.toString()+ " 상세조회 에러");
+            log.error(DOUBLE_F_LOG_PREFIX + "Product : + " + product.toString() + " 상세조회 에러");
         }
 
     }
