@@ -110,20 +110,6 @@ public class DiscordBot extends ListenerAdapter {
         if (returnMessage != null) {
             textChannel.sendMessage(returnMessage).queue();
         }
-
-
-    }
-
-
-    public void sendMessage(String channelName, String message) {
-
-        final String id = channelHashMap.get(channelName);
-        final TextChannel textChannel = jda.getTextChannelById(id);
-        if (textChannel != null) {
-            textChannel.sendMessage(message).queue();
-        } else {
-            log.error("유효하지 않은 채널이름 : {}", channelName);
-        }
     }
 
     public void sendNewProductInfo(String channelName, BiffiProduct biffiProduct, String url) {
@@ -245,30 +231,5 @@ public class DiscordBot extends ListenerAdapter {
         textChannel.sendMessageEmbeds(embed.build()).queue();
         textChannel.sendMessage(doubleFProduct.getSku() + " " + doubleFProduct.getColorCode()).queue();
     }
-
-
-    private String makeReturnMessage(MessageReceivedEvent event, String message) {
-
-
-        //여기서 주문정보 get 하는것 정도는 충분히 가능할거 같다.
-        User user = event.getAuthor();
-        String returnMessage = "";
-        switch (message) {
-            case "이름":
-                returnMessage = user.getName();
-                break;
-            case "태그":
-                returnMessage = user.getAsTag();
-                break;
-            case "테스트":
-                returnMessage = user.getAsMention();
-                break;
-            default:
-                returnMessage = "없는 명령어 입니다 :(";
-                break;
-        }
-        return returnMessage;
-    }
-
 
 }
