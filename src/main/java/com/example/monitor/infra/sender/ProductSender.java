@@ -34,8 +34,9 @@ public class ProductSender {
 
         SearchRequestDto searchRequestDto = SearchRequestDto.builder()
                 .data(searchProductList)
-                .monitoringSite("JULIAN")
+                .monitoringSite(searchProductList.get(0).getMonitoringSite())
                 .build();
+
         String body = null;
         try {
             body = objectMapper.writeValueAsString(searchRequestDto);

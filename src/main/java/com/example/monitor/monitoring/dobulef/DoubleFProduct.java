@@ -18,8 +18,14 @@ public class DoubleFProduct {
     private String sku;
     private String colorCode;
     private String madeBy;
+    private String detectedCause;
 
-    public void updateMadeBy(String italy) {
-        this.madeBy = italy;
+
+    public void updateMadeBy(String madeBy) {
+        this.madeBy = madeBy;
+    }
+
+    public void updateDetectedCause(String detectedCause) {
+        this.detectedCause = detectedCause;
     }
 }

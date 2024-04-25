@@ -92,16 +92,16 @@ public class DiscordBot extends ListenerAdapter {
         String returnMessage = null;
         switch (channelName) {
             case DiscordString.ALL_CATEGORIES_CHANNEL:
-                returnMessage = discordMessageProcessor.responseServerRunning(ALL_CATEGORIES, event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES));
+                returnMessage = discordMessageProcessor.responseServerRunningOrNull(ALL_CATEGORIES, event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES));
                 break;
             case DiscordString.PROMO_CHANNEL:
-                returnMessage = discordMessageProcessor.responseServerRunning(PROMO, event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(PROMO));
+                returnMessage = discordMessageProcessor.responseServerRunningOrNull(PROMO, event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(PROMO));
                 break;
             case DiscordString.DOUBLE_F_DISCOUNT_CHANNEL, DiscordString.DOUBLE_F_NEW_PRODUCT_CHANNEL:
-                returnMessage = discordMessageProcessor.responseServerRunning(DOUBLE_F, event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F));
+                returnMessage = discordMessageProcessor.responseServerRunningOrNull(DOUBLE_F, event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F));
                 break;
             case DiscordString.BIFFI_DISCOUNT_CHANNEL, DiscordString.BIFFI_NEW_PRODUCT_CHANNEL:
-                returnMessage = discordMessageProcessor.responseServerRunning(BIFFI, event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(BIFFI));
+                returnMessage = discordMessageProcessor.responseServerRunningOrNull(BIFFI, event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(BIFFI));
 
                 break;
             default:

@@ -1,6 +1,7 @@
 package com.example.monitor.monitoring.biffi;
 
 import com.example.monitor.chrome.ChromeDriverTool;
+import com.example.monitor.infra.converter.controller.IConverterFacade;
 import com.example.monitor.infra.discord.DiscordBot;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,8 @@ public class BiffiMonitorCore {
     private final DiscordBot discordBot;
 
     private final BiffiBrandHashMap biffiBrandHashMap;
+
+    private final IConverterFacade iConverterFacade;
 
     @Value("${biffi.user.id}")
     private String userId;

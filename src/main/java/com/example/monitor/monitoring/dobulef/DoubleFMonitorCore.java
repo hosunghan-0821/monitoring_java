@@ -2,6 +2,8 @@ package com.example.monitor.monitoring.dobulef;
 
 
 import com.example.monitor.chrome.ChromeDriverTool;
+import com.example.monitor.infra.converter.controller.IConverterFacade;
+import com.example.monitor.infra.converter.dto.ConvertProduct;
 import com.example.monitor.infra.discord.DiscordBot;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +39,8 @@ public class DoubleFMonitorCore {
     @Value("${doublef.user.pw}")
     private String userPw;
 
+    private final IConverterFacade iConverterFacade;
+
 
     public void runLoadLogic(ChromeDriverTool chromeDriverTool) {
 
@@ -65,14 +69,24 @@ public class DoubleFMonitorCore {
         ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
         WebDriverWait wait = chromeDriverTool.getWebDriverWait();
 
+        List<DoubleFProduct> doubleFProductList = new ArrayList<>();
         if (!chromeDriverTool.isLoadData() || !chromeDriverTool.isRunning()) {
             log.error(DOUBLE_F_LOG_PREFIX + "Data Load or isRunning OFF");
             return;
         }
         log.info(DOUBLE_F_LOG_PREFIX + "DOUBLE_F FIND NEW PRODUCT START==");
-        findDifferentAndAlarm(chromeDriver, wait, womanBrandNameList, WOMANS_PREFIX);
-        findDifferentAndAlarm(chromeDriver, wait, manBrandNameList, MANS_PREFIX);
+        List<DoubleFProduct> womanDifferent = findDifferentAndAlarm(chromeDriver, wait, womanBrandNameList, WOMANS_PREFIX);
+        List<DoubleFProduct> manDifferent = findDifferentAndAlarm(chromeDriver, wait, manBrandNameList, MANS_PREFIX);
+
+        doubleFProductList.addAll(womanDifferent);
+        doubleFProductList.addAll(manDifferent);
         log.info(DOUBLE_F_LOG_PREFIX + "DOUBLE_F FIND NEW PRODUCT FINISH ==");
+
+        if (!doubleFProductList.isEmpty()) {
+            List<ConvertProduct> convertProductList = changeToConvertProduct(doubleFProductList);
+            iConverterFacade.convertProduct(convertProductList);
+        }
+
     }
 
 
@@ -105,48 +119,6 @@ public class DoubleFMonitorCore {
         }
 
     }
-
-    private void findDifferentAndAlarm(ChromeDriver driver, WebDriverWait wait, String[] brandNameList, String sexPrefix) {
-        for (int i = 0; i < brandNameList.length; i++) {
-
-            //페이지 URL 만들기
-            String brandName = brandNameList[i];
-            String url = makeBrandUrl(brandName, sexPrefix);
-
-            List<DoubleFProduct> pageProductData = getPageProductData(driver, wait, url, brandName);
-
-            //상품 정보 존재할 경우
-            Map<String, DoubleFProduct> eachBrandHashMap = doubleFBrandHashMap.getBrandHashMap(sexPrefix, brandName);
-
-            for (DoubleFProduct product : pageProductData) {
-                if (!eachBrandHashMap.containsKey(product.getId())) {
-                    //새로운 재품일 경우
-                    log.info(DOUBLE_F_LOG_PREFIX + "새로운 제품" + product);
-                    getDetailProductInfo(driver, wait, product);
-                    discordBot.sendNewProductInfo(DOUBLE_F_NEW_PRODUCT_CHANNEL, product, url);
-                } else {
-                    //포함 되어있고,할인 퍼센테이지가 다를 경우
-                    DoubleFProduct beforeProduct = eachBrandHashMap.get(product.getId());
-                    if (!beforeProduct.getDiscountPercentage().equals(product.getDiscountPercentage())) {
-                        log.info(DOUBLE_F_LOG_PREFIX + "할인율 변경" + beforeProduct.getDiscountPercentage() + " -> " + product.getDiscountPercentage());
-                        getDetailProductInfo(driver, wait, product);
-                        discordBot.sendDiscountChangeInfo(DOUBLE_F_DISCOUNT_CHANNEL, product, url, beforeProduct.getDiscountPercentage());
-                    }
-                }
-            }
-
-            //검사 후 현재 상태로 기존 데이터 변경
-            if (pageProductData.size() > 0) {
-                eachBrandHashMap.clear();
-                for (DoubleFProduct product : pageProductData) {
-                    eachBrandHashMap.put(product.getId(), product);
-                }
-            }
-
-        }
-
-    }
-
 
     public void loadData(ChromeDriver driver, WebDriverWait wait, String[] brandNameList, String sexPrefix) {
 
@@ -245,7 +217,6 @@ public class DoubleFMonitorCore {
                     productColorCode = splitData[splitData.length - 1];
                 }
 
-
             } catch (Exception e) {
                 log.info(DOUBLE_F_LOG_PREFIX + productName + " 의 링크 정보가 없습니다.");
             }
@@ -267,8 +238,56 @@ public class DoubleFMonitorCore {
         return pageProductList;
     }
 
+    private List<DoubleFProduct> findDifferentAndAlarm(ChromeDriver driver, WebDriverWait wait, String[] brandNameList, String sexPrefix) {
+        List<DoubleFProduct> findDoubleFProduct = new ArrayList<>();
 
-    public void getDetailProductInfo(ChromeDriver driver, WebDriverWait wait, DoubleFProduct product) {
+        for (int i = 0; i < brandNameList.length; i++) {
+
+            //페이지 URL 만들기
+            String brandName = brandNameList[i];
+            String url = makeBrandUrl(brandName, sexPrefix);
+
+            List<DoubleFProduct> pageProductData = getPageProductData(driver, wait, url, brandName);
+
+            //상품 정보 존재할 경우
+            Map<String, DoubleFProduct> eachBrandHashMap = doubleFBrandHashMap.getBrandHashMap(sexPrefix, brandName);
+
+            for (DoubleFProduct product : pageProductData) {
+                if (!eachBrandHashMap.containsKey(product.getId())) {
+                    //새로운 재품일 경우
+                    log.info(DOUBLE_F_LOG_PREFIX + "새로운 제품" + product);
+                    getDetailProductInfo(driver, wait, product);
+                    discordBot.sendNewProductInfo(DOUBLE_F_NEW_PRODUCT_CHANNEL, product, url);
+
+                    product.updateDetectedCause("new_product");
+                    findDoubleFProduct.add(product);
+
+                } else {
+                    //포함 되어있고,할인 퍼센테이지가 다를 경우
+                    DoubleFProduct beforeProduct = eachBrandHashMap.get(product.getId());
+                    if (!beforeProduct.getDiscountPercentage().equals(product.getDiscountPercentage())) {
+                        log.info(DOUBLE_F_LOG_PREFIX + "할인율 변경" + beforeProduct.getDiscountPercentage() + " -> " + product.getDiscountPercentage());
+                        getDetailProductInfo(driver, wait, product);
+                        discordBot.sendDiscountChangeInfo(DOUBLE_F_DISCOUNT_CHANNEL, product, url, beforeProduct.getDiscountPercentage());
+
+                        product.updateDetectedCause("discount_change");
+                        findDoubleFProduct.add(product);
+                    }
+                }
+            }
+
+            //검사 후 현재 상태로 기존 데이터 변경
+            if (pageProductData.size() > 0) {
+                eachBrandHashMap.clear();
+                for (DoubleFProduct product : pageProductData) {
+                    eachBrandHashMap.put(product.getId(), product);
+                }
+            }
+        }
+        return findDoubleFProduct;
+    }
+
+    private void getDetailProductInfo(ChromeDriver driver, WebDriverWait wait, DoubleFProduct product) {
 
         boolean isGetData = false;
 
@@ -315,6 +334,32 @@ public class DoubleFMonitorCore {
 
     }
 
+    public List<ConvertProduct> changeToConvertProduct(List<DoubleFProduct> doubleFProductList) {
+        List<ConvertProduct> convertProductList = new ArrayList<>();
+        for (DoubleFProduct doubleFProduct : doubleFProductList) {
+            ConvertProduct convertProduct = ConvertProduct.builder()
+                    .inputPrice(changePriceToDouble(doubleFProduct.getPrice()))
+                    .madeBy(doubleFProduct.getMadeBy())
+                    .monitoringSite(DOUBLE_F)
+                    .sku(doubleFProduct.getSku())
+                    .colorCode(doubleFProduct.getColorCode())
+                    .brandName(doubleFProduct.getBrand())
+                    .isFta(true) //TO-DO 고쳐야함
+                    .build();
+
+            convertProductList.add(convertProduct);
+        }
+        return convertProductList;
+    }
+
+    private double changePriceToDouble(String price) {
+        String[] split = price.split(" ");
+        if (split.length == 2) {
+            return Double.parseDouble(split[1].replace("€", "").strip());
+        } else {
+            return Double.parseDouble(split[0].replace("€", "").strip());
+        }
+    }
 
     private String makeBrandUrl(String brandName, String sexPrefix) {
         return "https://www.thedoublef.com/bu_en/" + sexPrefix + "/designers/" + brandName + "/";

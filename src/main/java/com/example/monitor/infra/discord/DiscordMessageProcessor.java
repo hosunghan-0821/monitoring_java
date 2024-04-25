@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DiscordMessageProcessor {
 
-    public String responseServerRunning(String monitoring,String message, ChromeDriverTool chromeDriverTool){
+    public String responseServerRunningOrNull(String monitoring, String message, ChromeDriverTool chromeDriverTool){
         message = message.substring(1);
-        String returnMessage = "";
+        String returnMessage = null;
         if (message.equals("on")) {
             chromeDriverTool.isRunning(true);
             returnMessage = monitoring + " turn on Monitoring" ;
