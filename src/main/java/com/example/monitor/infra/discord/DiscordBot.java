@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.monitor.infra.discord.DiscordString.*;
 import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F;
 import static com.example.monitor.monitoring.julian.JulianFindString.ALL_CATEGORIES;
@@ -38,8 +39,6 @@ public class DiscordBot extends ListenerAdapter {
 
 
     private final DiscordMessageProcessor discordMessageProcessor;
-
-    private Map<String, String> channelHashMap = new HashMap<>();
 
     private ChromeDriverToolFactory chromeDriverToolFactory;
     private JDA jda;
@@ -63,11 +62,7 @@ public class DiscordBot extends ListenerAdapter {
         }
 
         List<TextChannel> textChannels = jda.getTextChannels();
-        //In-Memory로 들고 있는게 낫지 않은가?
-        for (TextChannel textChannel : textChannels) {
-            log.info("ID :" + textChannel.getId() + "NAME: " + textChannel.getName());
-            channelHashMap.put(textChannel.getName(), textChannel.getId());
-        }
+
     }
 
     public void setChromeDriverTool(ChromeDriverToolFactory chromeDriverToolFactory) {
@@ -88,33 +83,27 @@ public class DiscordBot extends ListenerAdapter {
 
         TextChannel textChannel = event.getChannel().asTextChannel();
 
-        String channelName = textChannel.getName();
-        String returnMessage = null;
-        switch (channelName) {
-            case DiscordString.ALL_CATEGORIES_CHANNEL:
-                returnMessage = discordMessageProcessor.responseServerRunningOrNull(ALL_CATEGORIES, event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES));
-                break;
-            case DiscordString.PROMO_CHANNEL:
-                returnMessage = discordMessageProcessor.responseServerRunningOrNull(PROMO, event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(PROMO));
-                break;
-            case DiscordString.DOUBLE_F_DISCOUNT_CHANNEL, DiscordString.DOUBLE_F_NEW_PRODUCT_CHANNEL:
-                returnMessage = discordMessageProcessor.responseServerRunningOrNull(DOUBLE_F, event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F));
-                break;
-            case DiscordString.BIFFI_DISCOUNT_CHANNEL, DiscordString.BIFFI_NEW_PRODUCT_CHANNEL:
-                returnMessage = discordMessageProcessor.responseServerRunningOrNull(BIFFI, event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(BIFFI));
+        Long channelId = textChannel.getIdLong();
 
-                break;
-            default:
-                break;
+        String returnMessage = null;
+        if (channelId.equals(ALL_CATEGORIES_CHANNEL)) {
+            returnMessage = discordMessageProcessor.responseServerRunningOrNull(ALL_CATEGORIES, event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES));
+        } else if (channelId.equals(PROMO_CHANNEL)) {
+            returnMessage = discordMessageProcessor.responseServerRunningOrNull(PROMO, event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(PROMO));
+        } else if (channelId.equals(DOUBLE_F_DISCOUNT_CHANNEL) || channelId.equals(DOUBLE_F_NEW_PRODUCT_CHANNEL)) {
+            returnMessage = discordMessageProcessor.responseServerRunningOrNull(DOUBLE_F, event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F));
+        } else if (channelId.equals(BIFFI_DISCOUNT_CHANNEL) || channelId.equals(BIFFI_NEW_PRODUCT_CHANNEL)) {
+            returnMessage = discordMessageProcessor.responseServerRunningOrNull(BIFFI, event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(BIFFI));
         }
+
         if (returnMessage != null) {
             textChannel.sendMessage(returnMessage).queue();
         }
     }
 
-    public void sendNewProductInfo(String channelName, BiffiProduct biffiProduct, String url) {
-        final String id = channelHashMap.get(channelName);
-        final TextChannel textChannel = jda.getTextChannelById(id);
+    public void sendNewProductInfo(Long channelId, BiffiProduct biffiProduct, String url) {
+
+        final TextChannel textChannel = jda.getTextChannelById(channelId);
         assert (textChannel != null);
 
         // Embed 생성
@@ -134,9 +123,9 @@ public class DiscordBot extends ListenerAdapter {
 
     }
 
-    public void sendNewProductInfo(String channelName, JulianProduct julianProduct) {
-        final String id = channelHashMap.get(channelName);
-        final TextChannel textChannel = jda.getTextChannelById(id);
+    public void sendNewProductInfo(Long channelId, JulianProduct julianProduct) {
+
+        final TextChannel textChannel = jda.getTextChannelById(channelId);
         assert (textChannel != null);
 
         // Embed 생성
@@ -158,9 +147,9 @@ public class DiscordBot extends ListenerAdapter {
         textChannel.sendMessage(julianProduct.getSku()).queue(); // 품번도 같이 전송
     }
 
-    public void sendNewProductInfo(String channelName, DoubleFProduct doubleFProduct, String url) {
-        final String id = channelHashMap.get(channelName);
-        final TextChannel textChannel = jda.getTextChannelById(id);
+    public void sendNewProductInfo(Long channelId, DoubleFProduct doubleFProduct, String url) {
+
+        final TextChannel textChannel = jda.getTextChannelById(channelId);
         assert (textChannel != null);
 
         // Embed 생성
@@ -184,9 +173,9 @@ public class DiscordBot extends ListenerAdapter {
 
     }
 
-    public void sendDiscountChangeInfo(String channelName, BiffiProduct biffiProduct, String url, String beforeDiscount) {
-        final String id = channelHashMap.get(channelName);
-        final TextChannel textChannel = jda.getTextChannelById(id);
+    public void sendDiscountChangeInfo(Long channelId, BiffiProduct biffiProduct, String url, String beforeDiscount) {
+
+        final TextChannel textChannel = jda.getTextChannelById(channelId);
         assert (textChannel != null);
 
         // Embed 생성
@@ -208,9 +197,9 @@ public class DiscordBot extends ListenerAdapter {
 
     }
 
-    public void sendDiscountChangeInfo(String channelName, DoubleFProduct doubleFProduct, String url, String beforeDiscount) {
-        final String id = channelHashMap.get(channelName);
-        final TextChannel textChannel = jda.getTextChannelById(id);
+    public void sendDiscountChangeInfo(Long channelId, DoubleFProduct doubleFProduct, String url, String beforeDiscount) {
+
+        final TextChannel textChannel = jda.getTextChannelById(channelId);
         assert (textChannel != null);
 
         // Embed 생성

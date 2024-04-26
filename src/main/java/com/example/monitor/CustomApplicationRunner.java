@@ -54,7 +54,7 @@ public class CustomApplicationRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-//
+
 //        chromeDriverToolFactory.makeChromeDriverTool(DOUBLE_F);
 //        chromeDriverToolFactory.makeChromeDriverTool(ALL_CATEGORIES);
 //        chromeDriverToolFactory.makeChromeDriverTool(PROMO);

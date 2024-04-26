@@ -33,7 +33,7 @@ public class JulianMonitorCore {
     private String userPw;
 
 
-    public void runFindProductLogic(ChromeDriverTool chromeDriverTool, String pageUrl, String category, String discordChannelName) {
+    public void runFindProductLogic(ChromeDriverTool chromeDriverTool, String pageUrl, String category, Long discordChannelId) {
         ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
         WebDriverWait wait = chromeDriverTool.getWebDriverWait();
         HashMap<String, JulianProduct> dataHashMap = chromeDriverTool.getDataHashMap();
@@ -82,7 +82,7 @@ public class JulianMonitorCore {
                         dataKeySet.add(julianProduct.getSku());
                         getProductMadeBy(chromeDriver,wait,julianProduct);
                         julianProduct.setCategory(category);
-                        discordBot.sendNewProductInfo(discordChannelName, julianProduct);
+                        discordBot.sendNewProductInfo(discordChannelId, julianProduct);
                         log.info(JULIAN_LOG_PREFIX + "New Product = " + julianProduct);
                     }
                 }

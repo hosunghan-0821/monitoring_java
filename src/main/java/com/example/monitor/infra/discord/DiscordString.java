@@ -2,15 +2,15 @@ package com.example.monitor.infra.discord;
 
 public class DiscordString {
 
-    public static final String ALL_CATEGORIES_CHANNEL = "줄리앙_all_categories";
-    public static final String PROMO_CHANNEL = "줄리앙_promo";
-    public static final String EXCHANGE_CHANNEL = "환율계산기";
+    public static final Long ALL_CATEGORIES_CHANNEL =1220650964852408354L;
+    public static final Long PROMO_CHANNEL = 1220973782206910554L;
+    public static final Long EXCHANGE_CHANNEL = 1220967225955975239L;
 
-    public static final String DOUBLE_F_NEW_PRODUCT_CHANNEL = "더블에프_new_product";
+    public static final Long DOUBLE_F_NEW_PRODUCT_CHANNEL =1221357982235758602L;
 
-    public static final String DOUBLE_F_DISCOUNT_CHANNEL ="더블에프_discount_change";
+    public static final Long DOUBLE_F_DISCOUNT_CHANNEL =1221367265858031656L;
 
-    public static final String BIFFI_NEW_PRODUCT_CHANNEL = "비피_new_product";
+    public static final Long BIFFI_NEW_PRODUCT_CHANNEL = 1231795377372659722L;
 
-    public static final String BIFFI_DISCOUNT_CHANNEL = "비피_discount_change";
+    public static final Long BIFFI_DISCOUNT_CHANNEL = 1231795464110866503L;
 }
