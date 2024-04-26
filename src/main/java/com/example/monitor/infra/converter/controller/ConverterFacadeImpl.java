@@ -65,7 +65,11 @@ public class ConverterFacadeImpl implements IConverterFacade {
 
         this.sendToSearchServer(searchProductList);
 
+    }
 
+    public void sendToSearchServer(List<SearchProduct> searchProductList) {
+
+        sender.sendToSearchServer(searchProductList);
     }
 
     private Boolean isFtaCountry(String madeBy) {
@@ -80,8 +84,5 @@ public class ConverterFacadeImpl implements IConverterFacade {
         return false;
     }
 
-    public void sendToSearchServer(List<SearchProduct> searchProductList) {
 
-        sender.sendToSearchServer(searchProductList);
-    }
 }

@@ -1,5 +1,6 @@
 package com.example.monitor.monitoring.global;
 
+import com.example.monitor.infra.converter.dto.ConvertProduct;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -19,4 +20,16 @@ public class MonitoringProduct {
     protected String colorCode;
     protected String madeBy;
     protected String monitoringSite;
+    protected double doublePrice;
+
+    public ConvertProduct changeToConvertProduct(String monitoringSite) {
+        return ConvertProduct.builder()
+                .sku(this.sku)
+                .monitoringSite(monitoringSite)
+                .inputPrice(this.doublePrice)
+                .madeBy(this.madeBy)
+                .productLink(this.productLink)
+                .colorCode(this.colorCode)
+                .build();
+    }
 }

@@ -9,6 +9,7 @@ import lombok.ToString;
 @Builder
 public class ConvertProduct {
 
+    private String productLink;
     private String monitoringSite;
     private String brandName;
     //부띠끄

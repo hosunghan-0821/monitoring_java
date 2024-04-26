@@ -5,6 +5,7 @@ import com.example.monitor.chrome.ChromeDriverTool;
 import com.example.monitor.infra.converter.controller.IConverterFacade;
 import com.example.monitor.infra.converter.dto.ConvertProduct;
 import com.example.monitor.infra.discord.DiscordBot;
+import com.example.monitor.monitoring.global.MonitoringProduct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 import static com.example.monitor.infra.discord.DiscordString.DOUBLE_F_DISCOUNT_CHANNEL;
@@ -83,7 +85,9 @@ public class DoubleFMonitorCore {
         log.info(DOUBLE_F_LOG_PREFIX + "DOUBLE_F FIND NEW PRODUCT FINISH ==");
 
         if (!doubleFProductList.isEmpty()) {
-            List<ConvertProduct> convertProductList = changeToConvertProduct(doubleFProductList);
+            List<ConvertProduct> convertProductList = doubleFProductList.stream()
+                    .map(v -> v.changeToConvertProduct(DOUBLE_F))
+                    .collect(Collectors.toList());
             iConverterFacade.convertProduct(convertProductList);
         }
 
@@ -166,6 +170,7 @@ public class DoubleFMonitorCore {
             String productLink = "";
             String productSkU = "";
             String productColorCode = "";
+            double productDoublePrice = 0;
 
             //상품 id
             try {
@@ -198,6 +203,7 @@ public class DoubleFMonitorCore {
                     productPrice = productPrice + " " + productPriceElement.getText();
                 }
                 productPrice = productPrice.strip();
+                productDoublePrice = changePriceToDouble(productPrice);
 
             } catch (Exception e) {
                 log.info(DOUBLE_F_LOG_PREFIX + productName + " 의 가격 정보가 없습니다.");
@@ -231,6 +237,7 @@ public class DoubleFMonitorCore {
                     .productLink(productLink)
                     .sku(productSkU)
                     .colorCode(productColorCode)
+                    .doublePrice(productDoublePrice)
                     .build();
 
 
@@ -345,7 +352,6 @@ public class DoubleFMonitorCore {
                     .sku(doubleFProduct.getSku())
                     .colorCode(doubleFProduct.getColorCode())
                     .brandName(doubleFProduct.getBrand())
-                    .isFta(true) //TO-DO 고쳐야함
                     .build();
 
             convertProductList.add(convertProduct);
