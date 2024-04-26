@@ -8,8 +8,8 @@ public class FinalSkuMaker {
 
         assert (endRule != null);
         return switch (endRule) {
-            case "union" -> convertedSku + convertedColorCode;
-            default -> convertedSku;
+            case "sku-only" -> convertedSku;
+            default -> convertedSku + convertedColorCode;
         };
     }
 }

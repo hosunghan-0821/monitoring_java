@@ -8,14 +8,14 @@ public class BrandConverterInfoString {
      */
 
     public static final String[][] BRAND_CONVERTING_RULE = {
-            {"doublef", "acne", "delete-final-english", "default", "union"},
-            {"doublef", "adidas", "delete-final-english", "default", "default"},
-            {"doublef", "adidas-y-3", "default", "default", "default"},
-            {"doublef", "ami-paris", "delete-final-english", "default", "union"},
-            {"doublef", "a-p-c", "delete-final-english", "default", "union"},
+            {"doublef", "acne", "delete-final-english", "default", "default"},
+            {"doublef", "adidas", "delete-final-english", "default", "sku-only"},
+            {"doublef", "adidas-y-3", "default", "default", "sku-only"},
+            {"doublef", "ami-paris", "delete-final-english", "default", "default"},
+            {"doublef", "a-p-c", "delete-final-english", "default", "default"},
             {"doublef", "asics", "default", "default", "default"},
-            {"doublef", "autry", "delete-final-english", "default", "default"},
-            {"doublef", "balenciaga", "default", "default", "union"},
+            {"doublef", "autry", "delete-final-english", "default", "sku-only"},
+            {"doublef", "balenciaga", "default", "default", "default"},
             {"doublef", "barbour", "default", "default", "default"},
             {"doublef", "birkenstock", "default", "default", "default"},
             {"doublef", "bottega-veneta", "default", "default", "default"},
@@ -47,6 +47,10 @@ public class BrandConverterInfoString {
             {"doublef", "kenzo", "default", "default", "default"},
             {"doublef", "miu-miu", "default", "default", "default"},
             {"doublef", "vivienne-westwood", "default", "default", "default"},
+
+            {"biffi", "bottega veneta", "default", "default", "sku-only"},
+            {"biffi", "thom browne", "default", "default", "sku-only"},
+            {"biffi", "jacquemus", "default", "default", "sku-only"},
     };
 
     public static final String[] FTA_COUNTRY_LIST = {

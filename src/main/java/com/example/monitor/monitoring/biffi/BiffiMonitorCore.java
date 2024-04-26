@@ -2,10 +2,12 @@ package com.example.monitor.monitoring.biffi;
 
 import com.example.monitor.chrome.ChromeDriverTool;
 import com.example.monitor.infra.converter.controller.IConverterFacade;
+import com.example.monitor.infra.converter.dto.ConvertProduct;
 import com.example.monitor.infra.discord.DiscordBot;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.checkerframework.checker.units.qual.A;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -21,11 +23,13 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 import static com.example.monitor.infra.discord.DiscordString.BIFFI_DISCOUNT_CHANNEL;
 import static com.example.monitor.infra.discord.DiscordString.BIFFI_NEW_PRODUCT_CHANNEL;
 import static com.example.monitor.monitoring.biffi.BiffiFindString.*;
+import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F;
 
 @Slf4j
 @Component
@@ -68,14 +72,23 @@ public class BiffiMonitorCore {
             return;
         }
         log.info(BIFFI_LOG_PREFIX + "BIFFI FIND NEW PRODUCT START==");
-        findDifferentAndAlarm(chromeDriver, wait, BIFFI_BRAND_URL_LIST, BIFFI_BRAND_NAME_LIST);
+        List<BiffiProduct> biffiFindList = findDifferentAndAlarm(chromeDriver, wait, BIFFI_BRAND_URL_LIST, BIFFI_BRAND_NAME_LIST);
 
         log.info(BIFFI_LOG_PREFIX + "BIFFI FIND NEW PRODUCT FINISH==");
+
+        if (!biffiFindList.isEmpty()) {
+            List<ConvertProduct> convertProductList = biffiFindList.stream()
+                    .map(v -> v.changeToConvertProduct(BIFFI))
+                    .collect(Collectors.toList());
+            iConverterFacade.convertProduct(convertProductList);
+        }
     }
 
-    private void findDifferentAndAlarm(ChromeDriver chromeDriver, WebDriverWait wait, String[] biffiBrandUrlList, String[] biffiBrandNameList) {
+    private List<BiffiProduct> findDifferentAndAlarm(ChromeDriver chromeDriver, WebDriverWait wait, String[] biffiBrandUrlList, String[] biffiBrandNameList) {
 
         assert (biffiBrandUrlList.length == biffiBrandNameList.length);
+
+        List<BiffiProduct> findBiffiProductList = new ArrayList<>();
 
         for (int i = 0; i < biffiBrandUrlList.length; i++) {
 
@@ -98,6 +111,7 @@ public class BiffiMonitorCore {
                     //원산지 데이터 긁어와야함.
                     getProductOrigin(chromeDriver, wait, biffiProduct);
                     discordBot.sendNewProductInfo(BIFFI_NEW_PRODUCT_CHANNEL, biffiProduct, biffiBrandUrlList[i]);
+                    findBiffiProductList.add(biffiProduct);
                 } else {
                     BiffiProduct beforeProduct = eachBrandHashMap.get(biffiProduct.getSku());
                     if (!beforeProduct.getDiscountPercentage().equals(biffiProduct.getDiscountPercentage())) {
@@ -105,6 +119,7 @@ public class BiffiMonitorCore {
                         //discord bot 알람
                         getProductOrigin(chromeDriver, wait, biffiProduct);
                         discordBot.sendDiscountChangeInfo(BIFFI_DISCOUNT_CHANNEL, biffiProduct, biffiBrandUrlList[i], beforeProduct.getDiscountPercentage());
+                        findBiffiProductList.add(biffiProduct);
                     }
                 }
             }
@@ -118,6 +133,8 @@ public class BiffiMonitorCore {
                 log.error(BIFFI_LOG_PREFIX + "biffiProduct 데이터 조회 실패 **확인요망**");
             }
         }
+
+        return findBiffiProductList;
     }
 
     public void getProductOrigin(ChromeDriver driver, WebDriverWait wait, BiffiProduct biffiProduct) {
@@ -230,7 +247,8 @@ public class BiffiMonitorCore {
                             .imgUrl(imageUrl)
                             .productLink(productDetailLink)
                             .sku(sku)
-                            .brand(brandName)
+                            .monitoringSite(BIFFI)
+                            .brandName(brandName)
                             .discountPercentage(discountPercentage)
                             .build();
 

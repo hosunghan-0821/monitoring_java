@@ -5,7 +5,6 @@ import com.example.monitor.chrome.ChromeDriverTool;
 import com.example.monitor.infra.converter.controller.IConverterFacade;
 import com.example.monitor.infra.converter.dto.ConvertProduct;
 import com.example.monitor.infra.discord.DiscordBot;
-import com.example.monitor.monitoring.global.MonitoringProduct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
@@ -231,7 +230,7 @@ public class DoubleFMonitorCore {
 
                     .id(productId)
                     .name(productName)
-                    .brand(brandName)
+                    .brandName(brandName)
                     .price(productPrice)
                     .discountPercentage(productDiscountPercentage)
                     .productLink(productLink)
@@ -351,7 +350,7 @@ public class DoubleFMonitorCore {
                     .monitoringSite(DOUBLE_F)
                     .sku(doubleFProduct.getSku())
                     .colorCode(doubleFProduct.getColorCode())
-                    .brandName(doubleFProduct.getBrand())
+                    .brandName(doubleFProduct.getBrandName())
                     .build();
 
             convertProductList.add(convertProduct);

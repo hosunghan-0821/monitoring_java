@@ -1,7 +1,6 @@
 package com.example.monitor.monitoring.global;
 
 import com.example.monitor.infra.converter.dto.ConvertProduct;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
@@ -13,13 +12,13 @@ public class MonitoringProduct {
 
     protected String id;
     protected String name;
-    protected String brand;
+    protected String brandName; // converting Rule 사용
     protected String price;
     protected String productLink;
     protected String sku;
     protected String colorCode;
     protected String madeBy;
-    protected String monitoringSite;
+    protected String monitoringSite;  // converting Rule 사용
     protected double doublePrice;
 
     public ConvertProduct changeToConvertProduct(String monitoringSite) {
