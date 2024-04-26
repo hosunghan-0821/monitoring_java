@@ -32,7 +32,7 @@ public class DoubleFMonitorCore {
 
     private final DiscordBot discordBot;
 
-    private final DoubleFBrandHashMap doubleFBrandHashMap;
+    private final DoubleFBrandHashData doubleFBrandHashData;
 
     @Value("${doublef.user.id}")
     private String userId;
@@ -134,7 +134,7 @@ public class DoubleFMonitorCore {
             List<DoubleFProduct> pageProductData = getPageProductData(driver, wait, url, brandName);
 
             //상품 정보 존재할 경우
-            Map<String, DoubleFProduct> eachBrandHashMap = doubleFBrandHashMap.getBrandHashMap(sexPrefix, brandName);
+            Map<String, DoubleFProduct> eachBrandHashMap = doubleFBrandHashData.getBrandHashMap(sexPrefix, brandName);
             for (DoubleFProduct product : pageProductData) {
                 eachBrandHashMap.put(product.getSku(), product);
             }
@@ -257,7 +257,7 @@ public class DoubleFMonitorCore {
             List<DoubleFProduct> pageProductData = getPageProductData(driver, wait, url, brandName);
 
             //상품 정보 존재할 경우
-            Map<String, DoubleFProduct> eachBrandHashMap = doubleFBrandHashMap.getBrandHashMap(sexPrefix, brandName);
+            Map<String, DoubleFProduct> eachBrandHashMap = doubleFBrandHashData.getBrandHashMap(sexPrefix, brandName);
 
             for (DoubleFProduct product : pageProductData) {
                 if (!eachBrandHashMap.containsKey(product.getSku())) {

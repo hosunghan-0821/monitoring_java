@@ -1,6 +1,5 @@
 package com.example.monitor.monitoring.dobulef;
 
-import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -9,11 +8,11 @@ import java.util.Map;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.*;
 
 @Component
-public class DoubleFBrandHashMap {
+public class DoubleFBrandHashData {
 
     private final HashMap<String, HashMap<String, DoubleFProduct>> doubleFHashMap;
 
-    public DoubleFBrandHashMap() {
+    public DoubleFBrandHashData() {
         doubleFHashMap = new HashMap<>();
         for (String brandName : manBrandNameList) {
             doubleFHashMap.put(MANS_PREFIX + brandName, new HashMap<>());
