@@ -24,6 +24,7 @@ public class MonitoringProduct {
     public ConvertProduct changeToConvertProduct(String monitoringSite) {
         return ConvertProduct.builder()
                 .sku(this.sku)
+                .brandName(this.brandName)
                 .monitoringSite(monitoringSite)
                 .inputPrice(this.doublePrice)
                 .madeBy(this.madeBy)

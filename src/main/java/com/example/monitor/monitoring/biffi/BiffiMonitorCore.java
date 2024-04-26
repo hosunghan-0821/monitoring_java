@@ -36,6 +36,7 @@ import static com.example.monitor.monitoring.biffi.BiffiFindString.*;
 public class BiffiMonitorCore {
 
 
+
     private final DiscordBot discordBot;
 
     private final BiffiBrandHashMap biffiBrandHashMap;
@@ -94,8 +95,8 @@ public class BiffiMonitorCore {
 
         // CSS 선택자를 사용하여 요소 선택
 
-        Element select = doc.select("div.aks-accordion-row").first();
-        Elements elements = select.selectXpath("//div[@class='aks-accordion-item-content']//p");
+        Element select = doc.select(INFO_CSS_SELECTOR).first();
+        Elements elements = select.selectXpath(GET_INFO_XPATH);
 
         if (elements.size() >= 3) {
             biffiProduct.updateMadeBy(elements.get(2).text());
@@ -199,6 +200,19 @@ public class BiffiMonitorCore {
         return biffiProductList;
     }
 
+    public void loadData(ChromeDriver driver, WebDriverWait wait, String[] brandNameList, String[] brandUrlList) {
+
+
+        assert (brandNameList.length == brandUrlList.length);
+
+        for (int i = 0; i < brandUrlList.length; i++) {
+            List<BiffiProduct> biffiProductList = getPageProductData(driver, wait, brandUrlList[i], brandNameList[i]);
+            for (BiffiProduct biffiProduct : biffiProductList) {
+                biffiBrandHashMap.getBrandHashMap(brandNameList[i]).put(biffiProduct.getSku(), biffiProduct);
+            }
+        }
+    }
+
 
     private List<BiffiProduct> findDifferentAndAlarm(ChromeDriver chromeDriver, WebDriverWait wait, String[] biffiBrandUrlList, String[] biffiBrandNameList) {
 
@@ -254,17 +268,6 @@ public class BiffiMonitorCore {
     }
 
 
-    private void loadData(ChromeDriver driver, WebDriverWait wait, String[] brandNameList, String[] brandUrlList) {
 
-
-        assert (brandNameList.length == brandUrlList.length);
-
-        for (int i = 0; i < brandUrlList.length; i++) {
-            List<BiffiProduct> biffiProductList = getPageProductData(driver, wait, brandUrlList[i], brandNameList[i]);
-            for (BiffiProduct biffiProduct : biffiProductList) {
-                biffiBrandHashMap.getBrandHashMap(brandNameList[i]).put(biffiProduct.getSku(), biffiProduct);
-            }
-        }
-    }
 
 }

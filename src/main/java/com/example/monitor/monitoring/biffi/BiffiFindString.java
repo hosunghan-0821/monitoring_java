@@ -36,6 +36,8 @@ public class BiffiFindString {
     public static final String IMAGE_XPATH = ".//div[@class='cotienifoto']//a//img";
     public static final String SRC_ATTRIBUTE = "src";
 
+    public static final String INFO_CSS_SELECTOR = "div.aks-accordion-row";
+    public static final String GET_INFO_XPATH = "//div[@class='aks-accordion-item-content']//p";
 
 
 }
