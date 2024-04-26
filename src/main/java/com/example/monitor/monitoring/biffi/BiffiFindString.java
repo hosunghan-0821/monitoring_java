@@ -23,6 +23,19 @@ public class BiffiFindString {
 
     public static final String BIFFI_LOG_PREFIX = "[BIFFI] : \t";
 
+    public static final String LOGIN_BUTTON_XPATH = "//input[@type='submit']";
+    public static final String NEXT_PRODUCT_PAGE_LINK = "//div[@class='col5 last right']//ul[@class='bloccopagine']//a";
+    public static final String HREF = "href";
+    public static final String PRODUCT_TOP_DIV_ID = "catalogogen";
+    public static final String CHILD_DIV_XPATH = "./div";
+    public static final String SALES_PERCENT_XPATH = ".//div[@class='prezzo']//span[@class='percsaldi']";
+    public static final String PRICE_ELMENT_XPATH = ".//div[@class='prezzo']//span[@class='saldi2']";
+    public static final String DETAIL_LINK_XPATH = ".//p[@class='pspec']//a";
+    public static final String ID_ATTRIBUTE = "id";
+    public static final String PRODUCT_SKU_XPATH = ".//div[@class='testofoto']//a//p";
+    public static final String IMAGE_XPATH = ".//div[@class='cotienifoto']//a//img";
+    public static final String SRC_ATTRIBUTE = "src";
+
 
 
 }

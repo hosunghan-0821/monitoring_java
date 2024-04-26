@@ -7,7 +7,7 @@ import com.example.monitor.infra.discord.DiscordBot;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.checkerframework.checker.units.qual.A;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -25,16 +25,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-
 import static com.example.monitor.infra.discord.DiscordString.BIFFI_DISCOUNT_CHANNEL;
 import static com.example.monitor.infra.discord.DiscordString.BIFFI_NEW_PRODUCT_CHANNEL;
 import static com.example.monitor.monitoring.biffi.BiffiFindString.*;
-import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F;
+
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class BiffiMonitorCore {
+
 
     private final DiscordBot discordBot;
 
@@ -83,6 +83,122 @@ public class BiffiMonitorCore {
             iConverterFacade.convertProduct(convertProductList);
         }
     }
+
+
+
+    public void getProductOrigin(ChromeDriver driver, WebDriverWait wait, BiffiProduct biffiProduct) {
+        driver.get(biffiProduct.getProductLink());
+        String pageSource = driver.getPageSource();
+
+        Document doc = Jsoup.parse(pageSource);
+
+        // CSS 선택자를 사용하여 요소 선택
+
+        Element select = doc.select("div.aks-accordion-row").first();
+        Elements elements = select.selectXpath("//div[@class='aks-accordion-item-content']//p");
+
+        if (elements.size() >= 3) {
+            biffiProduct.updateMadeBy(elements.get(2).text());
+        } else {
+            log.error("**page 확인 요망**" + biffiProduct.getProductLink());
+        }
+
+
+    }
+
+    public void login(ChromeDriver driver, WebDriverWait wait) {
+        driver.get(BIFFI_MAIN_URL);
+
+        WebElement loginElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.id(BIFFI_LOGIN_FORM_ID)));
+        loginElement.sendKeys(userId);
+        WebElement passwordElement = driver.findElement(By.id(BIFFI_PASSWORD_FORD_ID));
+        passwordElement.sendKeys(userPw);
+
+        WebElement loginButton = driver.findElement(By.xpath(LOGIN_BUTTON_XPATH));
+        loginButton.click();
+
+        //로그인 이후 5초 정지..
+        try {
+            Thread.sleep(5000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public List<BiffiProduct> getPageProductData(ChromeDriver driver, WebDriverWait wait, String url, String brandName) {
+
+        List<BiffiProduct> biffiProductList = new ArrayList<>();
+        driver.get(url);
+
+        List<WebElement> nextLinkList = driver.findElements(By.xpath(NEXT_PRODUCT_PAGE_LINK));
+        //find max
+        int maxPageNum = 1;
+        String tempLink = nextLinkList.get(0).getAttribute(HREF);
+        String nextUrlLink = tempLink.substring(0, tempLink.length() - 1);
+
+        //max page 찾기
+        for (WebElement nextLink : nextLinkList) {
+            String href = nextLink.getAttribute(HREF);
+            int pageNum = href.charAt(href.length() - 1) - '0';
+            if (pageNum > maxPageNum) {
+                maxPageNum = pageNum;
+            }
+        }
+
+        //상품 긁어와서 등록하기
+        for (int j = 1; j <= maxPageNum; j++) {
+            driver.get(nextUrlLink + j);
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.id(PRODUCT_TOP_DIV_ID)));
+            WebElement topDiv = driver.findElement(By.id(PRODUCT_TOP_DIV_ID));
+            List<WebElement> productElements = topDiv.findElements(By.xpath(CHILD_DIV_XPATH));
+
+            for (WebElement productElement : productElements) {
+                try {
+                    String id = productElement.getAttribute(ID_ATTRIBUTE);
+
+                    WebElement salesPercent = productElement.findElement(By.xpath(SALES_PERCENT_XPATH));
+                    String discountPercentage = salesPercent.getText().strip();
+
+
+                    WebElement price = productElement.findElement(By.xpath(PRICE_ELMENT_XPATH));
+                    String finalPrice = price.getText();
+
+                    WebElement detailLink = productElement.findElement(By.xpath(DETAIL_LINK_XPATH));
+                    String productDetailLink = detailLink.getAttribute(HREF);
+
+                    WebElement SKU = productElement.findElement(By.xpath(PRODUCT_SKU_XPATH));
+                    String sku = SKU.getText();
+
+                    WebElement image = productElement.findElement(By.xpath(IMAGE_XPATH));
+                    String imageUrl = image.getAttribute(SRC_ATTRIBUTE);
+                    int lastIndexOf = imageUrl.lastIndexOf("?");
+                    if (lastIndexOf != -1) {
+                        imageUrl = imageUrl.substring(0, lastIndexOf);
+                    }
+
+
+                    BiffiProduct biffiProduct = BiffiProduct.builder()
+                            .id(id)
+                            .price(finalPrice)
+                            .imgUrl(imageUrl)
+                            .productLink(productDetailLink)
+                            .sku(sku)
+                            .monitoringSite(BIFFI)
+                            .brandName(brandName)
+                            .discountPercentage(discountPercentage)
+                            .build();
+
+                    biffiProductList.add(biffiProduct);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    log.error("상품 데이터 조회 실패 URL" + nextUrlLink + j);
+                }
+            }
+        }
+        return biffiProductList;
+    }
+
 
     private List<BiffiProduct> findDifferentAndAlarm(ChromeDriver chromeDriver, WebDriverWait wait, String[] biffiBrandUrlList, String[] biffiBrandNameList) {
 
@@ -137,44 +253,6 @@ public class BiffiMonitorCore {
         return findBiffiProductList;
     }
 
-    public void getProductOrigin(ChromeDriver driver, WebDriverWait wait, BiffiProduct biffiProduct) {
-        driver.get(biffiProduct.getProductLink());
-        String pageSource = driver.getPageSource();
-
-        Document doc = Jsoup.parse(pageSource);
-
-        // CSS 선택자를 사용하여 요소 선택
-
-        Element select = doc.select("div.aks-accordion-row").first();
-        Elements elements = select.selectXpath("//div[@class='aks-accordion-item-content']//p");
-
-        if (elements.size() >= 3) {
-            biffiProduct.updateMadeBy(elements.get(2).text());
-        } else {
-            log.error("**page 확인 요망**" + biffiProduct.getProductLink());
-        }
-
-
-    }
-
-    public void login(ChromeDriver driver, WebDriverWait wait) {
-        driver.get(BIFFI_MAIN_URL);
-
-        WebElement loginElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.id(BIFFI_LOGIN_FORM_ID)));
-        loginElement.sendKeys(userId);
-        WebElement passwordElement = driver.findElement(By.id(BIFFI_PASSWORD_FORD_ID));
-        passwordElement.sendKeys(userPw);
-
-        WebElement loginButton = driver.findElement(By.xpath("//input[@type='submit']"));
-        loginButton.click();
-
-        //로그인 이후 5초 정지..
-        try {
-            Thread.sleep(5000);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     private void loadData(ChromeDriver driver, WebDriverWait wait, String[] brandNameList, String[] brandUrlList) {
 
@@ -187,79 +265,6 @@ public class BiffiMonitorCore {
                 biffiBrandHashMap.getBrandHashMap(brandNameList[i]).put(biffiProduct.getSku(), biffiProduct);
             }
         }
-    }
-
-    public List<BiffiProduct> getPageProductData(ChromeDriver driver, WebDriverWait wait, String url, String brandName) {
-
-        List<BiffiProduct> biffiProductList = new ArrayList<>();
-        driver.get(url);
-
-        List<WebElement> nextLinkList = driver.findElements(By.xpath("//div[@class='col5 last right']//ul[@class='bloccopagine']//a"));
-        //find max
-        int maxPageNum = 1;
-        String tempLink = nextLinkList.get(0).getAttribute("href");
-        String nextUrlLink = tempLink.substring(0, tempLink.length() - 1);
-
-        //max page 찾기
-        for (WebElement nextLink : nextLinkList) {
-            String href = nextLink.getAttribute("href");
-            int pageNum = href.charAt(href.length() - 1) - '0';
-            if (pageNum > maxPageNum) {
-                maxPageNum = pageNum;
-            }
-        }
-
-        //상품 긁어와서 등록하기
-        for (int j = 1; j <= maxPageNum; j++) {
-            driver.get(nextUrlLink + j);
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.id("catalogogen")));
-            WebElement topDiv = driver.findElement(By.id("catalogogen"));
-            List<WebElement> productElements = topDiv.findElements(By.xpath("./div"));
-
-            for (WebElement productElement : productElements) {
-                try {
-                    String id = productElement.getAttribute("id");
-
-                    WebElement salesPercent = productElement.findElement(By.xpath(".//div[@class='prezzo']//span[@class='percsaldi']"));
-                    String discountPercentage = salesPercent.getText().strip();
-
-
-                    WebElement price = productElement.findElement(By.xpath(".//div[@class='prezzo']//span[@class='saldi2']"));
-                    String finalPrice = price.getText();
-
-                    WebElement detailLink = productElement.findElement(By.xpath(".//p[@class='pspec']//a"));
-                    String productDetailLink = detailLink.getAttribute("href");
-
-                    WebElement SKU = productElement.findElement(By.xpath(".//div[@class='testofoto']//a//p"));
-                    String sku = SKU.getText();
-
-                    WebElement image = productElement.findElement(By.xpath(".//div[@class='cotienifoto']//a//img"));
-                    String imageUrl = image.getAttribute("src");
-                    int lastIndexOf = imageUrl.lastIndexOf("?");
-                    if (lastIndexOf != -1) {
-                        imageUrl = imageUrl.substring(0, lastIndexOf);
-                    }
-
-
-                    BiffiProduct biffiProduct = BiffiProduct.builder()
-                            .id(id)
-                            .price(finalPrice)
-                            .imgUrl(imageUrl)
-                            .productLink(productDetailLink)
-                            .sku(sku)
-                            .monitoringSite(BIFFI)
-                            .brandName(brandName)
-                            .discountPercentage(discountPercentage)
-                            .build();
-
-                    biffiProductList.add(biffiProduct);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    log.error("상품 데이터 조회 실패 URL" + nextUrlLink + j);
-                }
-            }
-        }
-        return biffiProductList;
     }
 
 }
