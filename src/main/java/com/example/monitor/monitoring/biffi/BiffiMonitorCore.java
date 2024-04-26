@@ -91,20 +91,20 @@ public class BiffiMonitorCore {
             }
 
             for (BiffiProduct biffiProduct : biffiProductList) {
-                if (!eachBrandHashMap.containsKey(biffiProduct.getId())) {
+                if (!eachBrandHashMap.containsKey(biffiProduct.getSku())) {
                     //새로운 제품일 경우
                     log.info(BIFFI_LOG_PREFIX + "새로운 제품" + biffiProduct);
                     //discord bot 알람
                     //원산지 데이터 긁어와야함.
-                    getProductOrigin(chromeDriver,wait,biffiProduct);
+                    getProductOrigin(chromeDriver, wait, biffiProduct);
                     discordBot.sendNewProductInfo(BIFFI_NEW_PRODUCT_CHANNEL, biffiProduct, biffiBrandUrlList[i]);
                 } else {
-                    BiffiProduct beforeProduct = eachBrandHashMap.get(biffiProduct.getId());
+                    BiffiProduct beforeProduct = eachBrandHashMap.get(biffiProduct.getSku());
                     if (!beforeProduct.getDiscountPercentage().equals(biffiProduct.getDiscountPercentage())) {
                         log.info(BIFFI_LOG_PREFIX + "할인율 변경" + beforeProduct.getDiscountPercentage() + " -> " + biffiProduct.getDiscountPercentage());
                         //discord bot 알람
-                        getProductOrigin(chromeDriver,wait,biffiProduct);
-                        discordBot.sendDiscountChangeInfo(BIFFI_DISCOUNT_CHANNEL, biffiProduct, biffiBrandUrlList[i],beforeProduct.getDiscountPercentage());
+                        getProductOrigin(chromeDriver, wait, biffiProduct);
+                        discordBot.sendDiscountChangeInfo(BIFFI_DISCOUNT_CHANNEL, biffiProduct, biffiBrandUrlList[i], beforeProduct.getDiscountPercentage());
                     }
                 }
             }
@@ -112,7 +112,7 @@ public class BiffiMonitorCore {
             if (biffiProductList.size() > 0) {
                 eachBrandHashMap.clear();
                 for (BiffiProduct biffiProduct : biffiProductList) {
-                    eachBrandHashMap.put(biffiProduct.getId(), biffiProduct);
+                    eachBrandHashMap.put(biffiProduct.getSku(), biffiProduct);
                 }
             } else {
                 log.error(BIFFI_LOG_PREFIX + "biffiProduct 데이터 조회 실패 **확인요망**");
@@ -120,8 +120,8 @@ public class BiffiMonitorCore {
         }
     }
 
-    private void getProductOrigin(ChromeDriver driver, WebDriverWait wait, BiffiProduct biffiProduct) {
-        driver.get(biffiProduct.getProductUrl());
+    public void getProductOrigin(ChromeDriver driver, WebDriverWait wait, BiffiProduct biffiProduct) {
+        driver.get(biffiProduct.getProductLink());
         String pageSource = driver.getPageSource();
 
         Document doc = Jsoup.parse(pageSource);
@@ -131,16 +131,16 @@ public class BiffiMonitorCore {
         Element select = doc.select("div.aks-accordion-row").first();
         Elements elements = select.selectXpath("//div[@class='aks-accordion-item-content']//p");
 
-        if(elements.size() >= 3) {
+        if (elements.size() >= 3) {
             biffiProduct.updateMadeBy(elements.get(2).text());
         } else {
-            log.error("**page 확인 요망**" + biffiProduct.getProductUrl());
+            log.error("**page 확인 요망**" + biffiProduct.getProductLink());
         }
 
 
     }
 
-    private void login(ChromeDriver driver, WebDriverWait wait) {
+    public void login(ChromeDriver driver, WebDriverWait wait) {
         driver.get(BIFFI_MAIN_URL);
 
         WebElement loginElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.id(BIFFI_LOGIN_FORM_ID)));
@@ -167,12 +167,12 @@ public class BiffiMonitorCore {
         for (int i = 0; i < brandUrlList.length; i++) {
             List<BiffiProduct> biffiProductList = getPageProductData(driver, wait, brandUrlList[i], brandNameList[i]);
             for (BiffiProduct biffiProduct : biffiProductList) {
-                biffiBrandHashMap.getBrandHashMap(brandNameList[i]).put(biffiProduct.getId(), biffiProduct);
+                biffiBrandHashMap.getBrandHashMap(brandNameList[i]).put(biffiProduct.getSku(), biffiProduct);
             }
         }
     }
 
-    private List<BiffiProduct> getPageProductData(ChromeDriver driver, WebDriverWait wait, String url, String brandName) {
+    public List<BiffiProduct> getPageProductData(ChromeDriver driver, WebDriverWait wait, String url, String brandName) {
 
         List<BiffiProduct> biffiProductList = new ArrayList<>();
         driver.get(url);
@@ -220,7 +220,7 @@ public class BiffiMonitorCore {
                     String imageUrl = image.getAttribute("src");
                     int lastIndexOf = imageUrl.lastIndexOf("?");
                     if (lastIndexOf != -1) {
-                        imageUrl = imageUrl.substring(0,lastIndexOf);
+                        imageUrl = imageUrl.substring(0, lastIndexOf);
                     }
 
 
@@ -228,7 +228,7 @@ public class BiffiMonitorCore {
                             .id(id)
                             .price(finalPrice)
                             .imgUrl(imageUrl)
-                            .productUrl(productDetailLink)
+                            .productLink(productDetailLink)
                             .sku(sku)
                             .brand(brandName)
                             .discountPercentage(discountPercentage)

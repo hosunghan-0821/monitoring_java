@@ -25,7 +25,7 @@ public class BrandConverterRule {
         private String colorCodeRule;
         private String endRule;
 
-        public ConvertRuleInfo(String skuRule, String colorCodeRule, String endRule) {
+         public ConvertRuleInfo(String skuRule, String colorCodeRule, String endRule) {
             this.skuRule = skuRule;
             this.colorCodeRule = colorCodeRule;
             this.endRule = endRule;

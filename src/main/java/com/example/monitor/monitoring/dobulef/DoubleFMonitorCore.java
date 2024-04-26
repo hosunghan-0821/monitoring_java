@@ -133,7 +133,7 @@ public class DoubleFMonitorCore {
             //상품 정보 존재할 경우
             Map<String, DoubleFProduct> eachBrandHashMap = doubleFBrandHashMap.getBrandHashMap(sexPrefix, brandName);
             for (DoubleFProduct product : pageProductData) {
-                eachBrandHashMap.put(product.getId(), product);
+                eachBrandHashMap.put(product.getSku(), product);
             }
 
         }
@@ -222,6 +222,7 @@ public class DoubleFMonitorCore {
             }
 
             DoubleFProduct doubleFProduct = DoubleFProduct.builder()
+
                     .id(productId)
                     .name(productName)
                     .brand(brandName)
@@ -253,7 +254,7 @@ public class DoubleFMonitorCore {
             Map<String, DoubleFProduct> eachBrandHashMap = doubleFBrandHashMap.getBrandHashMap(sexPrefix, brandName);
 
             for (DoubleFProduct product : pageProductData) {
-                if (!eachBrandHashMap.containsKey(product.getId())) {
+                if (!eachBrandHashMap.containsKey(product.getSku())) {
                     //새로운 재품일 경우
                     log.info(DOUBLE_F_LOG_PREFIX + "새로운 제품" + product);
                     getDetailProductInfo(driver, wait, product);
@@ -264,7 +265,7 @@ public class DoubleFMonitorCore {
 
                 } else {
                     //포함 되어있고,할인 퍼센테이지가 다를 경우
-                    DoubleFProduct beforeProduct = eachBrandHashMap.get(product.getId());
+                    DoubleFProduct beforeProduct = eachBrandHashMap.get(product.getSku());
                     if (!beforeProduct.getDiscountPercentage().equals(product.getDiscountPercentage())) {
                         log.info(DOUBLE_F_LOG_PREFIX + "할인율 변경" + beforeProduct.getDiscountPercentage() + " -> " + product.getDiscountPercentage());
                         getDetailProductInfo(driver, wait, product);
@@ -280,14 +281,14 @@ public class DoubleFMonitorCore {
             if (pageProductData.size() > 0) {
                 eachBrandHashMap.clear();
                 for (DoubleFProduct product : pageProductData) {
-                    eachBrandHashMap.put(product.getId(), product);
+                    eachBrandHashMap.put(product.getSku(), product);
                 }
             }
         }
         return findDoubleFProduct;
     }
 
-    private void getDetailProductInfo(ChromeDriver driver, WebDriverWait wait, DoubleFProduct product) {
+    public void getDetailProductInfo(ChromeDriver driver, WebDriverWait wait, DoubleFProduct product) {
 
         boolean isGetData = false;
 
@@ -356,13 +357,13 @@ public class DoubleFMonitorCore {
         String[] split = price.split(" ");
         if (split.length == 2) {
 
-            return Double.parseDouble(split[1].replace("€", "").replace(",","").strip());
+            return Double.parseDouble(split[1].replace("€", "").replace(",", "").strip());
         } else {
-            return Double.parseDouble(split[0].replace("€", "").replace(",","").strip());
+            return Double.parseDouble(split[0].replace("€", "").replace(",", "").strip());
         }
     }
 
-    private String makeBrandUrl(String brandName, String sexPrefix) {
+    public String makeBrandUrl(String brandName, String sexPrefix) {
         return "https://www.thedoublef.com/bu_en/" + sexPrefix + "/designers/" + brandName + "/";
     }
 }

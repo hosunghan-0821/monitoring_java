@@ -144,7 +144,7 @@ public class DiscordBot extends ListenerAdapter {
         embed.setTitle("새 상품 알림!");
         embed.setDescription(
                 "상품 카테고리 : " + julianProduct.getCategory() + "\n" +
-                        "상품품번 : " + julianProduct.getId() + "\n" +
+                        "상품품번 : " + julianProduct.getSku() + "\n" +
                         "상품브랜드 : " + julianProduct.getName() + "\n\n" +
                         "가격정보 \n" + julianProduct.getPrice() + "\n\n" +
                         "원산지" + julianProduct.getMadeBy());
@@ -153,9 +153,9 @@ public class DiscordBot extends ListenerAdapter {
         embed.addField("사이트 바로가기", "[줄리앙 바로가기](https://b2bfashion.online/)", false); // false는 필드가 인라인으로 표시되지 않도록 설정합니다.
 
         // 이미지 추가
-        embed.setImage(julianProduct.getImageSrc()); // 웹 이미지 사용
+        embed.setImage(julianProduct.getImageUrl()); // 웹 이미지 사용
         textChannel.sendMessageEmbeds(embed.build()).queue();
-        textChannel.sendMessage(julianProduct.getId()).queue(); // 품번도 같이 전송
+        textChannel.sendMessage(julianProduct.getSku()).queue(); // 품번도 같이 전송
     }
 
     public void sendNewProductInfo(String channelName, DoubleFProduct doubleFProduct, String url) {

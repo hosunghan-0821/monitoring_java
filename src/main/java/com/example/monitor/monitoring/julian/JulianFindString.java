@@ -29,7 +29,7 @@ public class JulianFindString {
 
     public static final String PRODUCT_NAME = ".//div[@class='product_name']";
 
-    public static final String PRODUCT_ID = ".//div[@class='produt_reference']";
+    public static final String PRODUCT_SKU = ".//div[@class='produt_reference']";
 
     //생성자 생성 금지
     private JulianFindString() {

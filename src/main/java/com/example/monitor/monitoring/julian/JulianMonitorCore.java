@@ -73,13 +73,13 @@ public class JulianMonitorCore {
                     for (JulianProduct julianProduct : newJulianProductList) {
 
                         //새 상품 set에 있다면, 알람x 보내면 안됨.
-                        if (dataKeySet.contains(julianProduct.getId())) {
-                            log.info(JULIAN_LOG_PREFIX + "이전에 알람 보냈던 제품 PASS 상품ID " + julianProduct.getId());
+                        if (dataKeySet.contains(julianProduct.getSku())) {
+                            log.info(JULIAN_LOG_PREFIX + "이전에 알람 보냈던 제품 PASS 상품ID " + julianProduct.getSku());
                             continue;
                         }
 
                         //새 상품 set에 없다면, 알람 보내고, 보낸걸 기록
-                        dataKeySet.add(julianProduct.getId());
+                        dataKeySet.add(julianProduct.getSku());
                         getProductMadeBy(chromeDriver,wait,julianProduct);
                         julianProduct.setCategory(category);
                         discordBot.sendNewProductInfo(discordChannelName, julianProduct);
@@ -147,7 +147,7 @@ public class JulianMonitorCore {
         for (WebElement child : childDivs) {
             WebElement image = child.findElement(By.xpath(PRODUCT_IMAGE));
             WebElement name = child.findElement(By.xpath(PRODUCT_NAME));
-            WebElement reference = child.findElement(By.xpath(PRODUCT_ID));
+            WebElement reference = child.findElement(By.xpath(PRODUCT_SKU));
 
             String imageSrc = image.getAttribute("src");
             List<WebElement> priceElementList = child.findElements(By.xpath(".//p[@class='price']"));
@@ -164,10 +164,10 @@ public class JulianMonitorCore {
 
             JulianProduct julianProduct = JulianProduct.builder()
                     .name(name.getText())
-                    .Id(reference.getText())
-                    .imageSrc(imageSrc)
+                    .sku(reference.getText())
+                    .imageUrl(imageSrc)
                     .price(priceString)
-                    .findUrl(findUrl)
+                    .productLink(findUrl)
                     .build();
             julianProductList.add(julianProduct);
 
@@ -180,8 +180,8 @@ public class JulianMonitorCore {
     public void loadData(HashMap<String, JulianProduct> productHashMap, List<JulianProduct> julianProductData) {
 
         for (JulianProduct julianProduct : julianProductData) {
-            if (!productHashMap.containsKey(julianProduct.getId())) {
-                productHashMap.put(julianProduct.getId(), julianProduct);
+            if (!productHashMap.containsKey(julianProduct.getSku())) {
+                productHashMap.put(julianProduct.getSku(), julianProduct);
             } else {
                 log.error(JULIAN_LOG_PREFIX + "Load 시 겹치는 ID 존재 확인 필요 상품정보 " + julianProduct.toString());
             }
@@ -192,7 +192,7 @@ public class JulianMonitorCore {
         List<JulianProduct> newJulianProductList = new ArrayList<>();
 
         for (JulianProduct julianProduct : julianProductData) {
-            if (!productHashMap.containsKey(julianProduct.getId())) {
+            if (!productHashMap.containsKey(julianProduct.getSku())) {
 
                 newJulianProductList.add(julianProduct);
             }
@@ -201,14 +201,14 @@ public class JulianMonitorCore {
         return newJulianProductList;
     }
 
-    private void getProductMadeBy(WebDriver driver, WebDriverWait wait, JulianProduct julianProduct) {
+    public void getProductMadeBy(WebDriver driver, WebDriverWait wait, JulianProduct julianProduct) {
 
-        if(!julianProduct.getFindUrl().equals(driver.getCurrentUrl())){
-            driver.get(julianProduct.getFindUrl());
+        if(!julianProduct.getProductLink().equals(driver.getCurrentUrl())){
+            driver.get(julianProduct.getProductLink());
         }
         try{
             getInnerProductDivs(wait);
-            WebElement element = driver.findElement(By.xpath("//div[@class='produt_reference' and contains(text(),'"+julianProduct.getId()+"')]/.."));
+            WebElement element = driver.findElement(By.xpath("//div[@class='produt_reference' and contains(text(),'"+julianProduct.getSku()+"')]/.."));
             //정보가져오기
             WebElement detailLink = element.findElement(By.xpath(".//a[@class='button-action quick-view']"));
             //해당상품으로 이동
