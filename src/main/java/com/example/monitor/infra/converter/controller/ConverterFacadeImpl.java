@@ -53,6 +53,7 @@ public class ConverterFacadeImpl implements IConverterFacade {
 
             SearchProduct searchProduct = SearchProduct.builder()
                     .sku(finalSku)
+                    .productLink(convertProduct.getProductLink())
                     .originSku(convertProduct.getSku())
                     .monitoringSite(convertProduct.getMonitoringSite())
                     .inputPrice(convertProduct.getInputPrice())

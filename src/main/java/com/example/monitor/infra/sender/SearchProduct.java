@@ -12,6 +12,7 @@ public class SearchProduct {
 
 
     //부띠끄
+    private String productLink;
     private String sku;
     private String name;
     private String madeBy;
