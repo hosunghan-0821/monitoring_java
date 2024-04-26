@@ -7,15 +7,15 @@ public class BrandConverterInfoString {
      *
      */
 
-    public static final String[][] brandConvertingRule = {
-            {"doublef", "acne", "default", "default", "default"},
+    public static final String[][] BRAND_CONVERTING_RULE = {
+            {"doublef", "acne", "delete-final-english", "default", "union"},
             {"doublef", "adidas", "delete-final-english", "default", "default"},
             {"doublef", "adidas-y-3", "default", "default", "default"},
-            {"doublef", "ami-paris", "default", "default", "default"},
-            {"doublef", "a-p-c", "default", "default", "default"},
+            {"doublef", "ami-paris", "delete-final-english", "default", "union"},
+            {"doublef", "a-p-c", "delete-final-english", "default", "union"},
             {"doublef", "asics", "default", "default", "default"},
-            {"doublef", "autry", "default", "default", "default"},
-            {"doublef", "balenciaga", "default", "default", "default"},
+            {"doublef", "autry", "delete-final-english", "default", "default"},
+            {"doublef", "balenciaga", "default", "default", "union"},
             {"doublef", "barbour", "default", "default", "default"},
             {"doublef", "birkenstock", "default", "default", "default"},
             {"doublef", "bottega-veneta", "default", "default", "default"},
@@ -49,5 +49,35 @@ public class BrandConverterInfoString {
             {"doublef", "vivienne-westwood", "default", "default", "default"},
     };
 
-    private BrandConverterInfoString(){};
+    public static final String[] FTA_COUNTRY_LIST = {
+            "belgium",
+            "bulgaria",
+            "cyprus",
+            "czech republic",
+            "denmark",
+            "estonia",
+            "finland",
+            "france",
+            "germany",
+            "greece",
+            "hungary",
+            "ireland",
+            "italy",
+            "latvia",
+            "lithuania",
+            "luxembourg",
+            "malta",
+            "netherlands",
+            "portugal",
+            "romania",
+            "slovakia",
+            "slovenia",
+            "spain",
+            "sweden"
+    };
+
+    private BrandConverterInfoString() {
+    }
+
+    ;
 }

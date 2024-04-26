@@ -10,7 +10,7 @@ public class BrandConverterRule {
     private final HashMap<String, ConvertRuleInfo> brandConverterRuleMap = new HashMap<>();
 
     BrandConverterRule() {
-        String[][] brandConvertingRule = BrandConverterInfoString.brandConvertingRule;
+        String[][] brandConvertingRule = BrandConverterInfoString.BRAND_CONVERTING_RULE;
         for (String[] strings : brandConvertingRule) {
             String key = strings[0] + strings[1];
             ConvertRuleInfo convertRuleInfo = new ConvertRuleInfo(strings[2], strings[3], strings[4]);

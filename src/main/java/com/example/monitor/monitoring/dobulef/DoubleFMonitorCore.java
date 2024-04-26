@@ -355,9 +355,10 @@ public class DoubleFMonitorCore {
     private double changePriceToDouble(String price) {
         String[] split = price.split(" ");
         if (split.length == 2) {
-            return Double.parseDouble(split[1].replace("€", "").strip());
+
+            return Double.parseDouble(split[1].replace("€", "").replace(",","").strip());
         } else {
-            return Double.parseDouble(split[0].replace("€", "").strip());
+            return Double.parseDouble(split[0].replace("€", "").replace(",","").strip());
         }
     }
 

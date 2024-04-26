@@ -13,8 +13,11 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
+import static com.example.monitor.infra.converter.config.BrandConverterInfoString.FTA_COUNTRY_LIST;
 
 @Component
 @Slf4j
@@ -53,7 +56,7 @@ public class ConverterFacadeImpl implements IConverterFacade {
                     .originSku(convertProduct.getSku())
                     .monitoringSite(convertProduct.getMonitoringSite())
                     .inputPrice(convertProduct.getInputPrice())
-                    .fta(true) //TO-DO 고쳐야함
+                    .fta(isFtaCountry(convertProduct.getMadeBy()))
                     .madeBy(convertProduct.getMadeBy())
                     .originColorCode(convertProduct.getColorCode())
                     .build();
@@ -63,6 +66,18 @@ public class ConverterFacadeImpl implements IConverterFacade {
         this.sendToSearchServer(searchProductList);
 
 
+    }
+
+    private Boolean isFtaCountry(String madeBy) {
+
+        if (madeBy == null) {
+            return false;
+        } else {
+            if (Arrays.asList(FTA_COUNTRY_LIST).contains(madeBy.toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void sendToSearchServer(List<SearchProduct> searchProductList) {

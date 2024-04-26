@@ -30,39 +30,39 @@ public class MonitorScheduler {
     private final ChromeDriverToolFactory chromeDriverToolFactory;
 
 
-//    @Scheduled(initialDelay = 60000 * 2, fixedDelay = 60000)// 1분마다 실행
-//    public void monitorJulianAllCategories() {
-//        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES);
-//        julianMonitorCore.runFindProductLogic(chromeDriverTool, ALL_CATEGORIES_URL, ALL_CATEGORIES, ALL_CATEGORIES_CHANNEL);
-//
-//    }
-//    @Scheduled(initialDelay = 60000 * 2, fixedDelay = 60000 * 10)// 10분마다 실행
-//    public void monitorJulianPromo() {
-//        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(PROMO);
-//        julianMonitorCore.runFindProductLogic(chromeDriverTool, PROMO_URL, PROMO, PROMO_CHANNEL);
-//    }
-//
-//   @Scheduled(initialDelay = 60000 * 3, fixedDelay = 60000 * 15)// 15분마다 실행
-//    public void monitorDoubleF(){
-//        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F);
-//        doubleFMonitorCore.runFindProductLogic(chromeDriverTool);
-//    }
-//
-//    @Scheduled(initialDelay = 60000, fixedDelay = 60000 * 60 * 24 * 3)// 3일마다 실행
-//    public void clearKeySet(){
-//        ChromeDriverTool allCategories = chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES);
-//        ChromeDriverTool promo = chromeDriverToolFactory.getChromeDriverTool(PROMO);
-//        log.info(JULIAN_LOG_PREFIX + "새 등록 상품 풀 초기화 (중복방지용) : All Categories, Promo");
-//        allCategories.getProductKeySet().clear();
-//        promo.getProductKeySet().clear();
-//
-//
-//
-//    }
-//
-//    @Scheduled(initialDelay = 60000 * 5, fixedDelay = 60000 * 20)// 3분마다 실행
-//    public void monitorBIFFI(){
-//        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(BIFFI);
-//        biffiMonitorCore.runFindProductLogic(chromeDriverTool);
-//    }
+    @Scheduled(initialDelay = 60000 * 2, fixedDelay = 60000)// 1분마다 실행
+    public void monitorJulianAllCategories() {
+        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES);
+        julianMonitorCore.runFindProductLogic(chromeDriverTool, ALL_CATEGORIES_URL, ALL_CATEGORIES, ALL_CATEGORIES_CHANNEL);
+
+    }
+    @Scheduled(initialDelay = 60000 * 2, fixedDelay = 60000 * 10)// 10분마다 실행
+    public void monitorJulianPromo() {
+        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(PROMO);
+        julianMonitorCore.runFindProductLogic(chromeDriverTool, PROMO_URL, PROMO, PROMO_CHANNEL);
+    }
+
+   @Scheduled(initialDelay = 60000 * 3, fixedDelay = 60000 * 15)// 15분마다 실행
+    public void monitorDoubleF(){
+        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F);
+        doubleFMonitorCore.runFindProductLogic(chromeDriverTool);
+    }
+
+    @Scheduled(initialDelay = 60000, fixedDelay = 60000 * 60 * 24 * 3)// 3일마다 실행
+    public void clearKeySet(){
+        ChromeDriverTool allCategories = chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES);
+        ChromeDriverTool promo = chromeDriverToolFactory.getChromeDriverTool(PROMO);
+        log.info(JULIAN_LOG_PREFIX + "새 등록 상품 풀 초기화 (중복방지용) : All Categories, Promo");
+        allCategories.getProductKeySet().clear();
+        promo.getProductKeySet().clear();
+
+
+
+    }
+
+    @Scheduled(initialDelay = 60000 * 5, fixedDelay = 60000 * 20)// 3분마다 실행
+    public void monitorBIFFI(){
+        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(BIFFI);
+        biffiMonitorCore.runFindProductLogic(chromeDriverTool);
+    }
 }
