@@ -21,7 +21,7 @@ public class SkuConverter {
     private String deleteFinalEnglish(String sku) {
 
         int length = sku.length();
-        int finalIndex =  sku.length() - 1;
+        int finalIndex =  sku.length();
         for (int i = length - 1; i >= 0; i--) {
             char word = sku.charAt(i);
             if ((word >='A' && word <= 'Z') || (word >='a' && word<='z')) {
