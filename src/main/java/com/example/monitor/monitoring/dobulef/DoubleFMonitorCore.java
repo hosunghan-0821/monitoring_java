@@ -5,6 +5,7 @@ import com.example.monitor.chrome.ChromeDriverTool;
 import com.example.monitor.infra.converter.controller.IConverterFacade;
 import com.example.monitor.infra.converter.dto.ConvertProduct;
 import com.example.monitor.infra.discord.DiscordBot;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -32,6 +34,7 @@ public class DoubleFMonitorCore {
 
     private final DiscordBot discordBot;
 
+    @Getter
     private final DoubleFBrandHashData doubleFBrandHashData;
 
     @Value("${doublef.user.id}")
@@ -259,16 +262,23 @@ public class DoubleFMonitorCore {
 
             //상품 정보 존재할 경우
             Map<String, DoubleFProduct> eachBrandHashMap = doubleFBrandHashData.getBrandHashMap(sexPrefix, brandName);
-
+            HashSet<String> productKeySet = doubleFBrandHashData.getProductKeySet();
             for (DoubleFProduct product : pageProductData) {
                 if (!eachBrandHashMap.containsKey(product.getSku())) {
                     //새로운 재품일 경우
-                    log.info(DOUBLE_F_LOG_PREFIX + "새로운 제품" + product);
-                    getDetailProductInfo(driver, wait, product);
-                    discordBot.sendNewProductInfo(DOUBLE_F_NEW_PRODUCT_CHANNEL, product, url);
+                    if (!productKeySet.contains(product.getSku() + product.getColorCode())) {
+                        log.info(DOUBLE_F_LOG_PREFIX + "새로운 제품" + product);
+                        getDetailProductInfo(driver, wait, product);
+                        discordBot.sendNewProductInfo(DOUBLE_F_NEW_PRODUCT_CHANNEL, product, url);
 
-                    product.updateDetectedCause("new_product");
-                    findDoubleFProduct.add(product);
+                        product.updateDetectedCause("new_product");
+                        findDoubleFProduct.add(product);
+
+                        //보낸 상품 체크
+                        productKeySet.add(product.getSku() + product.getColorCode());
+                    } else {
+                        log.error(DOUBLE_F_LOG_PREFIX + "상품 중복 " + product);
+                    }
 
                 } else {
                     //포함 되어있고,할인 퍼센테이지가 다를 경우
