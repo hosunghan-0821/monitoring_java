@@ -13,6 +13,7 @@ public class DoubleFProduct extends MonitoringProduct {
 
     private String discountPercentage;
     private String detectedCause;
+    private String brandSex;
 
     public void updateMadeBy(String madeBy) {
         this.madeBy = madeBy;

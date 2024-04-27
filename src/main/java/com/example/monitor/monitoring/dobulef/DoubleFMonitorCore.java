@@ -230,6 +230,7 @@ public class DoubleFMonitorCore {
 
                     .id(productId)
                     .name(productName)
+                    .brandSex(getSexPrefix(url))
                     .brandName(brandName)
                     .price(productPrice)
                     .discountPercentage(productDiscountPercentage)
@@ -358,6 +359,10 @@ public class DoubleFMonitorCore {
         return convertProductList;
     }
 
+    public String makeBrandUrl(String brandName, String sexPrefix) {
+        return "https://www.thedoublef.com/bu_en/" + sexPrefix + "/designers/" + brandName + "/";
+    }
+
     private double changePriceToDouble(String price) {
         String[] split = price.split(" ");
         if (split.length == 2) {
@@ -368,7 +373,13 @@ public class DoubleFMonitorCore {
         }
     }
 
-    public String makeBrandUrl(String brandName, String sexPrefix) {
-        return "https://www.thedoublef.com/bu_en/" + sexPrefix + "/designers/" + brandName + "/";
+    private String getSexPrefix(String url) {
+        if (url.contains("man")) {
+            return "man";
+        } else {
+            return "woman";
+        }
     }
+
+
 }
