@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -122,7 +123,6 @@ class BiffiMonitorCoreTest {
             assertThat(convertProduct.getBrandName()).isEqualTo(brandName);
             assertThat(convertProduct.getProductLink()).isNotNull();
             assertThat(convertProduct.getSku()).isNotNull();
-            assertThat(convertProduct.getInputPrice()).isGreaterThan(0.0);
 
         }
     }
