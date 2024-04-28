@@ -163,9 +163,9 @@ public class CustomApplicationRunner implements ApplicationRunner {
         });
 
         julianThread.start();
+
 //
-//
-//          브랜드 체크 코드
+        // 브랜드 체크 코드
 //        chromeDriverToolFactory.makeChromeDriverTool(DOUBLE_F);
 //        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F);
 //        ChromeDriver driver = chromeDriverTool.getChromeDriver();
@@ -173,9 +173,14 @@ public class CustomApplicationRunner implements ApplicationRunner {
 //
 //        driver.get(DOUBLE_F_MAIN_PAGE);
 //        doubleFMonitorCore.acceptCookie(wait);
-//        doubleFMonitorCore.login(driver,wait);
-//        String url = "https://www.thedoublef.com/bu_en/" + "man" + "/designers/" + "balenciaga" + "/";
-//        List<DoubleFProduct> pageProductData = doubleFMonitorCore.getPageProductData(driver, wait, url, "balenciaga");
+//        doubleFMonitorCore.login(driver, wait);
+//        String url = "https://www.thedoublef.com/bu_en/" + "man" + "/designers/" + "a-p-c" + "/";
+//        List<DoubleFProduct> pageProductData = doubleFMonitorCore.getPageProductData(driver, wait, url, "a-p-c");
+//
+//
+//        for (DoubleFProduct doubleFProduct : pageProductData) {
+//            log.info(doubleFProduct.toString());
+//        }
 //
 //        List<ConvertProduct> convertProductList = doubleFMonitorCore.changeToConvertProduct(pageProductData);
 //

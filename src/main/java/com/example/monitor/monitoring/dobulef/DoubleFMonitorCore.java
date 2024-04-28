@@ -139,7 +139,7 @@ public class DoubleFMonitorCore {
             //상품 정보 존재할 경우
             Map<String, DoubleFProduct> eachBrandHashMap = doubleFBrandHashData.getBrandHashMap(sexPrefix, brandName);
             for (DoubleFProduct product : pageProductData) {
-                eachBrandHashMap.put(product.getSku() + product.getColorCode(), product);
+                eachBrandHashMap.put(getDoubleFProductKey(product), product);
             }
 
         }
@@ -264,7 +264,7 @@ public class DoubleFMonitorCore {
             Map<String, DoubleFProduct> eachBrandHashMap = doubleFBrandHashData.getBrandHashMap(sexPrefix, brandName);
             HashSet<String> productKeySet = doubleFBrandHashData.getProductKeySet();
             for (DoubleFProduct product : pageProductData) {
-                if (!eachBrandHashMap.containsKey(product.getSku())) {
+                if (!eachBrandHashMap.containsKey(getDoubleFProductKey(product))) {
                     //새로운 재품일 경우
                     if (!productKeySet.contains(product.getSku() + product.getColorCode())) {
                         log.info(DOUBLE_F_LOG_PREFIX + "새로운 제품" + product);
@@ -275,14 +275,14 @@ public class DoubleFMonitorCore {
                         findDoubleFProduct.add(product);
 
                         //보낸 상품 체크
-                        productKeySet.add(product.getSku() + product.getColorCode());
+                        productKeySet.add(getDoubleFProductKey(product));
                     } else {
                         log.error(DOUBLE_F_LOG_PREFIX + "상품 중복 " + product);
                     }
 
                 } else {
                     //포함 되어있고,할인 퍼센테이지가 다를 경우
-                    DoubleFProduct beforeProduct = eachBrandHashMap.get(product.getSku());
+                    DoubleFProduct beforeProduct = eachBrandHashMap.get(getDoubleFProductKey(product));
                     if (!beforeProduct.getDiscountPercentage().equals(product.getDiscountPercentage())) {
                         log.info(DOUBLE_F_LOG_PREFIX + "할인율 변경" + beforeProduct.getDiscountPercentage() + " -> " + product.getDiscountPercentage());
                         getDetailProductInfo(driver, wait, product);
@@ -304,6 +304,7 @@ public class DoubleFMonitorCore {
         }
         return findDoubleFProduct;
     }
+
 
     public void getDetailProductInfo(ChromeDriver driver, WebDriverWait wait, DoubleFProduct product) {
 
@@ -381,6 +382,10 @@ public class DoubleFMonitorCore {
         } else {
             return Double.parseDouble(split[0].replace("€", "").replace(",", "").strip());
         }
+    }
+
+    private String getDoubleFProductKey(DoubleFProduct product) {
+        return product.getId();
     }
 
     private String getSexPrefix(String url) {
