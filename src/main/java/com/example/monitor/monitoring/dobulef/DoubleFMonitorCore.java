@@ -139,7 +139,7 @@ public class DoubleFMonitorCore {
             //상품 정보 존재할 경우
             Map<String, DoubleFProduct> eachBrandHashMap = doubleFBrandHashData.getBrandHashMap(sexPrefix, brandName);
             for (DoubleFProduct product : pageProductData) {
-                eachBrandHashMap.put(product.getSku(), product);
+                eachBrandHashMap.put(product.getSku() + product.getColorCode(), product);
             }
 
         }
@@ -298,7 +298,7 @@ public class DoubleFMonitorCore {
             if (pageProductData.size() > 0) {
                 eachBrandHashMap.clear();
                 for (DoubleFProduct product : pageProductData) {
-                    eachBrandHashMap.put(product.getSku(), product);
+                    eachBrandHashMap.put(product.getSku() + product.getColorCode(), product);
                 }
             }
         }
