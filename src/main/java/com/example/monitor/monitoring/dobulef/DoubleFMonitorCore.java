@@ -298,7 +298,7 @@ public class DoubleFMonitorCore {
             if (pageProductData.size() > 0) {
                 eachBrandHashMap.clear();
                 for (DoubleFProduct product : pageProductData) {
-                    eachBrandHashMap.put(product.getSku() + product.getColorCode(), product);
+                    eachBrandHashMap.put(getDoubleFProductKey(product), product);
                 }
             }
         }
