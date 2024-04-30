@@ -1,11 +1,10 @@
-package com.example.monitor.monitoring.julian;
+package com.example.monitor.integration;
 
 import com.example.monitor.chrome.ChromeDriverTool;
 import com.example.monitor.chrome.ChromeDriverToolFactory;
-import com.example.monitor.monitoring.dobulef.DoubleFFindString;
-import com.example.monitor.monitoring.dobulef.DoubleFMonitorCore;
-import com.example.monitor.monitoring.dobulef.DoubleFProduct;
-import org.assertj.core.api.Assertions;
+import com.example.monitor.monitoring.julian.JulianFindString;
+import com.example.monitor.monitoring.julian.JulianMonitorCore;
+import com.example.monitor.monitoring.julian.JulianProduct;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,15 +19,11 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
-import static com.example.monitor.monitoring.dobulef.DoubleFFindString.*;
-import static com.example.monitor.monitoring.dobulef.DoubleFFindString.manBrandNameList;
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@ActiveProfiles("dev")
-class JulianMonitorCoreTest {
+@ActiveProfiles("test")
+class JulianMonitorCoreIntegrationTest {
 
     @Value("${julian.user.id}")
     private String userId;

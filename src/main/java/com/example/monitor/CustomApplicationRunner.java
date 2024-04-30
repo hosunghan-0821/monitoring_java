@@ -21,6 +21,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ import static com.example.monitor.monitoring.julian.JulianFindString.*;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@Profile("!test")
 public class CustomApplicationRunner implements ApplicationRunner {
 
     private final ChromeDriverToolFactory chromeDriverToolFactory;

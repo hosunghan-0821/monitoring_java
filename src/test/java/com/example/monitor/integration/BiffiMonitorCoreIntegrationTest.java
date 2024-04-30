@@ -1,37 +1,39 @@
-package com.example.monitor.monitoring.biffi;
+package com.example.monitor.integration;
 
 import com.example.monitor.chrome.ChromeDriverTool;
 import com.example.monitor.chrome.ChromeDriverToolFactory;
 import com.example.monitor.infra.converter.dto.ConvertProduct;
-import com.example.monitor.monitoring.dobulef.DoubleFFindString;
-import com.example.monitor.monitoring.dobulef.DoubleFMonitorCore;
-import com.example.monitor.monitoring.dobulef.DoubleFProduct;
+import com.example.monitor.infra.discord.DiscordBot;
+import com.example.monitor.monitoring.biffi.BiffiBrandHashMap;
+import com.example.monitor.monitoring.biffi.BiffiFindString;
+import com.example.monitor.monitoring.biffi.BiffiMonitorCore;
+import com.example.monitor.monitoring.biffi.BiffiProduct;
 import com.example.monitor.monitoring.global.MonitoringProduct;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 
-import java.lang.reflect.Method;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI;
-import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI_BRAND_NAME_LIST;
-import static com.example.monitor.monitoring.dobulef.DoubleFFindString.*;
+import static com.example.monitor.monitoring.biffi.BiffiFindString.*;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.manBrandNameList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@ActiveProfiles("dev")
+@ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class BiffiMonitorCoreTest {
+@Import({TestConfiguration.class})
+class BiffiMonitorCoreIntegrationTest {
     @Autowired
     private BiffiMonitorCore biffiMonitorCore;
 
@@ -46,21 +48,42 @@ class BiffiMonitorCoreTest {
     @Value("${biffi.user.pw}")
     private String userPw;
 
-    private ChromeDriver driver;
+    @Autowired
+    private DiscordBot discordBot;
 
-    private WebDriverWait wait;
+    private static ChromeDriver driver;
+
+    private static WebDriverWait wait;
+
+    private static String[] brandNameList;
+
+    private static String[] brandUrlList;
 
 
-    @BeforeEach
-    void init() {
-        chromeDriverToolFactory.makeChromeDriverTool(BIFFI);
-        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(BIFFI);
-        driver = chromeDriverTool.getChromeDriver();
-        wait = chromeDriverTool.getWebDriverWait();
+    @BeforeAll
+    static void init() {
+
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--no-sandbox");
+        options.addArguments("window-size=1920x1080");
+        options.addArguments("start-maximized");
+        options.setExperimentalOption("excludeSwitches", Collections.singletonList("enable-automation"));
+        options.setExperimentalOption("useAutomationExtension", false);
+        options.addArguments("--disable-automation");
+        options.addArguments("--disable-blink-features=AutomationControlled");
+        options.setExperimentalOption("detach", true);
+
+        driver = new ChromeDriver(options);
+        wait = new WebDriverWait(driver, Duration.ofMillis(5000)); // 최대 5초 대기
+
+        brandNameList = Arrays.copyOfRange(BIFFI_BRAND_NAME_LIST, 0, 1);
+        brandUrlList = Arrays.copyOfRange(BIFFI_BRAND_URL_LIST, 0, 1);
+
+
     }
 
-    @AfterEach
-    void end() {
+    @AfterAll
+    static void end() {
         driver.quit();
     }
 
@@ -70,21 +93,13 @@ class BiffiMonitorCoreTest {
     void loadDataTest() {
 
         //given
-        String brandName = BIFFI_BRAND_NAME_LIST[0];
-        String[] brandNameList = new String[1];
-        brandNameList[0] = brandName;
-
-        String brandUrl = BiffiFindString.BIFFI_BRAND_URL_LIST[0];
-        String[] brandUrlList = new String[1];
-        brandUrlList[0] = brandUrl;
-
         biffiMonitorCore.login(driver, wait);
 
         //when
         biffiMonitorCore.loadData(driver, wait, brandNameList, brandUrlList);
 
         //then
-        assertThat(biffiBrandHashMap.getBrandHashMap(brandName).size()).isGreaterThan(1);
+        assertThat(biffiBrandHashMap.getBrandHashMap(brandNameList[0]).size()).isGreaterThan(1);
     }
 
     @Test
@@ -92,13 +107,12 @@ class BiffiMonitorCoreTest {
     @DisplayName(BiffiFindString.BIFFI_LOG_PREFIX + "데이터 조회 및 원산지 확인 테스트")
     void getPageProductDataTest() {
         //given
-        biffiMonitorCore.login(driver, wait);
-        String brandUrl = BiffiFindString.BIFFI_BRAND_URL_LIST[0];
-        String brandName = BIFFI_BRAND_NAME_LIST[0];
-
+        String brandName = brandNameList[0];
+        String url = brandUrlList[0];
 
         //when
-        List<BiffiProduct> biffiProductList = biffiMonitorCore.getPageProductData(driver, wait, brandUrl, brandName);
+
+        List<BiffiProduct> biffiProductList = biffiMonitorCore.getPageProductData(driver, wait, url, brandName);
 
         assertThat(biffiProductList.size()).isGreaterThanOrEqualTo(1);
 
