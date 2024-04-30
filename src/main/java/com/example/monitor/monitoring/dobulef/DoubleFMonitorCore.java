@@ -221,8 +221,11 @@ public class DoubleFMonitorCore {
                 tempLink = tempLink.replaceAll("/", "");
 
                 String[] splitData = tempLink.split("-");
-                if (splitData.length >= 4) {
+                if (splitData.length >= 5) {
                     productSkU = splitData[splitData.length - 4];
+                    if (productSkU.length() <=3) {
+                        productSkU = splitData[splitData.length - 5] + splitData[splitData.length - 4];
+                    }
                     productColorCode = splitData[splitData.length - 1];
                 }
 
@@ -354,22 +357,22 @@ public class DoubleFMonitorCore {
 
     }
 
-    public List<ConvertProduct> changeToConvertProduct(List<DoubleFProduct> doubleFProductList) {
-        List<ConvertProduct> convertProductList = new ArrayList<>();
-        for (DoubleFProduct doubleFProduct : doubleFProductList) {
-            ConvertProduct convertProduct = ConvertProduct.builder()
-                    .inputPrice(changePriceToDouble(doubleFProduct.getPrice()))
-                    .madeBy(doubleFProduct.getMadeBy())
-                    .monitoringSite(DOUBLE_F)
-                    .sku(doubleFProduct.getSku())
-                    .colorCode(doubleFProduct.getColorCode())
-                    .brandName(doubleFProduct.getBrandName())
-                    .build();
-
-            convertProductList.add(convertProduct);
-        }
-        return convertProductList;
-    }
+//    public List<ConvertProduct> changeToConvertProduct(List<DoubleFProduct> doubleFProductList) {
+//        List<ConvertProduct> convertProductList = new ArrayList<>();
+//        for (DoubleFProduct doubleFProduct : doubleFProductList) {
+//            ConvertProduct convertProduct = ConvertProduct.builder()
+//                    .inputPrice(changePriceToDouble(doubleFProduct.getPrice()))
+//                    .madeBy(doubleFProduct.getMadeBy())
+//                    .monitoringSite(DOUBLE_F)
+//                    .sku(doubleFProduct.getSku())
+//                    .colorCode(doubleFProduct.getColorCode())
+//                    .brandName(doubleFProduct.getBrandName())
+//                    .build();
+//
+//            convertProductList.add(convertProduct);
+//        }
+//        return convertProductList;
+//    }
 
     public String makeBrandUrl(String brandName, String sexPrefix) {
         return "https://www.thedoublef.com/bu_en/" + sexPrefix + "/designers/" + brandName + "/";

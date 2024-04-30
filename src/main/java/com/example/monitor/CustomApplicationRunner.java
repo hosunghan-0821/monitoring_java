@@ -27,6 +27,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import static com.example.monitor.monitoring.biffi.BiffiFindString.*;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.*;
@@ -176,15 +177,17 @@ public class CustomApplicationRunner implements ApplicationRunner {
 //        driver.get(DOUBLE_F_MAIN_PAGE);
 //        doubleFMonitorCore.acceptCookie(wait);
 //        doubleFMonitorCore.login(driver, wait);
-//        String url = "https://www.thedoublef.com/bu_en/" + "man" + "/designers/" + "a-p-c" + "/";
-//        List<DoubleFProduct> pageProductData = doubleFMonitorCore.getPageProductData(driver, wait, url, "a-p-c");
+//        String url = "https://www.thedoublef.com/bu_en/" + "woman" + "/designers/" + "new-balance" + "/";
+//        List<DoubleFProduct> pageProductData = doubleFMonitorCore.getPageProductData(driver, wait, url, "new-balance");
 //
 //
 //        for (DoubleFProduct doubleFProduct : pageProductData) {
 //            log.info(doubleFProduct.toString());
 //        }
 //
-//        List<ConvertProduct> convertProductList = doubleFMonitorCore.changeToConvertProduct(pageProductData);
+//        List<ConvertProduct> convertProductList = pageProductData.stream()
+//                .map(v -> v.changeToConvertProduct(DOUBLE_F))
+//                .collect(Collectors.toList());
 //
 //        iConverterFacade.convertProduct(convertProductList);
 
