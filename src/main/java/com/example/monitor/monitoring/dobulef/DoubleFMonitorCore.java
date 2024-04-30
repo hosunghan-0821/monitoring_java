@@ -266,7 +266,7 @@ public class DoubleFMonitorCore {
             for (DoubleFProduct product : pageProductData) {
                 if (!eachBrandHashMap.containsKey(getDoubleFProductKey(product))) {
                     //새로운 재품일 경우
-                    if (!productKeySet.contains(product.getSku() + product.getColorCode())) {
+                    if (!productKeySet.contains(getDoubleFProductKey(product))) {
                         log.info(DOUBLE_F_LOG_PREFIX + "새로운 제품" + product);
                         getDetailProductInfo(driver, wait, product);
                         discordBot.sendNewProductInfo(DOUBLE_F_NEW_PRODUCT_CHANNEL, product, url);
