@@ -1,23 +1,30 @@
 package com.example.monitor.monitoring.biffi;
 
-import com.example.monitor.monitoring.dobulef.DoubleFProduct;
+import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI_BRAND_NAME_LIST;
 
 @Component
-public class BiffiBrandHashMap {
+public class BiffiBrandHashData {
 
     private final HashMap<String, HashMap<String, BiffiProduct>> biffiHashMap;
 
-    public BiffiBrandHashMap() {
+
+    @Getter
+    private final HashSet<String> productKeySet;
+
+    public BiffiBrandHashData() {
         biffiHashMap = new HashMap<>();
         for (String brandName : BIFFI_BRAND_NAME_LIST) {
             biffiHashMap.put(brandName, new HashMap<>());
         }
+
+        productKeySet = new HashSet<>();
     }
 
     public Map<String, BiffiProduct> getBrandHashMap(String brandName) {

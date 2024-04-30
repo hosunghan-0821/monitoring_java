@@ -4,6 +4,7 @@ import com.example.monitor.chrome.ChromeDriverTool;
 import com.example.monitor.infra.converter.controller.IConverterFacade;
 import com.example.monitor.infra.converter.dto.ConvertProduct;
 import com.example.monitor.infra.discord.DiscordBot;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,10 +38,10 @@ import static com.example.monitor.monitoring.biffi.BiffiFindString.*;
 public class BiffiMonitorCore {
 
 
-
     private final DiscordBot discordBot;
 
-    private final BiffiBrandHashMap biffiBrandHashMap;
+    @Getter
+    private final BiffiBrandHashData biffiBrandHashData;
 
     private final IConverterFacade iConverterFacade;
 
@@ -84,7 +86,6 @@ public class BiffiMonitorCore {
             iConverterFacade.convertProduct(convertProductList);
         }
     }
-
 
 
     public void getProductOrigin(ChromeDriver driver, WebDriverWait wait, BiffiProduct biffiProduct) {
@@ -208,13 +209,13 @@ public class BiffiMonitorCore {
         for (int i = 0; i < brandUrlList.length; i++) {
             List<BiffiProduct> biffiProductList = getPageProductData(driver, wait, brandUrlList[i], brandNameList[i]);
             for (BiffiProduct biffiProduct : biffiProductList) {
-                biffiBrandHashMap.getBrandHashMap(brandNameList[i]).put(biffiProduct.getSku(), biffiProduct);
+                biffiBrandHashData.getBrandHashMap(brandNameList[i]).put(biffiProduct.getSku(), biffiProduct);
             }
         }
     }
 
 
-    private List<BiffiProduct> findDifferentAndAlarm(ChromeDriver chromeDriver, WebDriverWait wait, String[] biffiBrandUrlList, String[] biffiBrandNameList) {
+    public List<BiffiProduct> findDifferentAndAlarm(ChromeDriver chromeDriver, WebDriverWait wait, String[] biffiBrandUrlList, String[] biffiBrandNameList) {
 
         assert (biffiBrandUrlList.length == biffiBrandNameList.length);
 
@@ -222,7 +223,7 @@ public class BiffiMonitorCore {
 
         for (int i = 0; i < biffiBrandUrlList.length; i++) {
 
-            Map<String, BiffiProduct> eachBrandHashMap = biffiBrandHashMap.getBrandHashMap(biffiBrandNameList[i]);
+            Map<String, BiffiProduct> eachBrandHashMap = biffiBrandHashData.getBrandHashMap(biffiBrandNameList[i]);
             List<BiffiProduct> biffiProductList = new ArrayList<>();
 
             try {
@@ -233,15 +234,21 @@ public class BiffiMonitorCore {
                 biffiProductList = getPageProductData(chromeDriver, wait, biffiBrandUrlList[i], biffiBrandNameList[i]);
             }
 
+            HashSet<String> productKeySet = biffiBrandHashData.getProductKeySet();
             for (BiffiProduct biffiProduct : biffiProductList) {
                 if (!eachBrandHashMap.containsKey(biffiProduct.getSku())) {
                     //새로운 제품일 경우
-                    log.info(BIFFI_LOG_PREFIX + "새로운 제품" + biffiProduct);
-                    //discord bot 알람
-                    //원산지 데이터 긁어와야함.
-                    getProductOrigin(chromeDriver, wait, biffiProduct);
-                    discordBot.sendNewProductInfo(BIFFI_NEW_PRODUCT_CHANNEL, biffiProduct, biffiBrandUrlList[i]);
-                    findBiffiProductList.add(biffiProduct);
+                    if (!productKeySet.contains(biffiProduct.getSku())) {
+                        log.info(BIFFI_LOG_PREFIX + "새로운 제품" + biffiProduct);
+
+                        getProductOrigin(chromeDriver, wait, biffiProduct);
+                        discordBot.sendNewProductInfo(BIFFI_NEW_PRODUCT_CHANNEL, biffiProduct, biffiBrandUrlList[i]);
+                        findBiffiProductList.add(biffiProduct);
+
+                        //보낸상품 체크
+                        productKeySet.add(biffiProduct.getSku());
+                    }
+
                 } else {
                     BiffiProduct beforeProduct = eachBrandHashMap.get(biffiProduct.getSku());
                     if (!beforeProduct.getDiscountPercentage().equals(biffiProduct.getDiscountPercentage())) {
@@ -266,8 +273,6 @@ public class BiffiMonitorCore {
 
         return findBiffiProductList;
     }
-
-
 
 
 }
