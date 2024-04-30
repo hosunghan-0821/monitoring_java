@@ -63,6 +63,9 @@ public class DoubleFFindString {
     public static final String MANS_PREFIX = "man";
     public static final String WOMANS_PREFIX = "woman";
 
+    public static final String DISCOUNT_CHANGE = "discount_change";
+    public static final String NEW_PRODUCT = "new_product";
+
     public static final String DOUBLE_F_LOG_PREFIX = "[DOUBLE_F] : \t";
 
     //
@@ -88,6 +91,8 @@ public class DoubleFFindString {
     public static final String PRODUCT_DISCOUNT_XPATH =".//div[@class='product-card__discount absolute z-5 top-0 left-0 font-medium tracking-0-12 leading-8 text-white text-4xs h-5-5 px-5px bg-primary lg:tracking-0-15 lg:leading-10 lg:text-2xs lg:h-6 lg:px-10px']//span";
 
     public static final String PRODUCT_PRICE_XPATH =".//span[@class='price']";
+
+
     //생성방지
     private DoubleFFindString() {
 

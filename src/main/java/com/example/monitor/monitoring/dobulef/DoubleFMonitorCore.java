@@ -32,6 +32,7 @@ import static com.example.monitor.monitoring.dobulef.DoubleFFindString.*;
 @RequiredArgsConstructor
 public class DoubleFMonitorCore {
 
+
     private final DiscordBot discordBot;
 
     @Getter
@@ -249,7 +250,7 @@ public class DoubleFMonitorCore {
         return pageProductList;
     }
 
-    private List<DoubleFProduct> findDifferentAndAlarm(ChromeDriver driver, WebDriverWait wait, String[] brandNameList, String sexPrefix) {
+    public List<DoubleFProduct> findDifferentAndAlarm(ChromeDriver driver, WebDriverWait wait, String[] brandNameList, String sexPrefix) {
         List<DoubleFProduct> findDoubleFProduct = new ArrayList<>();
 
         for (int i = 0; i < brandNameList.length; i++) {
@@ -271,7 +272,7 @@ public class DoubleFMonitorCore {
                         getDetailProductInfo(driver, wait, product);
                         discordBot.sendNewProductInfo(DOUBLE_F_NEW_PRODUCT_CHANNEL, product, url);
 
-                        product.updateDetectedCause("new_product");
+                        product.updateDetectedCause(NEW_PRODUCT);
                         findDoubleFProduct.add(product);
 
                         //보낸 상품 체크
@@ -288,7 +289,7 @@ public class DoubleFMonitorCore {
                         getDetailProductInfo(driver, wait, product);
                         discordBot.sendDiscountChangeInfo(DOUBLE_F_DISCOUNT_CHANNEL, product, url, beforeProduct.getDiscountPercentage());
 
-                        product.updateDetectedCause("discount_change");
+                        product.updateDetectedCause(DISCOUNT_CHANGE);
                         findDoubleFProduct.add(product);
                     }
                 }

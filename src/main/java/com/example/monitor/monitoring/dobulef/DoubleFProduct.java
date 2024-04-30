@@ -22,4 +22,8 @@ public class DoubleFProduct extends MonitoringProduct {
     public void updateDetectedCause(String detectedCause) {
         this.detectedCause = detectedCause;
     }
+
+    public void updateDiscountPercentage(String discountPercentage) {
+        this.discountPercentage = discountPercentage;
+    }
 }
