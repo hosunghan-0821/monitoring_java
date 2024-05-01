@@ -92,6 +92,7 @@ public class DoubleFMonitorCore {
                     .map(v -> v.changeToConvertProduct(DOUBLE_F))
                     .collect(Collectors.toList());
             iConverterFacade.convertProduct(convertProductList);
+            iConverterFacade.sendToSearchServer(convertProductList);
         }
 
     }

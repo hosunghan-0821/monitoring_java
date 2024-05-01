@@ -17,6 +17,7 @@ public class SearchProduct {
     private String name;
     private String madeBy;
     private String monitoringSite;
+    private String colorCode;
     private String imgUrl;
     private double inputPrice; // 해외 떼오는 가격
     private String unit;

@@ -35,9 +35,8 @@ public class ConverterFacadeImpl implements IConverterFacade {
 
     @Async
     @Override
-    public void convertProduct(List<ConvertProduct> convertProductList) {
+    public List<ConvertProduct> convertProduct(List<ConvertProduct> convertProductList) {
 
-        List<SearchProduct> searchProductList = new ArrayList<>();
         for (ConvertProduct convertProduct : convertProductList) {
             HashMap<String, BrandConverterRule.ConvertRuleInfo> brandConverterRuleMap = brandConverterRule.getBrandConverterRuleMap();
             BrandConverterRule.ConvertRuleInfo convertRuleInfo = brandConverterRuleMap.getOrDefault(convertProduct.getMonitoringSite() + convertProduct.getBrandName(), null);
@@ -50,27 +49,42 @@ public class ConverterFacadeImpl implements IConverterFacade {
             String convertedSku = skuConverter.convertSku(convertProduct.getSku(), convertRuleInfo.getSkuRule());
             String convertedColorCode = colorCodeConverter.convertColorCode(convertProduct.getColorCode(), convertRuleInfo.getSkuRule());
             String finalSku = finalSkuMaker.convertFinal(convertedSku, convertedColorCode, convertRuleInfo.getEndRule());
+            boolean isFta = isFtaCountry(convertProduct.getMadeBy());
 
+            convertProduct.update(finalSku, convertedColorCode, convertProduct.getSku(), convertProduct.getColorCode(), isFta);
+
+        }
+
+
+        return convertProductList;
+    }
+
+    @Override
+    public void sendToSearchServer(List<ConvertProduct> convertProductList) {
+
+
+        List<SearchProduct> searchProductList = new ArrayList<>();
+        changeToSearchProductList(convertProductList, searchProductList);
+
+        sender.sendToSearchServer(searchProductList);
+    }
+
+    public void changeToSearchProductList(List<ConvertProduct> convertProductList, List<SearchProduct> searchProductList) {
+        for (ConvertProduct convertProduct : convertProductList) {
             SearchProduct searchProduct = SearchProduct.builder()
-                    .sku(finalSku)
+                    .sku(convertProduct.getSku())
                     .productLink(convertProduct.getProductLink())
-                    .originSku(convertProduct.getSku())
+                    .colorCode(convertProduct.getColorCode())
+                    .originSku(convertProduct.getOriginSku())
                     .monitoringSite(convertProduct.getMonitoringSite())
                     .inputPrice(convertProduct.getInputPrice())
                     .fta(isFtaCountry(convertProduct.getMadeBy()))
                     .madeBy(convertProduct.getMadeBy())
-                    .originColorCode(convertProduct.getColorCode())
+                    .originColorCode(convertProduct.getOriginColorCode())
                     .build();
+
             searchProductList.add(searchProduct);
         }
-
-        this.sendToSearchServer(searchProductList);
-
-    }
-
-    public void sendToSearchServer(List<SearchProduct> searchProductList) {
-
-        sender.sendToSearchServer(searchProductList);
     }
 
     private Boolean isFtaCountry(String madeBy) {

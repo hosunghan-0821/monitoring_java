@@ -83,7 +83,8 @@ public class BiffiMonitorCore {
             List<ConvertProduct> convertProductList = biffiFindList.stream()
                     .map(v -> v.changeToConvertProduct(BIFFI))
                     .collect(Collectors.toList());
-            iConverterFacade.convertProduct(convertProductList);
+             iConverterFacade.convertProduct(convertProductList);
+             iConverterFacade.sendToSearchServer(convertProductList);
         }
     }
 

@@ -6,5 +6,7 @@ import com.example.monitor.infra.sender.SearchProduct;
 import java.util.List;
 
 public interface IConverterFacade {
-    void convertProduct(List<ConvertProduct> convertProduct);
+    List<ConvertProduct> convertProduct(List<ConvertProduct> convertProduct);
+
+     void sendToSearchServer(List<ConvertProduct> convertProductList);
 }

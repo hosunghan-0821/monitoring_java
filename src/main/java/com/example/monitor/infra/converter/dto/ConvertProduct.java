@@ -12,6 +12,9 @@ public class ConvertProduct {
     private String productLink;
     private String monitoringSite;
     private String brandName;
+
+    private String originSku;
+    private String originColorCode;
     //부띠끄
     private String sku;
     private String name;
@@ -22,4 +25,12 @@ public class ConvertProduct {
     private String unit;
     private Boolean isFta;
 
+
+    public void update(String finalSku, String finalColorCode ,String originSku, String originColorCode,boolean isFta) {
+        this.sku = finalSku;
+        this.colorCode = finalColorCode;
+        this.originSku = originSku;
+        this.originColorCode = originColorCode;
+        this.isFta =isFta;
+    }
 }
