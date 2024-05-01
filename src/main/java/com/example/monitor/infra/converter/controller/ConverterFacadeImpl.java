@@ -6,6 +6,7 @@ import com.example.monitor.infra.converter.core.FinalSkuMaker;
 import com.example.monitor.infra.converter.core.SkuConverter;
 import com.example.monitor.infra.converter.dto.ConvertProduct;
 import com.example.monitor.infra.sender.ProductSender;
+import com.example.monitor.infra.sender.ProductSenderImpl;
 import com.example.monitor.infra.sender.SearchProduct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
