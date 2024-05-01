@@ -4,6 +4,7 @@ import com.example.monitor.chrome.ChromeDriverTool;
 import com.example.monitor.chrome.ChromeDriverToolFactory;
 import com.example.monitor.monitoring.biffi.BiffiMonitorCore;
 import com.example.monitor.monitoring.dobulef.DoubleFMonitorCore;
+import com.example.monitor.monitoring.julian.JulianBrandHashData;
 import com.example.monitor.monitoring.julian.JulianMonitorCore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,8 @@ public class MonitorScheduler {
     private final ChromeDriverToolFactory chromeDriverToolFactory;
 
 
+
+
     @Scheduled(initialDelay = 60000 * 2, fixedDelay = 60000)// 1분마다 실행
     public void monitorJulianAllCategories() {
         ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES);
@@ -57,8 +60,10 @@ public class MonitorScheduler {
         ChromeDriverTool allCategories = chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES);
         ChromeDriverTool promo = chromeDriverToolFactory.getChromeDriverTool(PROMO);
         log.info(JULIAN_LOG_PREFIX + "새 등록 상품 풀 초기화 (중복방지용) : All Categories, Promo");
-        allCategories.getProductKeySet().clear();
-        promo.getProductKeySet().clear();
+
+        //TO-DO DataHashMap
+//        allCategories.getProductKeySet().clear();
+//        promo.getProductKeySet().clear();
 
 
         //DoubleF

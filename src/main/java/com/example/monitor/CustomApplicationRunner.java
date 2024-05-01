@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -65,9 +66,7 @@ public class CustomApplicationRunner implements ApplicationRunner {
         discordBot.setChromeDriverTool(chromeDriverToolFactory);
 
 
-
-
-        Thread biffiThread =new Thread(new Runnable() {
+        Thread biffiThread = new Thread(new Runnable() {
             @Override
             public void run() {
 
@@ -79,8 +78,6 @@ public class CustomApplicationRunner implements ApplicationRunner {
         });
 
         biffiThread.start();
-
-
 
 
         Thread doubleFThread = new Thread(new Runnable() {
@@ -95,17 +92,20 @@ public class CustomApplicationRunner implements ApplicationRunner {
         doubleFThread.start();
 
 
-
         Thread julianThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                log.info(JULIAN_LOG_PREFIX+ "============================ Load Julian Product Start ============================");
+                log.info(JULIAN_LOG_PREFIX + "============================ Load Julian Product Start ============================");
                 try {
                     //로그인
                     ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES);
+
                     ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
                     WebDriverWait wait = chromeDriverTool.getWebDriverWait();
-                    julianMonitorCore.login(chromeDriver,wait);
+                    HashMap<String, JulianProduct> brandHashMap = julianMonitorCore.getJulianBrandHashData().getBrandHashMap(ALL_CATEGORIES);
+
+
+                    julianMonitorCore.login(chromeDriver, wait);
 
                     for (int i = 1; i < 3; i++) {
                         String url = julianMonitorCore.getUrl(ALL_CATEGORIES_URL, i);
@@ -116,10 +116,10 @@ public class CustomApplicationRunner implements ApplicationRunner {
                         List<WebElement> productDataDivs = julianMonitorCore.getInnerProductDivs(wait);
 
                         //상품 하위 데이터 조회
-                        List<JulianProduct> productData = julianMonitorCore.getProductData(productDataDivs,url);
+                        List<JulianProduct> productData = julianMonitorCore.getProductData(productDataDivs, url);
 
                         //정보가져오기
-                        julianMonitorCore.loadData(chromeDriverTool.getDataHashMap(), productData);
+                        julianMonitorCore.loadData(brandHashMap, productData);
 
                     }
                     //로드체크
@@ -136,7 +136,9 @@ public class CustomApplicationRunner implements ApplicationRunner {
                     ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(PROMO);
                     ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
                     WebDriverWait wait = chromeDriverTool.getWebDriverWait();
-                    julianMonitorCore.login(chromeDriver,wait);
+                    HashMap<String, JulianProduct> brandHashMap = julianMonitorCore.getJulianBrandHashData().getBrandHashMap(PROMO);
+
+                    julianMonitorCore.login(chromeDriver, wait);
 
                     for (int i = 1; i < 3; i++) {
                         String url = julianMonitorCore.getUrl(PROMO_URL, i);
@@ -147,10 +149,10 @@ public class CustomApplicationRunner implements ApplicationRunner {
                         List<WebElement> productDataDivs = julianMonitorCore.getInnerProductDivs(wait);
 
                         //상품 하위 데이터 조회
-                        List<JulianProduct> productData = julianMonitorCore.getProductData(productDataDivs,url);
+                        List<JulianProduct> productData = julianMonitorCore.getProductData(productDataDivs, url);
 
                         //정보가져오기
-                        julianMonitorCore.loadData(chromeDriverTool.getDataHashMap(), productData);
+                        julianMonitorCore.loadData(brandHashMap, productData);
 
                     }
                     //Load 확인

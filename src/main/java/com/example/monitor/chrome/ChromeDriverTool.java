@@ -18,19 +18,14 @@ public class ChromeDriverTool {
 
     private final WebDriverWait webDriverWait;
 
-    private final HashMap<String, JulianProduct> dataHashMap;
-
-    private final HashSet<String> productKeySet;
-
     private boolean isLoadData = false;
 
     private boolean isRunning = true;
 
-    public ChromeDriverTool(ChromeDriver chromeDriver, WebDriverWait webDriverWait, HashMap<String, JulianProduct> dataHashMap, HashSet<String> productKeySet) {
+    public ChromeDriverTool(ChromeDriver chromeDriver, WebDriverWait webDriverWait) {
         this.chromeDriver = chromeDriver;
         this.webDriverWait = webDriverWait;
-        this.dataHashMap = dataHashMap;
-        this.productKeySet = productKeySet;
+
     }
 
     public void isLoadData(boolean bool){

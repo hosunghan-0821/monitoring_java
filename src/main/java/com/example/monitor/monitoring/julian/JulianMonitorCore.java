@@ -2,6 +2,7 @@ package com.example.monitor.monitoring.julian;
 
 import com.example.monitor.chrome.ChromeDriverTool;
 import com.example.monitor.infra.discord.DiscordBot;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
@@ -26,6 +27,9 @@ public class JulianMonitorCore {
 
 
     private final DiscordBot discordBot;
+
+    @Getter
+    private final JulianBrandHashData julianBrandHashData;
     @Value("${julian.user.id}")
     private String userId;
 
@@ -33,16 +37,18 @@ public class JulianMonitorCore {
     private String userPw;
 
 
-    public void runFindProductLogic(ChromeDriverTool chromeDriverTool, String pageUrl, String category, Long discordChannelId) {
+    public void runFindProductLogic(ChromeDriverTool chromeDriverTool, String pageUrl, String monitoringSite, Long discordChannelId) {
         ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
         WebDriverWait wait = chromeDriverTool.getWebDriverWait();
-        HashMap<String, JulianProduct> dataHashMap = chromeDriverTool.getDataHashMap();
-        HashSet<String> dataKeySet = chromeDriverTool.getProductKeySet();
+
+        HashMap<String, JulianProduct> dataHashMap = julianBrandHashData.getBrandHashMap(monitoringSite);
+        HashSet<String> dataKeySet = julianBrandHashData.getProductKeySet();
+
         if (!chromeDriverTool.isLoadData() || !chromeDriverTool.isRunning()) {
             log.error(JULIAN_LOG_PREFIX + "Data Load or isRunning OFF");
             return;
         }
-        log.info(JULIAN_LOG_PREFIX + "START: " + category + " FIND NEW PRODUCT ");
+        log.info(JULIAN_LOG_PREFIX + "START: " + monitoringSite + " FIND NEW PRODUCT ");
         List<JulianProduct> findJulianProductList = new ArrayList<>();
 
         try {
@@ -81,7 +87,7 @@ public class JulianMonitorCore {
                         //새 상품 set에 없다면, 알람 보내고, 보낸걸 기록
                         dataKeySet.add(julianProduct.getSku());
                         getProductMadeBy(chromeDriver,wait,julianProduct);
-                        julianProduct.setCategory(category);
+                        julianProduct.setCategory(monitoringSite);
                         discordBot.sendNewProductInfo(discordChannelId, julianProduct);
                         log.info(JULIAN_LOG_PREFIX + "New Product = " + julianProduct);
                     }

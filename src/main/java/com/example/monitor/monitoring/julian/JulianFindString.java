@@ -6,6 +6,11 @@ public class JulianFindString {
     public static final String ALL_CATEGORIES ="all_categories";
     public static final String PROMO= "promo";
 
+    public static final String[] JULIAN_MONITORING_SITE = {
+            ALL_CATEGORIES,
+            PROMO,
+    };
+
     //로그인 관련
     public static final String ID_FORM = "email";
     public static final String PASS_FORM = "pass";
@@ -30,6 +35,8 @@ public class JulianFindString {
     public static final String PRODUCT_NAME = ".//div[@class='product_name']";
 
     public static final String PRODUCT_SKU = ".//div[@class='produt_reference']";
+
+
 
     //생성자 생성 금지
     private JulianFindString() {

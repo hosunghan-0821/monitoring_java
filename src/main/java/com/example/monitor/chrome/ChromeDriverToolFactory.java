@@ -22,7 +22,7 @@ public class ChromeDriverToolFactory {
     public void makeChromeDriverTool(String key) {
         ChromeDriver chromeDriver = new ChromeDriver(setOptions());
         WebDriverWait wait = new WebDriverWait(chromeDriver, Duration.ofMillis(5000)); // 최대 5초 대기
-        ChromeDriverTool chromeDriverTool = new ChromeDriverTool(chromeDriver, wait, new HashMap<>(),new HashSet<>());
+        ChromeDriverTool chromeDriverTool = new ChromeDriverTool(chromeDriver, wait);
 
         factoryHashMap.put(key, chromeDriverTool);
     }

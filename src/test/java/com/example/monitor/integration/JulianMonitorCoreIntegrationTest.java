@@ -38,11 +38,7 @@ class JulianMonitorCoreIntegrationTest {
     @Autowired
     private JulianMonitorCore julianMonitorCore;
 
-    @Autowired
-    private ChromeDriverToolFactory chromeDriverToolFactory;
 
-
-    private static HashMap<String, JulianProduct> productHashMap;
     private static ChromeDriver driver;
 
     private static WebDriverWait wait;
@@ -61,7 +57,7 @@ class JulianMonitorCoreIntegrationTest {
 
         driver = new ChromeDriver(options);
         wait = new WebDriverWait(driver, Duration.ofMillis(5000)); // 최대 5초 대기
-        productHashMap = new HashMap<>();
+
 
     }
 
@@ -75,9 +71,13 @@ class JulianMonitorCoreIntegrationTest {
     @DisplayName(JulianFindString.JULIAN_LOG_PREFIX + "데이터 로드 테스트")
     void dataLoad() {
 
+        //given
+        HashMap<String, JulianProduct> productHashMap = julianMonitorCore.getJulianBrandHashData().getBrandHashMap(JulianFindString.ALL_CATEGORIES);
         julianMonitorCore.login(driver, wait);
+
         //when
         List<JulianProduct> julianProductList = getJulianProducts(JulianFindString.ALL_CATEGORIES_URL);
+
 
         julianMonitorCore.loadData(productHashMap, julianProductList);
 
@@ -93,6 +93,7 @@ class JulianMonitorCoreIntegrationTest {
     void getPageProductDataTest() {
         //given
         List<JulianProduct> julianProductList = getJulianProducts(JulianFindString.ALL_CATEGORIES_URL);
+        HashMap<String, JulianProduct> productHashMap = julianMonitorCore.getJulianBrandHashData().getBrandHashMap(JulianFindString.ALL_CATEGORIES);
 
         //then
         for (JulianProduct julianProduct : julianProductList) {
