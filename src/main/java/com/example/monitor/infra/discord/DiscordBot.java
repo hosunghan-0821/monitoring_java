@@ -115,7 +115,7 @@ public class DiscordBot extends ListenerAdapter {
                         "가격정보 \n" + biffiProduct.getPrice());
         embed.setColor(Color.magenta); // Embed 색상 설정
 
-        embed.addField("사이트 바로가기", "[BIFFI 바로가기](" + url + ")", false); // false는 필드가 인라인으로 표시되지 않도록 설정합니다.
+        embed.addField("사이트 상품 바로가기", "[BIFFI 상세페이지 바로가기](" + biffiProduct.getProductLink() + ")", false); // false는 필드가 인라인으로 표시되지 않도록 설정합니다.
 
         embed.setImage(biffiProduct.getImgUrl()); // 웹 이미지 사용
         textChannel.sendMessageEmbeds(embed.build()).queue();
@@ -139,7 +139,7 @@ public class DiscordBot extends ListenerAdapter {
                         "원산지" + julianProduct.getMadeBy());
         embed.setColor(Color.GREEN); // Embed 색상 설정
 
-        embed.addField("사이트 바로가기", "[줄리앙 바로가기](https://b2bfashion.online/)", false); // false는 필드가 인라인으로 표시되지 않도록 설정합니다.
+        embed.addField("사이트 바로가기", "[줄리앙 상세페이지 바로가기](" + julianProduct.getProductLink() + ")", false); // false는 필드가 인라인으로 표시되지 않도록 설정합니다.
 
         // 이미지 추가
         embed.setImage(julianProduct.getImageUrl()); // 웹 이미지 사용
@@ -165,7 +165,7 @@ public class DiscordBot extends ListenerAdapter {
 
         embed.setColor(Color.GREEN); // Embed 색상 설정
 
-        embed.addField("사이트 바로가기", "[DOUBLEF 바로가기](" + url + ")", false); // false는 필드가 인라인으로 표시되지 않도록 설정합니다.
+        embed.addField("사이트 바로가기", "[DOUBLEF 상세페이지 바로가기](" + doubleFProduct.getProductLink() + ")", false); // false는 필드가 인라인으로 표시되지 않도록 설정합니다.
 
 
         textChannel.sendMessageEmbeds(embed.build()).queue();
@@ -215,7 +215,7 @@ public class DiscordBot extends ListenerAdapter {
 
         embed.setColor(Color.BLUE); // Embed 색상 설정
 
-        embed.addField("사이트 바로가기", "[DOUBLEF 바로가기](" + url + ")", false); // false는 필드가 인라인으로 표시되지 않도록 설정합니다.
+        embed.addField("사이트 바로가기", "[DOUBLEF 바로가기](" + doubleFProduct.getProductLink() + ")", false); // false는 필드가 인라인으로 표시되지 않도록 설정합니다.
 
         textChannel.sendMessageEmbeds(embed.build()).queue();
         textChannel.sendMessage(doubleFProduct.getSku() + " " + doubleFProduct.getColorCode()).queue();
