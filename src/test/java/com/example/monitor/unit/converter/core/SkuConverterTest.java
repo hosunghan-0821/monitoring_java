@@ -1,6 +1,7 @@
-package com.example.monitor.infra.converter.core;
+package com.example.monitor.unit.converter.core;
 
 
+import com.example.monitor.infra.converter.core.SkuConverter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
