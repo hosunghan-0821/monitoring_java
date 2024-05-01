@@ -29,7 +29,6 @@ class SkuConverterTest {
         //when
         String result = skuConverter.convertSku(sku, rule);
 
-        System.out.println(result);
         //then
         assertThat(result).isEqualTo("aulwul56");
 
