@@ -1,4 +1,4 @@
-# Monitoring Application with Crawling
+# Monitoring Application with Crawling
 
 # 📅 기간
 2024/04/21 ~ 2024/05/05 (약 3주)
