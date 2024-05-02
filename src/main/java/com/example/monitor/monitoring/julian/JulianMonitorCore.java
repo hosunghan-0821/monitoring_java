@@ -1,6 +1,7 @@
 package com.example.monitor.monitoring.julian;
 
 import com.example.monitor.chrome.ChromeDriverTool;
+import com.example.monitor.file.ProductFileWriter;
 import com.example.monitor.infra.discord.DiscordBot;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI;
+import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DISCOUNT_CHANGE;
+import static com.example.monitor.monitoring.dobulef.DoubleFFindString.NEW_PRODUCT;
 import static com.example.monitor.monitoring.julian.JulianFindString.*;
 
 @Slf4j
@@ -27,6 +31,8 @@ public class JulianMonitorCore {
 
 
     private final DiscordBot discordBot;
+
+    private final ProductFileWriter productFileWriter;
 
     @Getter
     private final JulianBrandHashData julianBrandHashData;
@@ -89,6 +95,7 @@ public class JulianMonitorCore {
                         getProductMadeBy(chromeDriver,wait,julianProduct);
                         julianProduct.setCategory(monitoringSite);
                         discordBot.sendNewProductInfo(discordChannelId, julianProduct);
+                        productFileWriter.writeProductInfo(julianProduct.changeToProductFileInfo(JULIAN +" / " + monitoringSite, NEW_PRODUCT));
                         log.info(JULIAN_LOG_PREFIX + "New Product = " + julianProduct);
                     }
                 }

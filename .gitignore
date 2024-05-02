@@ -38,3 +38,5 @@ out/
 ../Desktop/test_spring/scouter
 application-dev.properties
 application-test.properties
+/scouter
+/product

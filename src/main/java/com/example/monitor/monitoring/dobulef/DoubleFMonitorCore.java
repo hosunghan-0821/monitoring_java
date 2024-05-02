@@ -2,9 +2,11 @@ package com.example.monitor.monitoring.dobulef;
 
 
 import com.example.monitor.chrome.ChromeDriverTool;
+import com.example.monitor.file.ProductFileWriter;
 import com.example.monitor.infra.converter.controller.IConverterFacade;
 import com.example.monitor.infra.converter.dto.ConvertProduct;
 import com.example.monitor.infra.discord.DiscordBot;
+import com.example.monitor.monitoring.global.MonitoringProduct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +47,8 @@ public class DoubleFMonitorCore {
     private String userPw;
 
     private final IConverterFacade iConverterFacade;
+
+    private final ProductFileWriter productFileWriter;
 
 
     public void runLoadLogic(ChromeDriverTool chromeDriverTool) {
@@ -224,7 +228,7 @@ public class DoubleFMonitorCore {
                 String[] splitData = tempLink.split("-");
                 if (splitData.length >= 5) {
                     productSkU = splitData[splitData.length - 4];
-                    if (productSkU.length() <=3) {
+                    if (productSkU.length() <= 3) {
                         productSkU = splitData[splitData.length - 5] + splitData[splitData.length - 4];
                     }
                     productColorCode = splitData[splitData.length - 1];
@@ -279,6 +283,8 @@ public class DoubleFMonitorCore {
                         product.updateDetectedCause(NEW_PRODUCT);
                         findDoubleFProduct.add(product);
 
+                        productFileWriter.writeProductInfo(product.changeToProductFileInfo(DOUBLE_F, NEW_PRODUCT));
+
                         //보낸 상품 체크
                         productKeySet.add(getDoubleFProductKey(product));
                     } else {
@@ -294,6 +300,8 @@ public class DoubleFMonitorCore {
                         discordBot.sendDiscountChangeInfo(DOUBLE_F_DISCOUNT_CHANNEL, product, url, beforeProduct.getDiscountPercentage());
 
                         product.updateDetectedCause(DISCOUNT_CHANGE);
+                        productFileWriter.writeProductInfo(product.changeToProductFileInfo(DOUBLE_F, DISCOUNT_CHANGE));
+
                         findDoubleFProduct.add(product);
                     }
                 }
@@ -358,22 +366,6 @@ public class DoubleFMonitorCore {
 
     }
 
-//    public List<ConvertProduct> changeToConvertProduct(List<DoubleFProduct> doubleFProductList) {
-//        List<ConvertProduct> convertProductList = new ArrayList<>();
-//        for (DoubleFProduct doubleFProduct : doubleFProductList) {
-//            ConvertProduct convertProduct = ConvertProduct.builder()
-//                    .inputPrice(changePriceToDouble(doubleFProduct.getPrice()))
-//                    .madeBy(doubleFProduct.getMadeBy())
-//                    .monitoringSite(DOUBLE_F)
-//                    .sku(doubleFProduct.getSku())
-//                    .colorCode(doubleFProduct.getColorCode())
-//                    .brandName(doubleFProduct.getBrandName())
-//                    .build();
-//
-//            convertProductList.add(convertProduct);
-//        }
-//        return convertProductList;
-//    }
 
     public String makeBrandUrl(String brandName, String sexPrefix) {
         return "https://www.thedoublef.com/bu_en/" + sexPrefix + "/designers/" + brandName + "/";

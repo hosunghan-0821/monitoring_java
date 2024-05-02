@@ -3,6 +3,7 @@ package com.example.monitor.monitoring.julian;
 public class JulianFindString {
 
     //Category 작업단위
+    public static final String JULIAN ="julian";
     public static final String ALL_CATEGORIES ="all_categories";
     public static final String PROMO= "promo";
 

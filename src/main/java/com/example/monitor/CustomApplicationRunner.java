@@ -2,9 +2,13 @@ package com.example.monitor;
 
 import com.example.monitor.chrome.ChromeDriverTool;
 import com.example.monitor.chrome.ChromeDriverToolFactory;
+import com.example.monitor.file.ProductFileInfo;
+import com.example.monitor.file.ProductFileWriter;
+import com.example.monitor.file.ProductFileWriterImpl;
 import com.example.monitor.infra.converter.controller.IConverterFacade;
 import com.example.monitor.infra.discord.DiscordBot;
 import com.example.monitor.infra.sender.ProductSenderImpl;
+import com.example.monitor.monitoring.biffi.BiffiFindString;
 import com.example.monitor.monitoring.biffi.BiffiMonitorCore;
 import com.example.monitor.monitoring.dobulef.DoubleFMonitorCore;
 import com.example.monitor.monitoring.julian.JulianMonitorCore;
@@ -19,6 +23,9 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 
@@ -43,9 +50,6 @@ public class CustomApplicationRunner implements ApplicationRunner {
 
     private final DiscordBot discordBot;
 
-    private final ProductSenderImpl productSenderImpl;
-
-    private final IConverterFacade iConverterFacade;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {

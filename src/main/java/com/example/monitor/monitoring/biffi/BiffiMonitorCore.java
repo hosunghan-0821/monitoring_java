@@ -1,6 +1,7 @@
 package com.example.monitor.monitoring.biffi;
 
 import com.example.monitor.chrome.ChromeDriverTool;
+import com.example.monitor.file.ProductFileWriter;
 import com.example.monitor.infra.converter.controller.IConverterFacade;
 import com.example.monitor.infra.converter.dto.ConvertProduct;
 import com.example.monitor.infra.discord.DiscordBot;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 import static com.example.monitor.infra.discord.DiscordString.BIFFI_DISCOUNT_CHANNEL;
 import static com.example.monitor.infra.discord.DiscordString.BIFFI_NEW_PRODUCT_CHANNEL;
 import static com.example.monitor.monitoring.biffi.BiffiFindString.*;
+import static com.example.monitor.monitoring.dobulef.DoubleFFindString.*;
 
 
 @Slf4j
@@ -44,6 +46,8 @@ public class BiffiMonitorCore {
     private final BiffiBrandHashData biffiBrandHashData;
 
     private final IConverterFacade iConverterFacade;
+
+    private final ProductFileWriter productFileWriter;
 
     @Value("${biffi.user.id}")
     private String userId;
@@ -246,6 +250,7 @@ public class BiffiMonitorCore {
                         discordBot.sendNewProductInfo(BIFFI_NEW_PRODUCT_CHANNEL, biffiProduct, biffiBrandUrlList[i]);
                         findBiffiProductList.add(biffiProduct);
 
+                        productFileWriter.writeProductInfo(biffiProduct.changeToProductFileInfo(BIFFI, NEW_PRODUCT));
                         //보낸상품 체크
                         productKeySet.add(biffiProduct.getSku());
                     }
@@ -258,6 +263,7 @@ public class BiffiMonitorCore {
                         getProductOrigin(chromeDriver, wait, biffiProduct);
                         discordBot.sendDiscountChangeInfo(BIFFI_DISCOUNT_CHANNEL, biffiProduct, biffiBrandUrlList[i], beforeProduct.getDiscountPercentage());
                         findBiffiProductList.add(biffiProduct);
+                        productFileWriter.writeProductInfo(biffiProduct.changeToProductFileInfo(BIFFI, DISCOUNT_CHANGE));
                     }
                 }
             }
