@@ -36,7 +36,7 @@ public class ConverterFacadeImpl implements IConverterFacade {
 
     @Async
     @Override
-    public List<ConvertProduct> convertProduct(List<ConvertProduct> convertProductList) {
+    public void convertProduct(List<ConvertProduct> convertProductList) {
 
         for (ConvertProduct convertProduct : convertProductList) {
             HashMap<String, BrandConverterRule.ConvertRuleInfo> brandConverterRuleMap = brandConverterRule.getBrandConverterRuleMap();
@@ -57,7 +57,6 @@ public class ConverterFacadeImpl implements IConverterFacade {
         }
 
 
-        return convertProductList;
     }
 
     @Override
