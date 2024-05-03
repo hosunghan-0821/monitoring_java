@@ -33,8 +33,7 @@ public class ConverterFacadeImpl implements IConverterFacade {
     private final FinalSkuMaker finalSkuMaker;
 
     private final ProductSender sender;
-
-    @Async
+    
     @Override
     public void convertProduct(List<ConvertProduct> convertProductList) {
 
