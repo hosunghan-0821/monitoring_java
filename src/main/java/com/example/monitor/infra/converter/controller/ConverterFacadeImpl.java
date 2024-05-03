@@ -33,7 +33,7 @@ public class ConverterFacadeImpl implements IConverterFacade {
     private final FinalSkuMaker finalSkuMaker;
 
     private final ProductSender sender;
-    
+
     @Override
     public void convertProduct(List<ConvertProduct> convertProductList) {
 
@@ -79,6 +79,7 @@ public class ConverterFacadeImpl implements IConverterFacade {
                     .inputPrice(convertProduct.getInputPrice())
                     .fta(isFtaCountry(convertProduct.getMadeBy()))
                     .madeBy(convertProduct.getMadeBy())
+                    .originPrice(convertProduct.getOriginPrice())
                     .originColorCode(convertProduct.getOriginColorCode())
                     .build();
 

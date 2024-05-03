@@ -32,6 +32,7 @@ public class MonitoringProduct {
                 .brandName(this.brandName)
                 .monitoringSite(monitoringSite)
                 .inputPrice(this.doublePrice)
+                .originPrice(this.price)
                 .madeBy(this.madeBy)
                 .productLink(this.productLink)
                 .colorCode(this.colorCode)

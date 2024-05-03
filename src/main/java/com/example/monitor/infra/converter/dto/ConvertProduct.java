@@ -15,6 +15,7 @@ public class ConvertProduct {
 
     private String originSku;
     private String originColorCode;
+    private String originPrice;
     //부띠끄
     private String sku;
     private String name;

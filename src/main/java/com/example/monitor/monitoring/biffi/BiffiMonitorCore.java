@@ -87,8 +87,8 @@ public class BiffiMonitorCore {
             List<ConvertProduct> convertProductList = biffiFindList.stream()
                     .map(v -> v.changeToConvertProduct(BIFFI))
                     .collect(Collectors.toList());
-             iConverterFacade.convertProduct(convertProductList);
-             iConverterFacade.sendToSearchServer(convertProductList);
+            iConverterFacade.convertProduct(convertProductList);
+            iConverterFacade.sendToSearchServer(convertProductList);
         }
     }
 
@@ -170,7 +170,7 @@ public class BiffiMonitorCore {
 
                     WebElement price = productElement.findElement(By.xpath(PRICE_ELMENT_XPATH));
                     String finalPrice = price.getText();
-
+                    double finalPriceDouble = changePriceToDouble(finalPrice);
                     WebElement detailLink = productElement.findElement(By.xpath(DETAIL_LINK_XPATH));
                     String productDetailLink = detailLink.getAttribute(HREF);
 
@@ -193,6 +193,7 @@ public class BiffiMonitorCore {
                             .sku(sku)
                             .monitoringSite(BIFFI)
                             .brandName(brandName)
+                            .doublePrice(finalPriceDouble)
                             .discountPercentage(discountPercentage)
                             .build();
 
@@ -205,6 +206,7 @@ public class BiffiMonitorCore {
         }
         return biffiProductList;
     }
+
 
     public void loadData(ChromeDriver driver, WebDriverWait wait, String[] brandNameList, String[] brandUrlList) {
 
@@ -279,6 +281,12 @@ public class BiffiMonitorCore {
         }
 
         return findBiffiProductList;
+    }
+
+    private double changePriceToDouble(String finalPrice) {
+
+
+        return Double.parseDouble(finalPrice.replace("€", "").replace(".", "").replace(",", ".").strip());
     }
 
 

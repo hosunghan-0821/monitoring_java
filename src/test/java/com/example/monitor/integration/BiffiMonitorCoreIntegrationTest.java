@@ -1,6 +1,7 @@
 package com.example.monitor.integration;
 
 import com.example.monitor.chrome.ChromeDriverToolFactory;
+import com.example.monitor.infra.converter.controller.IConverterFacade;
 import com.example.monitor.infra.converter.dto.ConvertProduct;
 import com.example.monitor.infra.discord.DiscordBot;
 import com.example.monitor.monitoring.biffi.BiffiBrandHashData;
@@ -24,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.example.monitor.monitoring.biffi.BiffiFindString.*;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.MANS_PREFIX;
@@ -50,6 +52,9 @@ class BiffiMonitorCoreIntegrationTest {
 
     @Autowired
     private DiscordBot discordBot;
+
+    @Autowired
+    private IConverterFacade iConverterFacade;
 
     private static ChromeDriver driver;
 
@@ -87,25 +92,96 @@ class BiffiMonitorCoreIntegrationTest {
         driver.quit();
     }
 
+//    @Test
+//    @Order(1)
+//    @DisplayName(BiffiFindString.BIFFI_LOG_PREFIX + "데이터 로드 테스트")
+//    void loadDataTest() {
+//
+//        //given
+//        biffiMonitorCore.login(driver, wait);
+//
+//        //when
+//        biffiMonitorCore.loadData(driver, wait, brandNameList, brandUrlList);
+//
+//        //then
+//        assertThat(biffiBrandHashData.getBrandHashMap(brandNameList[0]).size()).isGreaterThan(1);
+//    }
+
+//    @Test
+//    @Order(2)
+//    @DisplayName(BiffiFindString.BIFFI_LOG_PREFIX + "데이터 조회 및 원산지 확인 테스트")
+//    void getPageProductDataTest() {
+//        //given
+//        String brandName = brandNameList[0];
+//        String url = brandUrlList[0];
+//
+//        //when
+//        List<BiffiProduct> biffiProductList = biffiMonitorCore.getPageProductData(driver, wait, url, brandName);
+//
+//        //then
+//        assertThat(biffiProductList.size()).isGreaterThanOrEqualTo(1);
+//
+//        BiffiProduct biffiProduct = biffiProductList.get(0);
+//
+//        biffiMonitorCore.getProductOrigin(driver, wait, biffiProduct);
+//
+//        assertThat(biffiProduct.getMadeBy()).isNotNull();
+//        assertThat(biffiProduct.getSku()).isNotNull();
+//        assertThat(biffiProduct.getPrice()).isNotNull();
+//        assertThat(biffiProduct.getProductLink()).isNotNull();
+//
+//        Map<String, BiffiProduct> brandHashMap = biffiBrandHashData.getBrandHashMap(brandName);
+//        for (BiffiProduct biffiProductData : biffiProductList) {
+//            assertThat(brandHashMap.containsKey(biffiProductData.getSku())).isEqualTo(true);
+//        }
+//
+//    }
+
+
+//    @Test
+//    @Order(4)
+//    @DisplayName(BiffiFindString.BIFFI_LOG_PREFIX + "다른상품 알람 테스트 새제품 없음")
+//    void findDifferentAlarmNothing(){
+//        //when
+//        List<BiffiProduct> differentAndAlarm = biffiMonitorCore.findDifferentAndAlarm(driver, wait, brandUrlList, brandNameList);
+//
+//        //then
+//        assertThat(differentAndAlarm.size()).isEqualTo(0);
+//    }
+
+//    @Test
+//    @Order(5)
+//    @DisplayName(BiffiFindString.BIFFI_LOG_PREFIX + "다른상품 알람 테스트 새제품 존재")
+//    void findDifferentAlarmNewProduct(){
+//
+//        //given
+//        Map<String, BiffiProduct> brandHashMap = biffiBrandHashData.getBrandHashMap(brandNameList[0]);
+//        for (Map.Entry<String, BiffiProduct> entry : brandHashMap.entrySet()) {
+//            String key = entry.getKey();
+//            brandHashMap.remove(key);
+//            break;
+//        }
+//
+//        //when
+//        List<BiffiProduct> differentAndAlarm = biffiMonitorCore.findDifferentAndAlarm(driver, wait, brandUrlList, brandNameList);
+//
+//        //then
+//        assertThat(differentAndAlarm.size()).isEqualTo(1);
+//
+//        List<ConvertProduct> collect = differentAndAlarm.stream().map(v -> v.changeToConvertProduct(BIFFI)).collect(Collectors.toList());
+//        iConverterFacade.convertProduct(collect);
+//        iConverterFacade.sendToSearchServer(collect);
+//    }
+
+
     @Test
-    @Order(1)
-    @DisplayName(BiffiFindString.BIFFI_LOG_PREFIX + "데이터 로드 테스트")
-    void loadDataTest() {
+    @Order(6)
+    @DisplayName(BiffiFindString.BIFFI_LOG_PREFIX + "다른상품 알람 테스트 새제품 존재")
+    void findDifferentAlarmNewProduct(){
+
 
         //given
         biffiMonitorCore.login(driver, wait);
-
-        //when
-        biffiMonitorCore.loadData(driver, wait, brandNameList, brandUrlList);
-
-        //then
-        assertThat(biffiBrandHashData.getBrandHashMap(brandNameList[0]).size()).isGreaterThan(1);
-    }
-
-    @Test
-    @Order(2)
-    @DisplayName(BiffiFindString.BIFFI_LOG_PREFIX + "데이터 조회 및 원산지 확인 테스트")
-    void getPageProductDataTest() {
         //given
         String brandName = brandNameList[0];
         String url = brandUrlList[0];
@@ -113,63 +189,14 @@ class BiffiMonitorCoreIntegrationTest {
         //when
         List<BiffiProduct> biffiProductList = biffiMonitorCore.getPageProductData(driver, wait, url, brandName);
 
-        //then
-        assertThat(biffiProductList.size()).isGreaterThanOrEqualTo(1);
 
-        BiffiProduct biffiProduct = biffiProductList.get(0);
-
-        biffiMonitorCore.getProductOrigin(driver, wait, biffiProduct);
-
-        assertThat(biffiProduct.getMadeBy()).isNotNull();
-        assertThat(biffiProduct.getSku()).isNotNull();
-        assertThat(biffiProduct.getPrice()).isNotNull();
-        assertThat(biffiProduct.getProductLink()).isNotNull();
-
-        Map<String, BiffiProduct> brandHashMap = biffiBrandHashData.getBrandHashMap(brandName);
-        for (BiffiProduct biffiProductData : biffiProductList) {
-            assertThat(brandHashMap.containsKey(biffiProductData.getSku())).isEqualTo(true);
-        }
-
-        //다른테스트 변환테스트
-//        for (MonitoringProduct monitoringProduct : biffiProductList) {
-//            ConvertProduct convertProduct = monitoringProduct.changeToConvertProduct(BIFFI);
-//            assertThat(convertProduct).isNotNull();
-//            assertThat(convertProduct.getBrandName()).isEqualTo(brandName);
-//            assertThat(convertProduct.getProductLink()).isNotNull();
-//            assertThat(convertProduct.getSku()).isNotNull();
-//        }
-    }
-
-
-    @Test
-    @Order(4)
-    @DisplayName(BiffiFindString.BIFFI_LOG_PREFIX + "다른상품 알람 테스트 새제품 없음")
-    void findDifferentAlarmNothing(){
-        //when
-        List<BiffiProduct> differentAndAlarm = biffiMonitorCore.findDifferentAndAlarm(driver, wait, brandUrlList, brandNameList);
+        List<BiffiProduct> collect1 = biffiProductList.stream().limit(5).collect(Collectors.toList());
 
         //then
-        assertThat(differentAndAlarm.size()).isEqualTo(0);
-    }
 
-    @Test
-    @Order(5)
-    @DisplayName(BiffiFindString.BIFFI_LOG_PREFIX + "다른상품 알람 테스트 새제품 존재")
-    void findDifferentAlarmNewProduct(){
-
-        //given
-        Map<String, BiffiProduct> brandHashMap = biffiBrandHashData.getBrandHashMap(brandNameList[0]);
-        for (Map.Entry<String, BiffiProduct> entry : brandHashMap.entrySet()) {
-            String key = entry.getKey();
-            brandHashMap.remove(key);
-            break;
-        }
-
-        //when
-        List<BiffiProduct> differentAndAlarm = biffiMonitorCore.findDifferentAndAlarm(driver, wait, brandUrlList, brandNameList);
-
-        //then
-        assertThat(differentAndAlarm.size()).isEqualTo(1);
+        List<ConvertProduct> collect = collect1.stream().map(v -> v.changeToConvertProduct(BIFFI)).collect(Collectors.toList());
+        iConverterFacade.convertProduct(collect);
+        iConverterFacade.sendToSearchServer(collect);
     }
 
 

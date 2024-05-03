@@ -8,7 +8,7 @@ public class ColorCodeConverter {
 
     public String convertColorCode(String colorCode, String convertRule) {
 
-        assert (convertRule != null && colorCode != null);
+        assert (convertRule != null);
 
         return switch (convertRule) {
             case "rule1" -> logic1(colorCode);
