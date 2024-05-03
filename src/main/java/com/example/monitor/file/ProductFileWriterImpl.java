@@ -46,16 +46,17 @@ public class ProductFileWriterImpl implements ProductFileWriter {
             String formattedDate = getTodayDate();
             String filePath = DIRECTORY_ROUTE_PATH + "/" + formattedDate + ".txt";
 
+
             this.writeHeader(filePath);
             FileWriter fw = new FileWriter(filePath, true);
             String productFileData = String.format(
-                    "%10s|%15s|%20s|%12s|%12s|%20s|%20s|%20s\n",
+                    "%10s|%15s|%20s|%12s|%12s|%40s|%20s|%20s\n",
                     productFileInfo.getMonitoringSite(),
                     productFileInfo.getBrandName(),
                     productFileInfo.getSku(),
                     productFileInfo.getColorCode(),
                     productFileInfo.getMadeBy(),
-                    productFileInfo.getPrice(),
+                    productFileInfo.getPrice().replace("\n"," "),
                     productFileInfo.getDetectedCause(),
                     productFileInfo.getDetectedDate()
 
@@ -76,7 +77,7 @@ public class ProductFileWriterImpl implements ProductFileWriter {
             if (!Files.exists(Path.of(path))) {
                 FileWriter fw = new FileWriter(path);
                 String header = String.format(
-                        "%10s|%15s|%20s|%12s|%12s|%20s|%20s|%20s\n\n",
+                        "%10s|%15s|%20s|%12s|%12s|%40s|%20s|%20s\n\n",
                         "site",
                         "brand",
                         "sku",
