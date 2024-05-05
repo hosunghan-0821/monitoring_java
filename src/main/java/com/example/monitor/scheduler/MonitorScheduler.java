@@ -48,7 +48,7 @@ public class MonitorScheduler {
         julianMonitorCore.runFindProductLogic(chromeDriverTool, PROMO_URL, PROMO, PROMO_CHANNEL);
     }
 
-    @Scheduled(initialDelay = 60000 * 3, fixedDelay = 60000 * 15)// 15분마다 실행
+    @Scheduled(initialDelay = 60000 * 7, fixedDelay = 60000 * 30)// 30분마다 실행
     public void monitorDoubleF() {
         ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F);
         doubleFMonitorCore.runFindProductLogic(chromeDriverTool);
