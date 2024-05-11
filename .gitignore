@@ -42,3 +42,4 @@ application-prod.properties
 application.properties
 /scouter
 /product
+data.xlsx
