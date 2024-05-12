@@ -12,6 +12,7 @@ import com.example.monitor.monitoring.biffi.BiffiFindString;
 import com.example.monitor.monitoring.biffi.BiffiMonitorCore;
 import com.example.monitor.monitoring.dobulef.DoubleFMonitorCore;
 import com.example.monitor.monitoring.gebnegozi.GebenegoziMonitorCore;
+import com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString;
 import com.example.monitor.monitoring.julian.JulianMonitorCore;
 import com.example.monitor.monitoring.julian.JulianProduct;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,7 @@ import java.util.regex.Pattern;
 import static com.example.monitor.monitoring.biffi.BiffiFindString.*;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.*;
 import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.GEBE;
+import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.GEBENE_LOG_PREFIX;
 import static com.example.monitor.monitoring.julian.JulianFindString.*;
 
 @Slf4j
@@ -65,17 +67,27 @@ public class CustomApplicationRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-        chromeDriverToolFactory.makeChromeDriverTool(GEBE);
-        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(GEBE);
-        gebenegoziMonitorCore.runLoadLogic(chromeDriverTool);
-
 //        chromeDriverToolFactory.makeChromeDriverTool(DOUBLE_F);
 //        chromeDriverToolFactory.makeChromeDriverTool(ALL_CATEGORIES);
 //        chromeDriverToolFactory.makeChromeDriverTool(PROMO);
 //        chromeDriverToolFactory.makeChromeDriverTool(BIFFI);
-//        discordBot.setChromeDriverTool(chromeDriverToolFactory);
-//
-//
+        chromeDriverToolFactory.makeChromeDriverTool(GEBE);
+        discordBot.setChromeDriverTool(chromeDriverToolFactory);
+
+
+        Thread gebeneThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE Product Start ============================");
+                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(GEBE);
+                gebenegoziMonitorCore.runLoadLogic(chromeDriverTool);
+                log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE Product Finish ============================");
+            }
+        });
+
+        gebeneThread.start();
+
 //        Thread biffiThread = new Thread(new Runnable() {
 //            @Override
 //            public void run() {

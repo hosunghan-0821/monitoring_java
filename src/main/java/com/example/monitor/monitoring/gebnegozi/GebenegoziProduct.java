@@ -12,7 +12,12 @@ import lombok.experimental.SuperBuilder;
 public class GebenegoziProduct extends MonitoringProduct {
 
 
+    private String imageSrc;
+    private String season;
     @Setter
     private String category;
 
+    public void updateImageUrl(String imageSrc) {
+        this.imageSrc = imageSrc;
+    }
 }

@@ -3,6 +3,7 @@ package com.example.monitor.infra.discord;
 import com.example.monitor.chrome.ChromeDriverToolFactory;
 import com.example.monitor.monitoring.biffi.BiffiProduct;
 import com.example.monitor.monitoring.dobulef.DoubleFProduct;
+import com.example.monitor.monitoring.gebnegozi.GebenegoziProduct;
 import com.example.monitor.monitoring.julian.JulianProduct;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -121,6 +122,30 @@ public class DiscordBot extends ListenerAdapter {
         textChannel.sendMessageEmbeds(embed.build()).queue();
         textChannel.sendMessage(biffiProduct.getSku()).queue(); // 품번도 같이 전송
 
+    }
+
+    public void sendNewProductInfo(Long channelId, GebenegoziProduct gebenegoziProduct) {
+
+        final TextChannel textChannel = jda.getTextChannelById(channelId);
+        assert (textChannel != null);
+
+        // Embed 생성
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("새 상품 알림!");
+        embed.setDescription(
+                "상품 카테고리 : " + gebenegoziProduct.getSeason() + "\n" +
+                        "상품품번 : " + gebenegoziProduct.getSku() + "\n" +
+                        "상품브랜드 : " + gebenegoziProduct.getBrandName() + "/" + gebenegoziProduct.getCategory()+ "\n\n" +
+                        "가격정보 \n" + gebenegoziProduct.getPrice() + "\n\n" +
+                        "원산지 " + gebenegoziProduct.getMadeBy());
+        embed.setColor(Color.DARK_GRAY); // Embed 색상 설정
+
+        embed.addField("사이트 바로가기", "[Gebene 상세페이지 바로가기](" + gebenegoziProduct.getProductLink() + ")", false); // false는 필드가 인라인으로 표시되지 않도록 설정합니다.
+
+        // 이미지 추가
+        embed.setImage(gebenegoziProduct.getImageSrc()); // 웹 이미지 사용
+        textChannel.sendMessageEmbeds(embed.build()).queue();
+        textChannel.sendMessage(gebenegoziProduct.getSku()).queue(); // 품번도 같이 전송
     }
 
     public void sendNewProductInfo(Long channelId, JulianProduct julianProduct) {

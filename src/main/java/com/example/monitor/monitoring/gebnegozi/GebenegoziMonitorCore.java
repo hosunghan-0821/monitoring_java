@@ -7,6 +7,7 @@ import com.amazonaws.services.s3.model.PutObjectResult;
 import com.example.monitor.chrome.ChromeDriverTool;
 import com.example.monitor.file.ProductFileWriter;
 import com.example.monitor.infra.converter.controller.IConverterFacade;
+import com.example.monitor.infra.converter.dto.ConvertProduct;
 import com.example.monitor.infra.discord.DiscordBot;
 import com.example.monitor.infra.s3.S3UploaderService;
 import com.example.monitor.monitoring.dobulef.DoubleFBrandHashData;
@@ -35,10 +36,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+import static com.example.monitor.infra.discord.DiscordString.DOUBLE_F_NEW_PRODUCT_CHANNEL;
+import static com.example.monitor.infra.discord.DiscordString.GEBENE_NEW_PRODUCT_CHANNEL;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.*;
 import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.*;
 
@@ -74,10 +77,104 @@ public class GebenegoziMonitorCore {
         ChromeDriver driver = chromeDriverTool.getChromeDriver();
         WebDriverWait wait = chromeDriverTool.getWebDriverWait();
 
+        String[] urlList = getUrlList();
+
         login(driver, wait);
-        loadData(driver, wait, GebenegoziProdcutFindString.GEBE_URL_LIST);
+
+        loadData(driver, wait, GEBE_URL_LIST);
 
         chromeDriverTool.isLoadData(true);
+    }
+
+
+    public void runFindProductLogic(ChromeDriverTool chromeDriverTool) {
+
+        ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
+        WebDriverWait wait = chromeDriverTool.getWebDriverWait();
+
+
+        if (!chromeDriverTool.isLoadData() || !chromeDriverTool.isRunning()) {
+            log.error(GEBENE_LOG_PREFIX + "Data Load or isRunning OFF");
+            return;
+        }
+        log.info(GEBENE_LOG_PREFIX + "GEBENE FIND NEW PRODUCT START");
+
+        List<GebenegoziProduct> gebenegoziProductList = findDifferentAndAlarm(chromeDriver, wait, GEBE_URL_LIST);
+
+        log.info(GEBENE_LOG_PREFIX + "GEBENE FIND NEW PRODUCT FINISH");
+
+        //검색 모듈로 전달은 나중에..
+//        if (!gebenegoziProductList.isEmpty()) {
+//            List<ConvertProduct> convertProductList = doubleFProductList.stream()
+//                    .map(v -> v.changeToConvertProduct(DOUBLE_F))
+//                    .collect(Collectors.toList());
+//            iConverterFacade.convertProduct(convertProductList);
+//            iConverterFacade.sendToSearchServer(convertProductList);
+//        }
+
+    }
+
+    public List<GebenegoziProduct> findDifferentAndAlarm(ChromeDriver driver, WebDriverWait wait, String[][] brandDataList) {
+        List<GebenegoziProduct> findGebeneProductList = new ArrayList<>();
+
+        HashSet<String> productKeySet = gebenegoziBrandHashData.getProductKeySet();
+
+        for (int i = 0; i < brandDataList.length; i++) {
+            String url = brandDataList[i][2];
+            String category = brandDataList[i][1];
+
+            Map<String, GebenegoziProduct> eachBrandHashMap = gebenegoziBrandHashData.getBrandHashMap(url);
+
+            List<GebenegoziProduct> pageProductDataList = getPageProductDataOrNull(driver, wait, url, category);
+
+            if (pageProductDataList == null) {
+                continue;
+            }
+            log.info("총 개수 " + pageProductDataList.size());
+
+
+            for (GebenegoziProduct product : pageProductDataList) {
+                if (!eachBrandHashMap.containsKey(getGebeneProductKey(product))) {
+                    if (!productKeySet.contains(getGebeneProductKey(product))) {
+                        log.info(GEBENE_LOG_PREFIX + "새로운 제품" + product);
+                        //이미지 다운로드 내 S3 대입
+//                    String cookie = driver.manage().getCookieNamed("JSESSIONID").getValue();
+//                    File file = downloadImageOrNull(product.getImageSrc(), cookie);
+//
+//                    if (file != null) {
+//                        String uploadUrl = s3UploaderService.uploadImage(file, file.getName());
+//                        product.updateImageUrl(uploadUrl);
+//                    } else {
+//                        product.updateImageUrl(null);
+//                    }
+
+                        discordBot.sendNewProductInfo(GEBENE_NEW_PRODUCT_CHANNEL, product);
+//                    productFileWriter.writeProductInfo(product.changeToProductFileInfo(DOUBLE_F, NEW_PRODUCT));
+
+                        findGebeneProductList.add(product);
+                        productKeySet.add(getGebeneProductKey(product));
+                    } else {
+                        log.error(GEBENE_LOG_PREFIX + "상품 중복 " + product);
+                    }
+
+                }
+            }
+
+            if (pageProductDataList.size() > 0) {
+                eachBrandHashMap.clear();
+                for (var product : pageProductDataList) {
+                    if (eachBrandHashMap.containsKey(getGebeneProductKey(product))) {
+                        // log.info(GEBENE_LOG_PREFIX + "id 중복 " + product);
+                        continue;
+                    }
+                    productKeySet.add(getGebeneProductKey(product));
+                    eachBrandHashMap.put(getGebeneProductKey(product), product);
+                }
+                log.info(pageProductDataList.get(0).getBrandName() + " total product" + eachBrandHashMap.size());
+            }
+
+        }
+        return findGebeneProductList;
     }
 
 
@@ -104,70 +201,166 @@ public class GebenegoziMonitorCore {
 
     }
 
-    public void loadData(ChromeDriver driver, WebDriverWait wait, String[] urlList) {
+    public void loadData(ChromeDriver driver, WebDriverWait wait, String[][] urlList) {
         //데이터 정보조회
+        for (String[] data : urlList) {
+            String url = data[2];
+            String category = data[1];
 
-        for (int i = 0; i < urlList.length; i++) {
-            String url = urlList[i];
-            driver.get(url);
+            Map<String, GebenegoziProduct> eachBrandHashMap = gebenegoziBrandHashData.getBrandHashMap(url);
+            HashSet<String> productKeySet = gebenegoziBrandHashData.getProductKeySet();
 
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@class='card-body']")));
-            String pattern = "\\S"; // 공백이 아닌 문자에 대한 패턴
-            Pattern p = Pattern.compile(pattern);
-            try {
-                wait.until(ExpectedConditions.textMatches(By.xpath("//div[@class='row title font-italic text-capitalize artPrezzi']//div[@class='col-5']"), p));
-            } catch (Exception e) {
-                log.error("**확인요망** 상품없음 url = " + url);
-                continue;
+            List<GebenegoziProduct> pageProductDataList = getPageProductDataOrNull(driver, wait, url, category);
+
+            if (pageProductDataList != null && !pageProductDataList.isEmpty()) {
+                log.info("총 개수:" + pageProductDataList.size());
+                for (var product : pageProductDataList) {
+                    if (eachBrandHashMap.containsKey(getGebeneProductKey(product))) {
+                        log.info(GEBENE_LOG_PREFIX + "id 중복 " + product);
+                        continue;
+                    }
+                    eachBrandHashMap.put(getGebeneProductKey(product), product);
+                    productKeySet.add(getGebeneProductKey(product));
+                }
+                log.info(pageProductDataList.get(0).getBrandName() + " total product" + eachBrandHashMap.size());
+
             }
 
-            WebElement pageElement = driver.findElement(By.xpath("//a[@class='page-link']"));
-            System.out.println(pageElement.getText());
-            int finalPage = pageElement.getText().charAt(pageElement.getText().length() - 1) - '0';
-            System.out.println("막페이지 : " + finalPage);
+        }
 
-            for (int j = 1; j <= finalPage; j++) {
-                driver.get(url);
+    }
 
-                wait.until(ExpectedConditions.textMatches(By.xpath("//div[@class='row title font-italic text-capitalize artPrezzi']//div[@class='col-5']"), p));
+    public List<GebenegoziProduct> getPageProductDataOrNull(ChromeDriver driver, WebDriverWait wait, String url, String category) {
 
-                List<WebElement> elements = driver.findElements(By.xpath("//div[@class='shopping-cart mb-3']"));
+        List<GebenegoziProduct> pageProductList = new ArrayList<>();
+        String pattern = "\\S";
+        Pattern p = Pattern.compile(pattern);
+
+        //해당 브랜드 사전 정보 캐치
+        driver.get(url);
+
+        try {
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@class='card-body']")));
+        } catch (Exception e) {
+            log.error(GEBENE_LOG_PREFIX + "logout Redirection  or FIND PRODUCT ERROR");
+            login(driver, wait);
+            return null;
+        }
 
 
-                for (WebElement productElement : elements) {
+        boolean isValidPage = false;
+        isValidPage = isValidPage(driver, wait, p, url);
+        if (!isValidPage) {
+            log.error("**확인요망** 페이지 오류 확인 url" + url);
+            return null;
+        }
 
-                    //이미지정보
+        //finalPage 찾기.
+        WebElement pageElement = driver.findElement(By.xpath("//a[@class='page-link']"));
+        int finalPage = Integer.parseInt(pageElement.getText().split("of")[1].strip());
+
+        log.info("finalPage" + finalPage);
+        for (int j = 1; j <= finalPage; j++) {
+            driver.get(url);
+
+            isValidPage = false;
+            isValidPage = isValidPage(driver, wait, p, url);
+            if (!isValidPage) {
+                log.error("**확인요망** 페이지 오류 확인 url" + url);
+                return null;
+            }
+
+            List<WebElement> elements = driver.findElements(By.xpath("//div[@class='shopping-cart mb-3']"));
+
+            for (WebElement productElement : elements) {
+
+                try {
+
+                    //상품정보
+                    WebElement infoElement = productElement.findElement(By.xpath(".//div[@class='row title font-italic text-capitalize artPrezzi']"));
+                    List<WebElement> dataList = infoElement.findElements(By.xpath(".//div[@class='col-5']"));
+                    List<WebElement> madeByList = infoElement.findElements(By.xpath(".//div[@class='col-3']"));
+                    WebElement priceInfo = infoElement.findElement(By.xpath(".//div[@class='col-3']//span"));
+
+                    String id = null;
                     try {
-                        //String imageSrc = findImageSrc(driver, wait, productElement);
-//                        String cookie = driver.manage().getCookieNamed("JSESSIONID").getValue();
-//                        downloadImage(imageSrc, cookie);
-
-                        //상품정보
-                        WebElement infoElement = productElement.findElement(By.xpath(".//div[@class='row title font-italic text-capitalize artPrezzi']"));
-                        List<WebElement> dataList = infoElement.findElements(By.xpath(".//div[@class='col-5']"));
-                        List<WebElement> madeByList = infoElement.findElements(By.xpath(".//div[@class='col-3']"));
-                        WebElement priceInfo = infoElement.findElement(By.xpath(".//div[@class='col-3']//span"));
-
-                        String brand = dataList.get(0).getText();
-                        String sku = dataList.get(1).getText();
-                        String season = dataList.get(2).getText();
-                        String finalPrice = priceInfo.getText();
-                        String madeBy = madeByList.get(1).getText();
-
-                        //TO-DO Product 만들고 저장 및 Discord 발송
-                        log.info("{},\t{},\t{},\t{},\t{},\t{}", brand, sku, season, finalPrice, madeBy);
+                        WebElement idInfo = productElement.findElement(By.xpath(".//div[@class='artCod']"));
+                        id = idInfo.getAttribute("id");
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        log.error("상품 정보 조회 오류 url =" + url);
+                        log.error(GEBENE_LOG_PREFIX + "id 검색 오류 url=" + url);
                         continue;
                     }
 
+                    //page 버그 수정..
+                    pageElement = driver.findElement(By.xpath("//a[@class='page-link']"));
+                    int tempPage = Integer.parseInt(pageElement.getText().split("of")[1].strip());
+
+                    if (tempPage > finalPage) {
+                        finalPage = tempPage;
+                        log.info(GEBENE_LOG_PREFIX + " final page 오류로 인해 변경 로그 확인");
+                    }
+
+                    String brand = dataList.get(0).getText();
+                    String sku = dataList.get(1).getText();
+                    sku = sku.replace(" ", "");
+                    String season = dataList.get(2).getText();
+                    String finalPrice = priceInfo.getText();
+                    String madeBy = madeByList.get(2).getText();
+
+
+                    //이미지 정보
+                    String imageSrc = null;
+                    try {
+                        imageSrc = findImageSrc(driver, wait, productElement);
+                    } catch (Exception e) {
+                        log.error(GEBENE_LOG_PREFIX + "이미지 경로 찾기 실패 sku" + sku + " url" + url);
+                    }
+
+                    GebenegoziProduct product = GebenegoziProduct.builder()
+                            .brandName(brand)
+                            .sku(sku)
+                            .season(season)
+                            .madeBy(madeBy)
+                            .price(finalPrice)
+                            .productLink(url)
+                            .imageSrc(imageSrc)
+                            .category(category)
+                            .id(id)
+                            .build();
+
+                    pageProductList.add(product);
+                    //log.info("id = {},\t sku = {}\t \t brand = {}\t  season = {}\t finalPrice ={}\t madeBy = {}\t product link = {}", id, sku, brand, season, finalPrice, madeBy, url);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    log.error("상품 정보 조회 오류 url =" + url);
                 }
-                //url 변경
-                url = url.replace("n=" + j, "n=" + (j + 1));
+
             }
+            log.info("page = " + j + " 상품 개수 =" + elements.size());
+            //url 변경
+            url = url.replace("n=" + j, "n=" + (j + 1));
         }
 
+        return pageProductList;
+    }
+
+
+    private boolean isValidPage(ChromeDriver driver, WebDriverWait wait, Pattern p, String url) {
+        boolean isValidPage = false;
+        for (int k = 0; k < 5; k++) {
+            try {
+                wait.until(ExpectedConditions.textMatches(By.xpath("//div[@class='row title font-italic text-capitalize artPrezzi']//div[@class='col-5']"), p));
+                isValidPage = true;
+                break;
+            } catch (Exception e) {
+                //페이지 오류땜에..
+                driver.get(url);
+                if (k == 4) {
+                    break;
+                }
+            }
+        }
+        return isValidPage;
     }
 
     private String findImageSrc(ChromeDriver driver, WebDriverWait wait, WebElement productElement) {
@@ -180,7 +373,6 @@ public class GebenegoziMonitorCore {
         wait.until(ExpectedConditions.attributeToBeNotEmpty(imageElement, "src"));
         imageElement = productElement.findElement(By.xpath(".//img[@class='zoom lozad']"));
         String imageSrc = imageElement.getAttribute("src");
-        log.info(imageSrc);
 
 
         return imageSrc;
@@ -213,17 +405,25 @@ public class GebenegoziMonitorCore {
 
         return file;
         //내 서버에 이미지 올립니다.
-//        s3UploaderService.uploadImage(file, fileName);
+
 
     }
 
     @NotNull
-    private static String getFileNameByTimeFormat() {
+    public static String getFileNameByTimeFormat() {
         // 현재 날짜와 시간 가져오기
         LocalDateTime currentDateTime = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm:ss.SSS");
         return currentDateTime.format(formatter) + ".jpg";
     }
 
+    private String[] getUrlList() {
+        List<String> collect = Arrays.stream(GEBE_URL_LIST).map(v -> v[1]).toList();
+        return collect.toArray(new String[collect.size()]);
+    }
+
+    private String getGebeneProductKey(GebenegoziProduct product) {
+        return product.getId() + product.getSku();
+    }
 
 }
