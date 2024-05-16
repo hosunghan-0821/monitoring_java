@@ -122,11 +122,11 @@ class DoubleFMonitorCoreIntegrationTest {
 
 
         for (DoubleFProduct doubleFProduct : findProductList) {
-            assertThat(doubleFProduct.getSku()).isNotNull();
-            assertThat(doubleFProduct.getProductLink()).isNotNull();
-            assertThat(doubleFProduct.getName()).isNotNull();
-            assertThat(doubleFProduct.getPrice()).isNotNull();
-            assertThat(doubleFProduct.getColorCode()).isNotNull();
+            assertThat(doubleFProduct.getSku()).isNotNull().isNotBlank();
+            assertThat(doubleFProduct.getProductLink()).isNotNull().isNotBlank();
+            assertThat(doubleFProduct.getName()).isNotNull().isNotBlank();
+            assertThat(doubleFProduct.getPrice()).isNotNull().isNotBlank();
+            assertThat(doubleFProduct.getColorCode()).isNotNull().isNotBlank();
             assertThat(brandHashMap.containsKey(doubleFProduct.getId())).isEqualTo(true);
         }
 

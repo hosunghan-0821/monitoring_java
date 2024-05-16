@@ -107,7 +107,7 @@ public class GebenegoziProdcutFindString {
 
             {"NEW BALANCE","SHOES",                     "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57&lde=95&is=3&ir=8&ci=0&m=&s=0&n=1"},
             {"NEW BALANCE","SHOES",                     "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57&lde=95&is=1&ir=8&ci=0&m=&s=0&n=1"},
-          //  {"NEW BALANCE","SHOES",                     "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57&lde=95&is=3&ir=8&ci=0&m=&s=0&n=1"},
+            {"NEW BALANCE","SHOES",                     "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57&lde=95&is=2&ir=8&ci=0&m=&s=0&n=1"},
 
             {"NIKE","SHOES",                            "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57&lde=608&is=3&ir=8&ci=0&m=&s=0&n=1"},
 

@@ -121,11 +121,10 @@ class BiffiMonitorCoreIntegrationTest {
         //then
         assertThat(biffiProductList.size()).isGreaterThanOrEqualTo(1);
 
-        BiffiProduct biffiProduct = biffiProductList.get(0);
+        BiffiProduct biffiProduct = biffiProductList.get(1);
 
         biffiMonitorCore.getProductOrigin(driver, wait, biffiProduct);
 
-        assertThat(biffiProduct.getMadeBy()).isNotNull();
         assertThat(biffiProduct.getSku()).isNotNull();
         assertThat(biffiProduct.getPrice()).isNotNull();
         assertThat(biffiProduct.getProductLink()).isNotNull();

@@ -107,7 +107,7 @@ public class BiffiMonitorCore {
         if (elements.size() >= 3) {
             biffiProduct.updateMadeBy(elements.get(2).text());
         } else {
-            log.error("**page 확인 요망**" + biffiProduct.getProductLink());
+            log.error("** made by 없음 page 확인 요망**" + biffiProduct.getProductLink());
         }
 
 
@@ -163,13 +163,25 @@ public class BiffiMonitorCore {
             for (WebElement productElement : productElements) {
                 try {
                     String id = productElement.getAttribute(ID_ATTRIBUTE);
+                    String discountPercentage = "0";
+                    String finalPrice = null;
 
-                    WebElement salesPercent = productElement.findElement(By.xpath(SALES_PERCENT_XPATH));
-                    String discountPercentage = salesPercent.getText().strip();
+                    try {
+                        WebElement salesPercent = productElement.findElement(By.xpath(SALES_PERCENT_XPATH));
+                        discountPercentage = salesPercent.getText().strip();
+                    } catch (Exception e) {
 
+                        log.error("상품 할인정보 없음 id = " + id);
+                    }
 
-                    WebElement price = productElement.findElement(By.xpath(PRICE_ELMENT_XPATH));
-                    String finalPrice = price.getText();
+                    try{
+                        WebElement price = productElement.findElement(By.xpath(PRICE_ELMENT_XPATH));
+                        finalPrice = price.getText();
+                    }catch (Exception e){
+                        log.error("**확인요망** 상품스킵 가격 정보 없음 id = " +id + " url = "+ url);
+                        continue;
+                    }
+
                     double finalPriceDouble = changePriceToDouble(finalPrice);
                     WebElement detailLink = productElement.findElement(By.xpath(DETAIL_LINK_XPATH));
                     String productDetailLink = detailLink.getAttribute(HREF);
@@ -246,9 +258,8 @@ public class BiffiMonitorCore {
                 if (!eachBrandHashMap.containsKey(biffiProduct.getSku())) {
                     //새로운 제품일 경우
                     if (!productKeySet.contains(biffiProduct.getSku())) {
-                        log.info(BIFFI_LOG_PREFIX + "새로운 제품" + biffiProduct);
-
                         getProductOrigin(chromeDriver, wait, biffiProduct);
+                        log.info(BIFFI_LOG_PREFIX + "새로운 제품" + biffiProduct);
                         discordBot.sendNewProductInfo(BIFFI_NEW_PRODUCT_CHANNEL, biffiProduct, biffiBrandUrlList[i]);
                         findBiffiProductList.add(biffiProduct);
 

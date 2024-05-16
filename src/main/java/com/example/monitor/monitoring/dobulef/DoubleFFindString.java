@@ -86,7 +86,7 @@ public class DoubleFFindString {
     //프로덕트
     public static final String TOP_DIV_XPATH = "//div[@class='grid grid-cols-4 gap-5 md:gap-4 md:gap-y-16 md:grid-cols-12 lg:gap-5-5 opacity-100 transition-opacity duration-500 items-container items-stretch']";
 
-    public static final String  PRODUCT_NAME_XPATH =".//h4[@class='product-card__name truncate ... font-light text-xs tracking-1-08 leading-snug mb-5px']";
+    public static final String  PRODUCT_NAME_XPATH =".//h2[@class='product-card__name truncate ... font-light text-xs tracking-1-08 leading-snug mb-5px']";
 
     public static final String PRODUCT_DISCOUNT_XPATH =".//div[@class='product-card__discount absolute z-5 top-0 left-0 font-medium tracking-0-12 leading-8 text-white text-4xs h-5-5 px-5px bg-primary lg:tracking-0-15 lg:leading-10 lg:text-2xs lg:h-6 lg:px-10px']//span";
 

@@ -202,6 +202,8 @@ public class DoubleFMonitorCore {
                 WebElement discountPercentage = product.findElement(By.xpath(PRODUCT_DISCOUNT_XPATH));
                 productDiscountPercentage = discountPercentage.getText();
             } catch (Exception e) {
+                log.error(DOUBLE_F_LOG_PREFIX + "** 확인요망 **" + productDiscountPercentage + "의 상품에 할인율 없습니다. 홈페이지 및 프로그램 확인 바랍니다.");
+
             }
 
             // 상품 가격 정보
@@ -218,7 +220,7 @@ public class DoubleFMonitorCore {
             }
             // 상품 링크 정보
             try {
-                WebElement webElement = product.findElement(By.xpath(".//h4[@class='product-card__name truncate ... font-light text-xs tracking-1-08 leading-snug mb-5px']//a"));
+                WebElement webElement = product.findElement(By.xpath(".//h2[@class='product-card__name truncate ... font-light text-xs tracking-1-08 leading-snug mb-5px']//a"));
                 productLink = webElement.getAttribute("href");
                 String tempLink = productLink;
                 // https://www.thedoublef.com/bu_en/light-blue-denim-over-shirt-acne-cb0070co-o-acne-228/
