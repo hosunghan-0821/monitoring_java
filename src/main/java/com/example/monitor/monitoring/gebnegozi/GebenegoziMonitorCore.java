@@ -1,23 +1,15 @@
 package com.example.monitor.monitoring.gebnegozi;
 
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectResult;
 import com.example.monitor.chrome.ChromeDriverTool;
 import com.example.monitor.file.ProductFileWriter;
 import com.example.monitor.infra.converter.controller.IConverterFacade;
-import com.example.monitor.infra.converter.dto.ConvertProduct;
 import com.example.monitor.infra.discord.DiscordBot;
 import com.example.monitor.infra.s3.S3UploaderService;
-import com.example.monitor.monitoring.dobulef.DoubleFBrandHashData;
-import com.example.monitor.monitoring.dobulef.DoubleFProduct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
@@ -38,9 +30,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
-import static com.example.monitor.infra.discord.DiscordString.DOUBLE_F_NEW_PRODUCT_CHANNEL;
 import static com.example.monitor.infra.discord.DiscordString.GEBENE_NEW_PRODUCT_CHANNEL;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.*;
 import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.*;
@@ -130,29 +120,33 @@ public class GebenegoziMonitorCore {
             if (pageProductDataList == null) {
                 continue;
             }
-            log.info("총 개수 " + pageProductDataList.size());
 
 
             for (GebenegoziProduct product : pageProductDataList) {
                 if (!eachBrandHashMap.containsKey(getGebeneProductKey(product))) {
                     if (!productKeySet.contains(getGebeneProductKey(product))) {
                         log.info(GEBENE_LOG_PREFIX + "새로운 제품" + product);
-                        //이미지 다운로드 내 S3 대입
-//                    String cookie = driver.manage().getCookieNamed("JSESSIONID").getValue();
-//                    File file = downloadImageOrNull(product.getImageSrc(), cookie);
-//
-//                    if (file != null) {
-//                        String uploadUrl = s3UploaderService.uploadImage(file, file.getName());
-//                        product.updateImageUrl(uploadUrl);
-//                    } else {
-//                        product.updateImageUrl(null);
-//                    }
+
+                        //이미지 다운로드 내 S3 대입 상태확인
+                        if (s3UploaderService.isAllowedUpload()) {
+                            String cookie = driver.manage().getCookieNamed("JSESSIONID").getValue();
+                            File file = downloadImageOrNull(product.getImageSrc(), cookie);
+
+                            if (file != null) {
+                                String fileName = getGebeneProductKey(product) + ".jpg";
+                                String uploadUrl = s3UploaderService.uploadImageOrNull(file, fileName);
+                                product.updateImageUrl(uploadUrl);
+                            }
+                        } else {
+                            product.updateImageUrl(null);
+                        }
 
                         discordBot.sendNewProductInfo(GEBENE_NEW_PRODUCT_CHANNEL, product);
-//                    productFileWriter.writeProductInfo(product.changeToProductFileInfo(DOUBLE_F, NEW_PRODUCT));
-
                         findGebeneProductList.add(product);
                         productKeySet.add(getGebeneProductKey(product));
+
+                        productFileWriter.writeProductInfo(product.changeToProductFileInfo(GEBE, NEW_PRODUCT));
+
                     } else {
                         log.error(GEBENE_LOG_PREFIX + "상품 중복 " + product);
                     }
@@ -170,7 +164,6 @@ public class GebenegoziMonitorCore {
                     productKeySet.add(getGebeneProductKey(product));
                     eachBrandHashMap.put(getGebeneProductKey(product), product);
                 }
-                log.info(pageProductDataList.get(0).getBrandName() + " total product" + eachBrandHashMap.size());
             }
 
         }
@@ -213,7 +206,7 @@ public class GebenegoziMonitorCore {
             List<GebenegoziProduct> pageProductDataList = getPageProductDataOrNull(driver, wait, url, category);
 
             if (pageProductDataList != null && !pageProductDataList.isEmpty()) {
-                log.info("총 개수:" + pageProductDataList.size());
+
                 for (var product : pageProductDataList) {
                     if (eachBrandHashMap.containsKey(getGebeneProductKey(product))) {
                         log.info(GEBENE_LOG_PREFIX + "id 중복 " + product);
@@ -222,7 +215,6 @@ public class GebenegoziMonitorCore {
                     eachBrandHashMap.put(getGebeneProductKey(product), product);
                     productKeySet.add(getGebeneProductKey(product));
                 }
-                log.info(pageProductDataList.get(0).getBrandName() + " total product" + eachBrandHashMap.size());
 
             }
 
@@ -259,7 +251,6 @@ public class GebenegoziMonitorCore {
         WebElement pageElement = driver.findElement(By.xpath("//a[@class='page-link']"));
         int finalPage = Integer.parseInt(pageElement.getText().split("of")[1].strip());
 
-        log.info("finalPage" + finalPage);
         for (int j = 1; j <= finalPage; j++) {
             driver.get(url);
 
@@ -302,7 +293,6 @@ public class GebenegoziMonitorCore {
 
                     String brand = dataList.get(0).getText();
                     String sku = dataList.get(1).getText();
-                    sku = sku.replace(" ", "");
                     String season = dataList.get(2).getText();
                     String finalPrice = priceInfo.getText();
                     String madeBy = madeByList.get(2).getText();
@@ -336,7 +326,6 @@ public class GebenegoziMonitorCore {
                 }
 
             }
-            log.info("page = " + j + " 상품 개수 =" + elements.size());
             //url 변경
             url = url.replace("n=" + j, "n=" + (j + 1));
         }

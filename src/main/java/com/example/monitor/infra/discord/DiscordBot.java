@@ -1,6 +1,7 @@
 package com.example.monitor.infra.discord;
 
 import com.example.monitor.chrome.ChromeDriverToolFactory;
+import com.example.monitor.infra.s3.S3UploaderService;
 import com.example.monitor.monitoring.biffi.BiffiProduct;
 import com.example.monitor.monitoring.dobulef.DoubleFProduct;
 import com.example.monitor.monitoring.gebnegozi.GebenegoziProduct;
@@ -22,13 +23,12 @@ import org.springframework.stereotype.Component;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.example.monitor.infra.discord.DiscordString.*;
 import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F;
+import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.GEBE;
 import static com.example.monitor.monitoring.julian.JulianFindString.ALL_CATEGORIES;
 import static com.example.monitor.monitoring.julian.JulianFindString.PROMO;
 
@@ -42,6 +42,8 @@ public class DiscordBot extends ListenerAdapter {
     private final DiscordMessageProcessor discordMessageProcessor;
 
     private ChromeDriverToolFactory chromeDriverToolFactory;
+
+    private S3UploaderService s3UploaderService;
     private JDA jda;
 
 
@@ -64,10 +66,6 @@ public class DiscordBot extends ListenerAdapter {
 
         List<TextChannel> textChannels = jda.getTextChannels();
 
-    }
-
-    public void setChromeDriverTool(ChromeDriverToolFactory chromeDriverToolFactory) {
-        this.chromeDriverToolFactory = chromeDriverToolFactory;
     }
 
 
@@ -95,6 +93,12 @@ public class DiscordBot extends ListenerAdapter {
             returnMessage = discordMessageProcessor.responseServerRunningOrNull(DOUBLE_F, event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F));
         } else if (channelId.equals(BIFFI_DISCOUNT_CHANNEL) || channelId.equals(BIFFI_NEW_PRODUCT_CHANNEL)) {
             returnMessage = discordMessageProcessor.responseServerRunningOrNull(BIFFI, event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(BIFFI));
+        } else if (channelId.equals(GEBENE_NEW_PRODUCT_CHANNEL)) {
+            if (event.getMessage().getContentDisplay().contains("!upload")) {
+                returnMessage = discordMessageProcessor.responseServerRunningS3ServiceOrNull(event.getMessage().getContentDisplay(), s3UploaderService);
+            } else {
+                returnMessage = discordMessageProcessor.responseServerRunningOrNull(GEBE, event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(GEBE));
+            }
         }
 
         if (returnMessage != null) {
@@ -135,7 +139,7 @@ public class DiscordBot extends ListenerAdapter {
         embed.setDescription(
                 "상품 카테고리 : " + gebenegoziProduct.getSeason() + "\n" +
                         "상품품번 : " + gebenegoziProduct.getSku() + "\n" +
-                        "상품브랜드 : " + gebenegoziProduct.getBrandName() + "/" + gebenegoziProduct.getCategory()+ "\n\n" +
+                        "상품브랜드 : " + gebenegoziProduct.getBrandName() + "/" + gebenegoziProduct.getCategory() + "\n\n" +
                         "가격정보 \n" + gebenegoziProduct.getPrice() + "\n\n" +
                         "원산지 " + gebenegoziProduct.getMadeBy());
         embed.setColor(Color.DARK_GRAY); // Embed 색상 설정
@@ -244,6 +248,14 @@ public class DiscordBot extends ListenerAdapter {
 
         textChannel.sendMessageEmbeds(embed.build()).queue();
         textChannel.sendMessage(doubleFProduct.getSku() + " " + doubleFProduct.getColorCode()).queue();
+    }
+
+    public void setS3UploaderService(S3UploaderService s3UploaderService) {
+        this.s3UploaderService = s3UploaderService;
+    }
+
+    public void setChromeDriverTool(ChromeDriverToolFactory chromeDriverToolFactory) {
+        this.chromeDriverToolFactory = chromeDriverToolFactory;
     }
 
 }

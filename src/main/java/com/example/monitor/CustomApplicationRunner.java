@@ -7,6 +7,7 @@ import com.example.monitor.file.ProductFileWriter;
 import com.example.monitor.file.ProductFileWriterImpl;
 import com.example.monitor.infra.converter.controller.IConverterFacade;
 import com.example.monitor.infra.discord.DiscordBot;
+import com.example.monitor.infra.s3.S3UploaderService;
 import com.example.monitor.infra.sender.ProductSenderImpl;
 import com.example.monitor.monitoring.biffi.BiffiFindString;
 import com.example.monitor.monitoring.biffi.BiffiMonitorCore;
@@ -63,6 +64,8 @@ public class CustomApplicationRunner implements ApplicationRunner {
 
     private final DiscordBot discordBot;
 
+    private final S3UploaderService s3UploaderService;
+
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -73,6 +76,7 @@ public class CustomApplicationRunner implements ApplicationRunner {
         chromeDriverToolFactory.makeChromeDriverTool(BIFFI);
         chromeDriverToolFactory.makeChromeDriverTool(GEBE);
         discordBot.setChromeDriverTool(chromeDriverToolFactory);
+        discordBot.setS3UploaderService(s3UploaderService);
 
 
         Thread gebeneThread = new Thread(new Runnable() {
