@@ -202,8 +202,7 @@ public class DoubleFMonitorCore {
                 WebElement discountPercentage = product.findElement(By.xpath(PRODUCT_DISCOUNT_XPATH));
                 productDiscountPercentage = discountPercentage.getText();
             } catch (Exception e) {
-                log.error(DOUBLE_F_LOG_PREFIX + "** 확인요망 **" + productDiscountPercentage + "의 상품에 할인율 없습니다. 홈페이지 및 프로그램 확인 바랍니다.");
-
+                //log.error(DOUBLE_F_LOG_PREFIX + "** 확인요망 **" + productDiscountPercentage + "의 상품에 할인율 없습니다. 홈페이지 및 프로그램 확인 바랍니다.");
             }
 
             // 상품 가격 정보
