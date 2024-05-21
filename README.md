@@ -19,7 +19,10 @@
 - 해외의 여러 부띠끄 사이트의 상품 가격 및 할인율 모니터링하는 프로그램입니다. 
 - 가격 및 할인율이 변경될 경우, 디스코드 봇을 통해 알림을 보냅니다.
 - 가격 및 할인율이 변동되었을 떄, 크림(국내 리셀 플랫폼)에 품번을 검색해 설정한 마진율이 높을 경우 디스코드 알람을 보냅니다.
-
+<br>
+- 하위 그림들은 모니터링 결과와 비교리포트 이빈다.
+<img width="934" alt="image" src="https://github.com/hosunghan-0821/monitoring_java/assets/79980357/0290427f-29a0-489b-bf58-bed27fff2a1c">
+<img width="949" alt="image" src="https://github.com/hosunghan-0821/monitoring_java/assets/79980357/a448bf6d-463b-4627-b29a-00d01edebb74">
 
 # Application 구조 
 <img width="1355" alt="image" src="https://github.com/hosunghan-0821/monitoring_java/assets/79980357/6b371a3b-0c0e-4149-a24f-5daab6e02de2">
