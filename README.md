@@ -1,4 +1,4 @@
-# Monitoring Application with Crawling
+# Monitoring Application
 
 # Intro
 - 위 어플리케이션은 2개의 프로젝트로 구성되었습니다. 
