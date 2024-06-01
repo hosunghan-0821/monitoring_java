@@ -17,6 +17,11 @@ public class GebenegoziProduct extends MonitoringProduct {
     @Setter
     private String category;
 
+    private String wholeSaleOrigin;
+    private String wholeSale;
+    private int wholeSalePercent;
+    private boolean isColored;
+
     public void updateImageUrl(String imageSrc) {
         this.imageSrc = imageSrc;
     }

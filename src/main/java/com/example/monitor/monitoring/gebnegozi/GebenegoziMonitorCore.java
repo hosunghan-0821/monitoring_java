@@ -67,7 +67,6 @@ public class GebenegoziMonitorCore {
         ChromeDriver driver = chromeDriverTool.getChromeDriver();
         WebDriverWait wait = chromeDriverTool.getWebDriverWait();
 
-        String[] urlList = getUrlList();
 
         login(driver, wait);
 
@@ -197,6 +196,7 @@ public class GebenegoziMonitorCore {
     public void loadData(ChromeDriver driver, WebDriverWait wait, String[][] urlList) {
         //데이터 정보조회
         for (String[] data : urlList) {
+            String brand = data[0];
             String url = data[2];
             String category = data[1];
 
@@ -272,8 +272,19 @@ public class GebenegoziMonitorCore {
                     List<WebElement> dataList = infoElement.findElements(By.xpath(".//div[@class='col-5']"));
                     List<WebElement> madeByList = infoElement.findElements(By.xpath(".//div[@class='col-3']"));
                     WebElement priceInfo = infoElement.findElement(By.xpath(".//div[@class='col-3']//span"));
+                    List<WebElement> wholeSaleInfoList = infoElement.findElements(By.xpath(".//div[@class='col-3']"));
 
                     String id = null;
+                    String wholeSaleOrigin = "0.0";
+                    String wholeSale = "0.0";
+                    int wholeSalePercent = 0;
+                    String brand = dataList.get(0).getText();
+                    String sku = dataList.get(1).getText();
+                    String season = dataList.get(2).getText();
+                    String finalPrice = priceInfo.getText();
+                    String madeBy = madeByList.get(2).getText();
+                    boolean isColored = false;
+
                     try {
                         WebElement idInfo = productElement.findElement(By.xpath(".//div[@class='artCod']"));
                         id = idInfo.getAttribute("id");
@@ -290,12 +301,26 @@ public class GebenegoziMonitorCore {
                         finalPage = tempPage;
                         log.info(GEBENE_LOG_PREFIX + " final page 오류로 인해 변경 로그 확인");
                     }
+                    try {
 
-                    String brand = dataList.get(0).getText();
-                    String sku = dataList.get(1).getText();
-                    String season = dataList.get(2).getText();
-                    String finalPrice = priceInfo.getText();
-                    String madeBy = madeByList.get(2).getText();
+                        for (int i = 0; i < wholeSaleInfoList.size(); i++) {
+                            if (wholeSaleInfoList.get(i).getText().toLowerCase().contains("whole")) {
+                                wholeSaleOrigin = wholeSaleInfoList.get(i).getText().split("€")[1].strip();
+                                String key = gebenegoziBrandHashData.makeSalesInfoKey(brand, season.toUpperCase(), category, "man");
+                                GebenegoziSaleInfo gebenegoziSaleInfoOrNull = gebenegoziBrandHashData.getGebenegoziSaleMap().getOrDefault(key, null);
+                                isColored= gebenegoziSaleInfoOrNull.isColored();
+                                if(gebenegoziSaleInfoOrNull != null) {
+                                    wholeSalePercent = gebenegoziSaleInfoOrNull.getSalesPercent();
+                                    double wholeSaleAfter = Double.parseDouble(wholeSaleOrigin) * (wholeSalePercent + 100) / 100;
+                                    wholeSale = String.valueOf(wholeSaleAfter) ;
+                                }
+                            }
+
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        log.error(GEBENE_LOG_PREFIX + "whole Sale 검색 오류 url = " + url);
+                    }
 
 
                     //이미지 정보
@@ -315,9 +340,14 @@ public class GebenegoziMonitorCore {
                             .productLink(url)
                             .imageSrc(imageSrc)
                             .category(category)
+                            .wholeSalePercent(wholeSalePercent)
+                            .wholeSale(wholeSale)
+                            .wholeSaleOrigin(wholeSaleOrigin)
                             .id(id)
+                            .isColored(isColored)
                             .build();
 
+                    log.info(product.toString());
                     pageProductList.add(product);
                     //log.info("id = {},\t sku = {}\t \t brand = {}\t  season = {}\t finalPrice ={}\t madeBy = {}\t product link = {}", id, sku, brand, season, finalPrice, madeBy, url);
                 } catch (Exception e) {

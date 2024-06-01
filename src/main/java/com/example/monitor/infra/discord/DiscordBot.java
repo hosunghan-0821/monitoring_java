@@ -140,8 +140,13 @@ public class DiscordBot extends ListenerAdapter {
                 "상품 카테고리 : " + gebenegoziProduct.getSeason() + "\n" +
                         "상품품번 : " + gebenegoziProduct.getSku() + "\n" +
                         "상품브랜드 : " + gebenegoziProduct.getBrandName() + "/" + gebenegoziProduct.getCategory() + "\n\n" +
-                        "가격정보 \n" + gebenegoziProduct.getPrice() + "\n\n" +
+                        "가격정보 \n" + gebenegoziProduct.getPrice() + "\n" +
+                        "wholeSale FinalPrice : " + gebenegoziProduct.getWholeSale() + "\n" +
+                        "wholeSale Percent : " + gebenegoziProduct.getWholeSalePercent() + "\n" +
+                        "wholeSale Origin : " + gebenegoziProduct.getWholeSaleOrigin() + "\n" +
+                        "Filled Color : " + gebenegoziProduct.isColored() + "\n\n"+
                         "원산지 " + gebenegoziProduct.getMadeBy());
+
         embed.setColor(Color.DARK_GRAY); // Embed 색상 설정
 
         embed.addField("사이트 바로가기", "[Gebene 상세페이지 바로가기](" + gebenegoziProduct.getProductLink() + ")", false); // false는 필드가 인라인으로 표시되지 않도록 설정합니다.
@@ -223,6 +228,7 @@ public class DiscordBot extends ListenerAdapter {
         embed.addField("사이트 바로가기", "[BIFFI 바로가기](" + url + ")", false); // false는 필드가 인라인으로 표시되지 않도록 설정합니다.
 
         textChannel.sendMessageEmbeds(embed.build()).queue();
+        textChannel.sendMessage(biffiProduct.getSku()).queue(); // 품번도 같이 전송
 
     }
 
