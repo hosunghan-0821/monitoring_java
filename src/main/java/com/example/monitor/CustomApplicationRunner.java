@@ -196,6 +196,5 @@ public class CustomApplicationRunner implements ApplicationRunner {
 //        julianThread.start();
 
 
-
     }
 }

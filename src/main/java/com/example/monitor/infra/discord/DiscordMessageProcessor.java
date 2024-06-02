@@ -10,12 +10,14 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DiscordMessageProcessor {
 
-    public String responseServerRunningOrNull(String monitoring, String message, ChromeDriverTool chromeDriverTool){
+    private final ExchangeTool exchangeTool;
+
+    public String responseServerRunningOrNull(String monitoring, String message, ChromeDriverTool chromeDriverTool) {
         message = message.substring(1);
         String returnMessage = null;
         if (message.equals("on")) {
             chromeDriverTool.isRunning(true);
-            returnMessage = monitoring + " turn on Monitoring" ;
+            returnMessage = monitoring + " turn on Monitoring";
         } else if (message.equals("status")) {
             returnMessage = monitoring + "is now Running " + chromeDriverTool.isRunning();
         } else if (message.equals("off")) {
@@ -31,13 +33,40 @@ public class DiscordMessageProcessor {
         String returnMessage = null;
         if (message.equals("upload on")) {
             s3UploaderService.setAllowedUpload(true);
-            returnMessage =  "S3 Upload Service turn on";
+            returnMessage = "S3 Upload Service turn on";
         } else if (message.equals("upload status")) {
-            returnMessage =  "S3 Upload Service status" + s3UploaderService.isAllowedUpload();
+            returnMessage = "S3 Upload Service status" + s3UploaderService.isAllowedUpload();
         } else if (message.equals("upload off")) {
             s3UploaderService.setAllowedUpload(false);
-            returnMessage =  "S3 Upload Service turn false";
+            returnMessage = "S3 Upload Service turn false";
         }
+        return returnMessage;
+    }
+
+    public String responseExchangeFee(String message) {
+        message = message.substring(1);
+        String returnMessage = null;
+        if (message.contains("수수료1")) {
+            String updateFeeOption1 = message.split(" ")[1];
+            exchangeTool.setFeeOption1(Double.parseDouble(updateFeeOption1));
+            returnMessage = "수수료1 update" + updateFeeOption1;
+        } else if (message.contains("수수료2")) {
+            String updateFeeOption2 = message.split(" ")[1];
+            exchangeTool.setFeeOption2(Double.parseDouble(updateFeeOption2));
+            returnMessage = "수수료2 update" + updateFeeOption2;
+        } else if (message.equals("status")) {
+            returnMessage = "수수료1 : " + exchangeTool.getFeeOption1() + " 수수료2 : " + exchangeTool.getFeeOption2();
+        }
+        //가격 계산
+        else {
+            try {
+                Double.parseDouble(message);
+                returnMessage = exchangeTool.calculateFee(message);
+            } catch (Exception e) {
+
+            }
+        }
+
         return returnMessage;
     }
 }

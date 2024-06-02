@@ -99,6 +99,8 @@ public class DiscordBot extends ListenerAdapter {
             } else {
                 returnMessage = discordMessageProcessor.responseServerRunningOrNull(GEBE, event.getMessage().getContentDisplay(), chromeDriverToolFactory.getChromeDriverTool(GEBE));
             }
+        } else if (channelId.equals(EXCHANGE_CHANNEL)) {
+            returnMessage = discordMessageProcessor.responseExchangeFee(event.getMessage().getContentDisplay());
         }
 
         if (returnMessage != null) {
