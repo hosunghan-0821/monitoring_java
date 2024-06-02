@@ -37,16 +37,18 @@ public class S3UploaderService {
             return null;
         }
         //상품이 있으면 재업로드 안해도됨
-        String accessUrl = amazonS3Client.getUrl(bucket, fileName).toString();
+        boolean isUpload = amazonS3Client.doesObjectExist(bucket, fileName);
 
-        if (accessUrl == null) {
+        String accessUrl = null;
+        if (!isUpload) {
             amazonS3Client.putObject(
                     new PutObjectRequest(bucket, fileName, file)
                             .withCannedAcl(CannedAccessControlList.PublicRead)    // PublicRead 권한으로 업로드 됨
             );
             accessUrl = amazonS3Client.getUrl(bucket, fileName).toString();
+        } else {
+            accessUrl = amazonS3Client.getUrl(bucket, fileName).toString();
         }
-
         file.delete();
 
 

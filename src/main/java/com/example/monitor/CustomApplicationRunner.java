@@ -79,18 +79,18 @@ public class CustomApplicationRunner implements ApplicationRunner {
         discordBot.setS3UploaderService(s3UploaderService);
 
 
-//        Thread gebeneThread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//
-//                log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE Product Start ============================");
-//                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(GEBE);
-//                gebenegoziMonitorCore.runLoadLogic(chromeDriverTool);
-//                log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE Product Finish ============================");
-//            }
-//        });
-//
-//        gebeneThread.start();
+        Thread gebeneThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE Product Start ============================");
+                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(GEBE);
+                gebenegoziMonitorCore.runLoadLogic(chromeDriverTool);
+                log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE Product Finish ============================");
+            }
+        });
+
+        gebeneThread.start();
 
 //        Thread biffiThread = new Thread(new Runnable() {
 //            @Override

@@ -111,10 +111,11 @@ public class GebenegoziMonitorCore {
         for (int i = 0; i < brandDataList.length; i++) {
             String url = brandDataList[i][2];
             String category = brandDataList[i][1];
+            String sex = brandDataList[i][3];
 
             Map<String, GebenegoziProduct> eachBrandHashMap = gebenegoziBrandHashData.getBrandHashMap(url);
 
-            List<GebenegoziProduct> pageProductDataList = getPageProductDataOrNull(driver, wait, url, category);
+            List<GebenegoziProduct> pageProductDataList = getPageProductDataOrNull(driver, wait, url, category, sex);
 
             if (pageProductDataList == null) {
                 continue;
@@ -172,7 +173,7 @@ public class GebenegoziMonitorCore {
 
     public void login(ChromeDriver driver, WebDriverWait wait) {
         //로그인페이지 로그인
-        driver.get("http://93.46.41.5:1995/login");
+        driver.get(GEBENE_MAIN_URL);
 
         try {
             Thread.sleep(1000);
@@ -199,11 +200,13 @@ public class GebenegoziMonitorCore {
             String brand = data[0];
             String url = data[2];
             String category = data[1];
+            String sex = data[3];
+
 
             Map<String, GebenegoziProduct> eachBrandHashMap = gebenegoziBrandHashData.getBrandHashMap(url);
             HashSet<String> productKeySet = gebenegoziBrandHashData.getProductKeySet();
 
-            List<GebenegoziProduct> pageProductDataList = getPageProductDataOrNull(driver, wait, url, category);
+            List<GebenegoziProduct> pageProductDataList = getPageProductDataOrNull(driver, wait, url, category, sex);
 
             if (pageProductDataList != null && !pageProductDataList.isEmpty()) {
 
@@ -222,7 +225,7 @@ public class GebenegoziMonitorCore {
 
     }
 
-    public List<GebenegoziProduct> getPageProductDataOrNull(ChromeDriver driver, WebDriverWait wait, String url, String category) {
+    public List<GebenegoziProduct> getPageProductDataOrNull(ChromeDriver driver, WebDriverWait wait, String url, String category, String sex) {
 
         List<GebenegoziProduct> pageProductList = new ArrayList<>();
         String pattern = "\\S";
@@ -308,11 +311,12 @@ public class GebenegoziMonitorCore {
                                 wholeSaleOrigin = wholeSaleInfoList.get(i).getText().split("€")[1].strip();
                                 String key = gebenegoziBrandHashData.makeSalesInfoKey(brand, season.toUpperCase(), category, "man");
                                 GebenegoziSaleInfo gebenegoziSaleInfoOrNull = gebenegoziBrandHashData.getGebenegoziSaleMap().getOrDefault(key, null);
-                                isColored= gebenegoziSaleInfoOrNull.isColored();
-                                if(gebenegoziSaleInfoOrNull != null) {
+
+                                if (gebenegoziSaleInfoOrNull != null) {
+                                    isColored = gebenegoziSaleInfoOrNull.isColored();
                                     wholeSalePercent = gebenegoziSaleInfoOrNull.getSalesPercent();
                                     double wholeSaleAfter = Double.parseDouble(wholeSaleOrigin) * (wholeSalePercent + 100) / 100;
-                                    wholeSale = String.valueOf(wholeSaleAfter) ;
+                                    wholeSale = String.valueOf(wholeSaleAfter);
                                 }
                             }
 
@@ -347,7 +351,6 @@ public class GebenegoziMonitorCore {
                             .isColored(isColored)
                             .build();
 
-                    log.info(product.toString());
                     pageProductList.add(product);
                     //log.info("id = {},\t sku = {}\t \t brand = {}\t  season = {}\t finalPrice ={}\t madeBy = {}\t product link = {}", id, sku, brand, season, finalPrice, madeBy, url);
                 } catch (Exception e) {

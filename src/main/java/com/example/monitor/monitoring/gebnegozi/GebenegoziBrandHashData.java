@@ -126,7 +126,13 @@ public class GebenegoziBrandHashData {
 
     }
 
+
     public String makeSalesInfoKey(String brandName, String season, String category, String sex) {
+        //unisex일 경우 woman으로 가격계산을 함.
+        if (sex.equals("unisex")) {
+            sex = "woman";
+        }
+
         StringBuilder sb = new StringBuilder();
         sb.append(brandName);
         sb.append("_");

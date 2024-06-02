@@ -1,5 +1,6 @@
 package com.example.monitor.infra.s3;
 
+import com.example.monitor.monitoring.gebnegozi.GebenegoziMonitorCore;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,6 @@ class S3UploaderServiceTest {
 
     @Autowired
     S3UploaderService s3UploaderService;
-
 
     @Test
     @Disabled
