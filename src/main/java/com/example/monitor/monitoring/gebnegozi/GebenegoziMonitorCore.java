@@ -420,8 +420,8 @@ public class GebenegoziMonitorCore {
             // 이미지 데이터를 파일로 저장
             Files.write(path, imageData);
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error(GEBENE_LOG_PREFIX + "이미지 다운로드 실패");
+
+            log.error(GEBENE_LOG_PREFIX + "이미지 다운로드 실패 : url =  "+ imageSrcUrl+" cookie = " + cookie + "message : " + e.getMessage());
             return null;
         }
 

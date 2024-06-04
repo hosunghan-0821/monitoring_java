@@ -10,6 +10,7 @@ import com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString;
 import com.example.monitor.monitoring.gebnegozi.GebenegoziProduct;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -24,6 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.io.File;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,7 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-
+@Import({TestConfiguration.class})
 class GebenegoziMonitorCoreIntegrationTest {
 
     @Autowired
@@ -129,4 +131,30 @@ class GebenegoziMonitorCoreIntegrationTest {
         assertThat(gebenegoziProduct.getSku()).isNotNull();
         assertThat(newProductList.size()).isEqualTo(1);
     }
+
+    @Test
+    @Order(3)
+    @Disabled
+    @DisplayName(GebenegoziProdcutFindString.GEBENE_LOG_PREFIX + "이미지 저장 테스트")
+    void imageDownloadTest(){
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--no-sandbox");
+        options.addArguments("window-size=1920x1080");
+        options.addArguments("start-maximized");
+        options.setExperimentalOption("excludeSwitches", Collections.singletonList("enable-automation"));
+        options.setExperimentalOption("useAutomationExtension", false);
+        options.addArguments("--disable-automation");
+        options.addArguments("--disable-blink-features=AutomationControlled");
+        options.setExperimentalOption("detach", true);
+
+        driver = new ChromeDriver(options);
+        wait = new WebDriverWait(driver, Duration.ofMillis(5000)); // 최대 5초 대기
+
+        gebenegoziMonitorCore.login(driver,wait);
+
+        String cookie = driver.manage().getCookieNamed("JSESSIONID").getValue();
+        File file = gebenegoziMonitorCore.downloadImageOrNull("http://93.46.41.5:1995/image/2000014056008_1.jpg", cookie);
+        assertThat(file).isNotNull();
+    }
+
 }

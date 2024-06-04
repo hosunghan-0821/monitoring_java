@@ -27,6 +27,32 @@ public class ChromeDriverToolFactory {
         factoryHashMap.put(key, chromeDriverTool);
     }
 
+    public void makePrivateChromeDriverTool(String key) {
+
+        ChromeDriver chromeDriver = new ChromeDriver(setPrivateOptions());
+        WebDriverWait wait = new WebDriverWait(chromeDriver, Duration.ofMillis(5000)); // 최대 5초 대기
+        ChromeDriverTool chromeDriverTool = new ChromeDriverTool(chromeDriver, wait);
+
+        factoryHashMap.put(key, chromeDriverTool);
+
+    }
+
+    private ChromeOptions setPrivateOptions(){
+        ChromeOptions privateOptions = new ChromeOptions();
+        privateOptions.addArguments("--no-sandbox");
+        privateOptions.addArguments("window-size=1920x1080");
+        privateOptions.addArguments("start-maximized");
+        privateOptions.setExperimentalOption("excludeSwitches", Collections.singletonList("enable-automation"));
+        privateOptions.setExperimentalOption("useAutomationExtension", false);
+        privateOptions.addArguments("--disable-automation");
+        privateOptions.addArguments("--disable-blink-features=AutomationControlled");
+        privateOptions.setExperimentalOption("detach", true);
+
+        privateOptions.addArguments("--user-data-dir=/Users/hanhosung/private/chrome");
+        privateOptions.addArguments("--profile-directory=private");
+        return privateOptions;
+    }
+
     private ChromeOptions setOptions() {
 
         ChromeOptions options = new ChromeOptions();
