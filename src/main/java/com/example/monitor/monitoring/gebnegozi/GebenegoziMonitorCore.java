@@ -435,7 +435,7 @@ public class GebenegoziMonitorCore {
     public static String getFileNameByTimeFormat() {
         // 현재 날짜와 시간 가져오기
         LocalDateTime currentDateTime = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm:ss.SSS");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss-SSS");
         return currentDateTime.format(formatter) + ".jpg";
     }
 
