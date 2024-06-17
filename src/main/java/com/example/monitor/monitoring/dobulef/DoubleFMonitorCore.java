@@ -104,6 +104,12 @@ public class DoubleFMonitorCore {
 
     public void acceptCookie(WebDriverWait wait) {
         //쿠키 허용
+        try {
+            Thread.sleep(5000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         WebElement cookieElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.id(DF_COOKIE_ID)));
         cookieElement.click();
     }
@@ -119,6 +125,13 @@ public class DoubleFMonitorCore {
 
         WebElement pwElement = driver.findElement(By.id(DF_PASS_ID));
         pwElement.sendKeys(userPw);
+
+        try {
+            Thread.sleep(3000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
         WebElement button = driver.findElement(By.xpath(DF_LOGIN_BUTTON_XPATH));
         button.click();
