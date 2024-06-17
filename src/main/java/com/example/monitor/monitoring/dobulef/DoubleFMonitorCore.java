@@ -172,103 +172,127 @@ public class DoubleFMonitorCore {
         //상품 상위 태그
         List<WebElement> productList = new ArrayList<>();
         List<DoubleFProduct> pageProductList = new ArrayList<>();
+
+        int totalPages = 1;
+        int productTotalNum = 48;
         try {
-            WebElement topDiv = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(TOP_DIV_XPATH)));
-            productList = topDiv.findElements(By.xpath(CHILD_PRODUCT_DIV));
+
+            WebElement pageElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@class='pb-3 text-4xs uppercase leading-normal tracking-widest']")));
+            String text = pageElement.getText();
+            int productNumPerPage = Integer.parseInt(text.split(" ")[1]);
+            productTotalNum = Integer.parseInt(text.split(" ")[3]);
+            totalPages = (int) (Math.ceil(((double) productTotalNum) / productNumPerPage));
         } catch (Exception e) {
-            log.error(DOUBLE_F_LOG_PREFIX + "logout Redirection  or FIND PRODUCT ERROR");
-            login(driver, wait);
-            return pageProductList;
+            log.error(DOUBLE_F_LOG_PREFIX + "error get page number");
         }
 
+        for (int i = 0; i < totalPages; i++) {
 
-        //상품 정보 로드
-        for (WebElement product : productList) {
-            String productName = "상품이름 정보 없습니다.";
-            String productDiscountPercentage = "0%";
-            String productPrice = "";
-            String productId = "";
-            String productLink = "";
-            String productSkU = "";
-            String productColorCode = "";
-            double productDoublePrice = 0;
-
-            //상품 id
-            try {
-                WebElement productIdElement = product.findElement(By.xpath(".//div[@class='price-box price-final_price']"));
-                productId = productIdElement.getAttribute("data-price-box");
-            } catch (Exception e) {
-                log.error(DOUBLE_F_LOG_PREFIX + "** 확인요망 ** url =" + url + " 상품중 상품ID 가 없습니다. 누락됩니다.");
-                log.error(DOUBLE_F_LOG_PREFIX + "상세정보 총 상품개수 " + productList.size() + "에러 index" + productList.indexOf(product));
-                continue;
+            if (i != 0) {
+                driver.get(url + "?p=" + (i + 1));
             }
-            // 상품이름 정보
             try {
-                WebElement productNameElement = product.findElement(By.xpath(PRODUCT_NAME_XPATH));
-                productName = productNameElement.getText();
+                WebElement topDiv = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(TOP_DIV_XPATH)));
+                productList = topDiv.findElements(By.xpath(CHILD_PRODUCT_DIV));
             } catch (Exception e) {
-                log.error(DOUBLE_F_LOG_PREFIX + "** 확인요망 **" + brandName + "의 상품에 이름이 없습니다. 홈페이지 및 프로그램 확인 바랍니다.");
-
-            }
-            // 상품할인율 정보
-            try {
-                WebElement discountPercentage = product.findElement(By.xpath(PRODUCT_DISCOUNT_XPATH));
-                productDiscountPercentage = discountPercentage.getText();
-            } catch (Exception e) {
-                //log.error(DOUBLE_F_LOG_PREFIX + "** 확인요망 **" + productDiscountPercentage + "의 상품에 할인율 없습니다. 홈페이지 및 프로그램 확인 바랍니다.");
+                log.error(DOUBLE_F_LOG_PREFIX + "logout Redirection  or FIND PRODUCT ERROR");
+                login(driver, wait);
+                return pageProductList;
             }
 
-            // 상품 가격 정보
-            try {
-                List<WebElement> productPriceElementList = product.findElements(By.xpath(PRODUCT_PRICE_XPATH));
-                for (WebElement productPriceElement : productPriceElementList) {
-                    productPrice = productPrice + " " + productPriceElement.getText();
+
+            //상품 정보 로드
+            for (WebElement product : productList) {
+                String productName = "상품이름 정보 없습니다.";
+                String productDiscountPercentage = "0%";
+                String productPrice = "";
+                String productId = "";
+                String productLink = "";
+                String productSkU = "";
+                String productColorCode = "";
+                double productDoublePrice = 0;
+
+                //상품 id
+                try {
+                    WebElement productIdElement = product.findElement(By.xpath(".//div[@class='price-box price-final_price']"));
+                    productId = productIdElement.getAttribute("data-price-box");
+                } catch (Exception e) {
+                    log.error(DOUBLE_F_LOG_PREFIX + "** 확인요망 ** url =" + url + " 상품중 상품ID 가 없습니다. 누락됩니다.");
+                    log.error(DOUBLE_F_LOG_PREFIX + "상세정보 총 상품개수 " + productList.size() + "에러 index" + productList.indexOf(product));
+                    continue;
                 }
-                productPrice = productPrice.strip();
-                productDoublePrice = changePriceToDouble(productPrice);
+                // 상품이름 정보
+                try {
+                    WebElement productNameElement = product.findElement(By.xpath(PRODUCT_NAME_XPATH));
+                    productName = productNameElement.getText();
+                } catch (Exception e) {
+                    log.error(DOUBLE_F_LOG_PREFIX + "** 확인요망 **" + brandName + "의 상품에 이름이 없습니다. 홈페이지 및 프로그램 확인 바랍니다.");
 
-            } catch (Exception e) {
-                log.info(DOUBLE_F_LOG_PREFIX + productName + " 의 가격 정보가 없습니다.");
-            }
-            // 상품 링크 정보
-            try {
-                WebElement webElement = product.findElement(By.xpath(".//h2[@class='product-card__name truncate ... font-light text-xs tracking-1-08 leading-snug mb-5px']//a"));
-                productLink = webElement.getAttribute("href");
-                String tempLink = productLink;
-                // https://www.thedoublef.com/bu_en/light-blue-denim-over-shirt-acne-cb0070co-o-acne-228/
+                }
+                // 상품할인율 정보
+                try {
+                    WebElement discountPercentage = product.findElement(By.xpath(PRODUCT_DISCOUNT_XPATH));
+                    productDiscountPercentage = discountPercentage.getText();
+                } catch (Exception e) {
+                    //log.error(DOUBLE_F_LOG_PREFIX + "** 확인요망 **" + productDiscountPercentage + "의 상품에 할인율 없습니다. 홈페이지 및 프로그램 확인 바랍니다.");
+                }
 
-                tempLink = tempLink.replaceAll("/", "");
-
-                String[] splitData = tempLink.split("-");
-                if (splitData.length >= 5) {
-                    productSkU = splitData[splitData.length - 4];
-                    if (productSkU.length() <= 3) {
-                        productSkU = splitData[splitData.length - 5] + splitData[splitData.length - 4];
+                // 상품 가격 정보
+                try {
+                    List<WebElement> productPriceElementList = product.findElements(By.xpath(PRODUCT_PRICE_XPATH));
+                    for (WebElement productPriceElement : productPriceElementList) {
+                        productPrice = productPrice + " " + productPriceElement.getText();
                     }
-                    productColorCode = splitData[splitData.length - 1];
+                    productPrice = productPrice.strip();
+                    productDoublePrice = changePriceToDouble(productPrice);
+
+                } catch (Exception e) {
+                    log.info(DOUBLE_F_LOG_PREFIX + productName + " 의 가격 정보가 없습니다.");
+                }
+                // 상품 링크 정보
+                try {
+                    WebElement webElement = product.findElement(By.xpath(".//h2[@class='product-card__name truncate ... font-light text-xs tracking-1-08 leading-snug mb-5px']//a"));
+                    productLink = webElement.getAttribute("href");
+                    String tempLink = productLink;
+                    // https://www.thedoublef.com/bu_en/light-blue-denim-over-shirt-acne-cb0070co-o-acne-228/
+
+                    tempLink = tempLink.replaceAll("/", "");
+
+                    String[] splitData = tempLink.split("-");
+                    if (splitData.length >= 5) {
+                        productSkU = splitData[splitData.length - 4];
+                        if (productSkU.length() <= 3) {
+                            productSkU = splitData[splitData.length - 5] + splitData[splitData.length - 4];
+                        }
+                        productColorCode = splitData[splitData.length - 1];
+                    }
+
+                } catch (Exception e) {
+                    log.info(DOUBLE_F_LOG_PREFIX + productName + " 의 링크 정보가 없습니다.");
                 }
 
-            } catch (Exception e) {
-                log.info(DOUBLE_F_LOG_PREFIX + productName + " 의 링크 정보가 없습니다.");
+                DoubleFProduct doubleFProduct = DoubleFProduct.builder()
+
+                        .id(productId)
+                        .name(productName)
+                        .brandSex(getSexPrefix(url))
+                        .brandName(brandName)
+                        .price(productPrice)
+                        .discountPercentage(productDiscountPercentage)
+                        .productLink(productLink)
+                        .sku(productSkU)
+                        .colorCode(productColorCode)
+                        .doublePrice(productDoublePrice)
+                        .build();
+
+
+                pageProductList.add(doubleFProduct);
             }
 
-            DoubleFProduct doubleFProduct = DoubleFProduct.builder()
-
-                    .id(productId)
-                    .name(productName)
-                    .brandSex(getSexPrefix(url))
-                    .brandName(brandName)
-                    .price(productPrice)
-                    .discountPercentage(productDiscountPercentage)
-                    .productLink(productLink)
-                    .sku(productSkU)
-                    .colorCode(productColorCode)
-                    .doublePrice(productDoublePrice)
-                    .build();
-
-
-            pageProductList.add(doubleFProduct);
         }
+
+        assert (productTotalNum == pageProductList.size());
+
         return pageProductList;
     }
 

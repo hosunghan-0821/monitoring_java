@@ -79,7 +79,7 @@ class DoubleFMonitorCoreIntegrationTest {
 
         driver = new ChromeDriver(options);
         wait = new WebDriverWait(driver, Duration.ofMillis(5000)); // 최대 5초 대기
-        brandNameList = Arrays.copyOfRange(manBrandNameList, 0, 1);
+        brandNameList = Arrays.copyOfRange(manBrandNameList, 10, 11);
     }
 
     @AfterAll
