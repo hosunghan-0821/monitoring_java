@@ -73,7 +73,7 @@ public class GebenegoziBrandHashData {
         for (File file : xlsxFiles) {
             String fileName = file.getName();
             log.info(fileName + " sales info 데이터 로드 시작");
-            String season = fileName.split("\\.")[0].toUpperCase();
+            String season = fileName.split("\\.")[1].toUpperCase();
 
             try (
                     Workbook workbook = WorkbookFactory.create(file);
@@ -179,14 +179,15 @@ public class GebenegoziBrandHashData {
 
     private List<File> findXlsxFiles() {
         Path startPath = Paths.get(System.getProperty("user.dir"));
-        System.out.println(startPath.toString());
+
         List<Path> xlsxFiles = new ArrayList<>();
         try {
             Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                     // .xlsx 확장자를 가진 파일을 찾습니다.
-                    if (file.toString().endsWith(".xlsx")) {
+                    String fileName = file.toString();
+                    if (fileName.endsWith(".xlsx") && fileName.contains("GNB")) {
                         xlsxFiles.add(file);
                     }
                     return FileVisitResult.CONTINUE;

@@ -3,6 +3,7 @@ package com.example.monitor.monitoring.julian;
 import com.example.monitor.chrome.ChromeDriverTool;
 import com.example.monitor.file.ProductFileWriter;
 import com.example.monitor.infra.discord.DiscordBot;
+import com.example.monitor.monitoring.gebnegozi.GebenegoziSaleInfo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,8 +20,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI;
-import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DISCOUNT_CHANGE;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.NEW_PRODUCT;
 import static com.example.monitor.monitoring.julian.JulianFindString.*;
 
@@ -68,7 +67,7 @@ public class JulianMonitorCore {
                 List<WebElement> productDataDivs = getInnerProductDivs(wait);
 
                 //상품 하위 데이터 조회
-                List<JulianProduct> julianProductData = getProductData(productDataDivs,url);
+                List<JulianProduct> julianProductData = getProductData(productDataDivs, url);
 
                 //데이터 누적 HashMap 수정을 위해서
                 findJulianProductList.addAll(julianProductData);
@@ -92,10 +91,10 @@ public class JulianMonitorCore {
 
                         //새 상품 set에 없다면, 알람 보내고, 보낸걸 기록
                         dataKeySet.add(julianProduct.getSku());
-                        getProductMadeBy(chromeDriver,wait,julianProduct);
-                        julianProduct.setCategory(monitoringSite);
+                        getProductMoreInfo(chromeDriver, wait, julianProduct);
+
                         discordBot.sendNewProductInfo(discordChannelId, julianProduct);
-                        productFileWriter.writeProductInfo(julianProduct.changeToProductFileInfo(JULIAN +" / " + monitoringSite, NEW_PRODUCT));
+                        productFileWriter.writeProductInfo(julianProduct.changeToProductFileInfo(JULIAN + " / " + monitoringSite, NEW_PRODUCT));
                         log.info(JULIAN_LOG_PREFIX + "New Product = " + julianProduct);
                     }
                 }
@@ -113,11 +112,12 @@ public class JulianMonitorCore {
             log.error(e.getMessage());
             log.error(JULIAN_LOG_PREFIX + "자동 로그아웃");
             // 모니터링 다시 시작
-            login(chromeDriver,wait);
+            login(chromeDriver, wait);
         }
 
         log.info(JULIAN_LOG_PREFIX + "END:  FIND NEW PRODUCT FINISH");
     }
+
 
     public void changeUrl(ChromeDriver driver, String url) {
         driver.get(url);
@@ -153,7 +153,7 @@ public class JulianMonitorCore {
         return topDiv.findElements(By.xpath(CHILD_DIV));
     }
 
-    public List<JulianProduct> getProductData(List<WebElement> childDivs,String findUrl) {
+    public List<JulianProduct> getProductData(List<WebElement> childDivs, String findUrl) {
 
         List<JulianProduct> julianProductList = new ArrayList<>();
 
@@ -214,43 +214,71 @@ public class JulianMonitorCore {
         return newJulianProductList;
     }
 
-    public void getProductMadeBy(WebDriver driver, WebDriverWait wait, JulianProduct julianProduct) {
+    public void getProductMoreInfo(WebDriver driver, WebDriverWait wait, JulianProduct julianProduct) {
 
-        if(!julianProduct.getProductLink().equals(driver.getCurrentUrl())){
+        if (!julianProduct.getProductLink().equals(driver.getCurrentUrl())) {
             driver.get(julianProduct.getProductLink());
         }
-        try{
+        try {
             getInnerProductDivs(wait);
-            WebElement element = driver.findElement(By.xpath("//div[@class='produt_reference' and contains(text(),'"+julianProduct.getSku()+"')]/.."));
+            WebElement element = driver.findElement(By.xpath("//div[@class='produt_reference' and contains(text(),'" + julianProduct.getSku() + "')]/.."));
             //정보가져오기
             WebElement detailLink = element.findElement(By.xpath(".//a[@class='button-action quick-view']"));
             //해당상품으로 이동
-            Actions actions =new Actions(driver);
+            Actions actions = new Actions(driver);
             actions.moveToElement(detailLink);
             actions.click().perform();
 
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@class='name']")));
             wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[@class='close']//span")));
             List<WebElement> productDataList = driver.findElements(By.xpath("//li[@class='name']"));
-            for (WebElement productDataElement :productDataList) {
+            for (WebElement productDataElement : productDataList) {
                 String text = productDataElement.getText();
                 text = text.toLowerCase(Locale.ENGLISH);
                 if (text.contains("made in")) {
                     String madeBy = text.split(":")[1].strip();
                     julianProduct.setMadeBy(madeBy);
+                } else if (text.contains("gender")) {
+                    String gender = text.split(":")[1].strip().toUpperCase();
+                    julianProduct.setGender(gender);
+                } else if (text.contains("season")) {
+                    String season = text.split(":")[1].strip().toUpperCase();
+                    julianProduct.setSeason(season);
+                } else if (text.contains("type")) {
+                    String category = text.split(":")[1].strip().toUpperCase();
+                    julianProduct.setCategory(category);
                 }
             }
             //닫기버튼
             driver.findElement(By.xpath("//button[@class='close']//span")).click();
-        } catch(Exception e){
-            log.error(JULIAN_LOG_PREFIX + "원산지 못찾는 에러\n"+ "상품정보 "+julianProduct.toString());
+            setProductPriceInfo(julianProduct);
+        } catch (Exception e) {
+            log.error(JULIAN_LOG_PREFIX + "추가정보 못찾는 에러\n" + "상품정보 " + julianProduct.toString());
             log.error(e.toString());
         }
-
-
     }
 
-    public String getUrl(String pageUrl,int i) {
+    public void setProductPriceInfo(JulianProduct julianProduct) {
+        String key = julianBrandHashData.makeSalesInfoKey(julianProduct.getName(), julianProduct.getSeason(), julianProduct.getCategory(), julianProduct.getGender());
+        String defaultKey = julianBrandHashData.makeSalesInfoKey("OTHER BRANDS", julianProduct.getSeason(), julianProduct.getCategory(), julianProduct.getGender());
+        JulianSaleInfo defaultSalesInfoOrNull = julianBrandHashData.getJulianSaleInfoHashMap().getOrDefault(defaultKey, null);
+        JulianSaleInfo julianSaleInfoOrNull = julianBrandHashData.getJulianSaleInfoHashMap().getOrDefault(key, defaultSalesInfoOrNull);
+
+        String wholeSaleOrigin = "0.0";
+        String wholeSale = "0.0";
+        int wholeSalePercent = 0;
+
+        if (julianSaleInfoOrNull != null) {
+            wholeSaleOrigin = julianProduct.getPrice().split("€")[1].replaceAll(",","");
+            wholeSalePercent = julianSaleInfoOrNull.getSalesPercent();
+            double wholeSaleAfter = Double.parseDouble(wholeSaleOrigin) * (wholeSalePercent + 100) / 100;
+            wholeSale = String.valueOf(wholeSaleAfter);
+        }
+
+        julianProduct.setMorePriceInfo(wholeSaleOrigin, wholeSale, wholeSalePercent, julianSaleInfoOrNull != null ? julianSaleInfoOrNull.toString() : null);
+    }
+
+    public String getUrl(String pageUrl, int i) {
         String findUrl;
         if (i == 1) {
             findUrl = pageUrl;

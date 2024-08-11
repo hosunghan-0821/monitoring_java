@@ -3,6 +3,7 @@ package com.example.monitor.monitoring.global;
 import com.example.monitor.file.ProductFileInfo;
 import com.example.monitor.infra.converter.dto.ConvertProduct;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
@@ -23,6 +24,7 @@ public class MonitoringProduct {
     protected String sku;
     protected String colorCode;
     protected String madeBy;
+    @Setter
     protected String monitoringSite;  // converting Rule 사용
     protected double doublePrice;
 

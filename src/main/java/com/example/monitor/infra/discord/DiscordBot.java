@@ -168,11 +168,19 @@ public class DiscordBot extends ListenerAdapter {
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("새 상품 알림!");
         embed.setDescription(
-                "상품 카테고리 : " + julianProduct.getCategory() + "\n" +
+
                         "상품품번 : " + julianProduct.getSku() + "\n" +
-                        "상품브랜드 : " + julianProduct.getName() + "\n\n" +
-                        "가격정보 \n" + julianProduct.getPrice() + "\n\n" +
-                        "원산지" + julianProduct.getMadeBy());
+                        "상품브랜드 : " + julianProduct.getName() + "\n\n\n" +
+
+                        "상품 카테고리 : " + julianProduct.getCategory() + "\n" +
+                        "원산지" + julianProduct.getMadeBy() + "\n" +
+                        "가격정보 \n" + julianProduct.getPrice() + "\n" +
+                        "wholeSale FinalPrice : " + julianProduct.getWholeSale() + "\n" +
+                        "wholeSale Percent : " + julianProduct.getWholeSalePercent() + "\n" +
+                        "wholeSale Origin : " + julianProduct.getWholeSaleOrigin() + "\n" +
+                        "wholeSale key : " + julianProduct.getWholeSaleKeyInfo() + "\n"
+
+        );
         embed.setColor(Color.GREEN); // Embed 색상 설정
 
         embed.addField("사이트 바로가기", "[줄리앙 상세페이지 바로가기](" + julianProduct.getProductLink() + ")", false); // false는 필드가 인라인으로 표시되지 않도록 설정합니다.

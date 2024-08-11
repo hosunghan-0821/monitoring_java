@@ -2,6 +2,7 @@ package com.example.monitor.integration;
 
 import com.example.monitor.chrome.ChromeDriverTool;
 import com.example.monitor.chrome.ChromeDriverToolFactory;
+import com.example.monitor.infra.discord.DiscordBot;
 import com.example.monitor.monitoring.julian.JulianFindString;
 import com.example.monitor.monitoring.julian.JulianMonitorCore;
 import com.example.monitor.monitoring.julian.JulianProduct;
@@ -43,6 +44,9 @@ class JulianMonitorCoreIntegrationTest {
 
     private static WebDriverWait wait;
 
+    @Autowired
+    private DiscordBot discordBot;
+
     @BeforeAll
     static void init() {
         ChromeOptions options = new ChromeOptions();
@@ -56,7 +60,7 @@ class JulianMonitorCoreIntegrationTest {
         options.setExperimentalOption("detach", true);
 
         driver = new ChromeDriver(options);
-        wait = new WebDriverWait(driver, Duration.ofMillis(5000)); // 최대 5초 대기
+        wait = new WebDriverWait(driver, Duration.ofMillis(20000)); // 최대 10초 대기
 
 
     }
@@ -104,8 +108,13 @@ class JulianMonitorCoreIntegrationTest {
             assertThat(julianProduct.getName()).isNotNull();
             assertThat(julianProduct.getPrice()).isNotNull();
             assertThat(productHashMap.containsKey(julianProduct.getSku())).isEqualTo(true);
+            julianMonitorCore.getProductMoreInfo(driver, wait, julianProduct);
+            System.out.println(julianProduct);
         }
+
     }
+
+
 
 
 
@@ -116,6 +125,7 @@ class JulianMonitorCoreIntegrationTest {
         List<WebElement> innerProductDivs = julianMonitorCore.getInnerProductDivs(wait);
         //when
         List<JulianProduct> julianProductList = julianMonitorCore.getProductData(innerProductDivs, url);
+
         return julianProductList;
     }
 }
