@@ -1,5 +1,6 @@
 package com.example.monitor;
 
+import chrome.ChromeDriverTool;
 import chrome.ChromeDriverToolFactory;
 import com.example.monitor.infra.discord.DiscordBot;
 
@@ -14,6 +15,9 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import s3.service.S3UploaderService;
+
+import static com.example.monitor.monitoring.julian.JulianFindString.ALL_CATEGORIES;
+import static com.example.monitor.monitoring.julian.JulianFindString.JULIAN_LOG_PREFIX;
 
 @Slf4j
 @Component
@@ -101,75 +105,12 @@ public class CustomApplicationRunner implements ApplicationRunner {
 //        Thread julianThread = new Thread(new Runnable() {
 //            @Override
 //            public void run() {
+//
+//                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES);
 //                log.info(JULIAN_LOG_PREFIX + "============================ Load Julian Product Start ============================");
-//                try {
-//                    //로그인
-//                    ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES);
-//
-//                    ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
-//                    WebDriverWait wait = chromeDriverTool.getWebDriverWait();
-//                    HashMap<String, JulianProduct> brandHashMap = julianMonitorCore.getJulianBrandHashData().getBrandHashMap(ALL_CATEGORIES);
-//
-//
-//                    julianMonitorCore.login(chromeDriver, wait);
-//
-//                    for (int i = 1; i < 3; i++) {
-//                        String url = julianMonitorCore.getUrl(ALL_CATEGORIES_URL, i);
-//                        //페이지 이동
-//                        julianMonitorCore.changeUrl(chromeDriver, url);
-//
-//                        //하위 데이터
-//                        List<WebElement> productDataDivs = julianMonitorCore.getInnerProductDivs(wait);
-//
-//                        //상품 하위 데이터 조회
-//                        List<JulianProduct> productData = julianMonitorCore.getProductData(productDataDivs, url);
-//
-//                        //정보가져오기
-//                        julianMonitorCore.loadData(brandHashMap, productData);
-//
-//                    }
-//                    //로드체크
-//                    chromeDriverTool.isLoadData(true);
-//                    log.info(JULIAN_LOG_PREFIX + "== ALL CATEGORIES LOAD DATA FINISH ==");
-//                } catch (Exception e) {
-//                    log.error(JULIAN_LOG_PREFIX + "All Category Data Load Error");
-//                    e.printStackTrace();
-//                }
-//
-//
-//                try {
-//                    //로그인
-//                    ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(PROMO);
-//                    ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
-//                    WebDriverWait wait = chromeDriverTool.getWebDriverWait();
-//                    HashMap<String, JulianProduct> brandHashMap = julianMonitorCore.getJulianBrandHashData().getBrandHashMap(PROMO);
-//
-//                    julianMonitorCore.login(chromeDriver, wait);
-//
-//                    for (int i = 1; i < 3; i++) {
-//                        String url = julianMonitorCore.getUrl(PROMO_URL, i);
-//                        //페이지 이동
-//                        julianMonitorCore.changeUrl(chromeDriver, url);
-//
-//                        //하위 데이터
-//                        List<WebElement> productDataDivs = julianMonitorCore.getInnerProductDivs(wait);
-//
-//                        //상품 하위 데이터 조회
-//                        List<JulianProduct> productData = julianMonitorCore.getProductData(productDataDivs, url);
-//
-//                        //정보가져오기
-//                        julianMonitorCore.loadData(brandHashMap, productData);
-//
-//                    }
-//                    //Load 확인
-//                    chromeDriverTool.isLoadData(true);
-//                    log.info(JULIAN_LOG_PREFIX + "== PROMO LOAD DATA FINISH ==");
-//                } catch (Exception e) {
-//                    log.error(JULIAN_LOG_PREFIX + "== PROMO LOAD DATA ERROR ==");
-//                    e.printStackTrace();
-//                }
-//
+//                julianMonitorCore.runLoadLogic(chromeDriverTool);
 //                log.info(JULIAN_LOG_PREFIX + "============================ Load Julian Product Finish ============================");
+//
 //            }
 //        });
 //

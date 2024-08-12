@@ -6,6 +6,7 @@ import com.example.monitor.file.ProductFileWriter;
 import com.example.monitor.infra.converter.controller.IConverterFacade;
 import com.example.monitor.infra.converter.dto.ConvertProduct;
 import com.example.monitor.infra.discord.DiscordBot;
+import com.example.monitor.monitoring.global.IMonitorService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ import static com.example.monitor.monitoring.dobulef.DoubleFFindString.*;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class DoubleFMonitorCore {
+public class DoubleFMonitorCore implements IMonitorService {
 
 
     private final DiscordBot discordBot;
@@ -49,7 +50,7 @@ public class DoubleFMonitorCore {
 
     private final ProductFileWriter productFileWriter;
 
-
+    @Override
     public void runLoadLogic(ChromeDriverTool chromeDriverTool) {
 
         ChromeDriver driver = chromeDriverTool.getChromeDriver();
@@ -72,6 +73,7 @@ public class DoubleFMonitorCore {
 
     }
 
+    @Override
     public void runFindProductLogic(ChromeDriverTool chromeDriverTool) {
 
         ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
@@ -113,6 +115,7 @@ public class DoubleFMonitorCore {
         cookieElement.click();
     }
 
+    @Override
     public void login(ChromeDriver driver, WebDriverWait wait) {
 
         driver.get(DOUBLE_F_MAIN_PAGE);

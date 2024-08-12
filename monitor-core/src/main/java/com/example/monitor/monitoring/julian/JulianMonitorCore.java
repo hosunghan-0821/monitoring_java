@@ -3,6 +3,7 @@ package com.example.monitor.monitoring.julian;
 import chrome.ChromeDriverTool;
 import com.example.monitor.file.ProductFileWriter;
 import com.example.monitor.infra.discord.DiscordBot;
+import com.example.monitor.monitoring.global.IMonitorService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,13 +20,14 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+import static com.example.monitor.infra.discord.DiscordString.ALL_CATEGORIES_CHANNEL;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.NEW_PRODUCT;
 import static com.example.monitor.monitoring.julian.JulianFindString.*;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class JulianMonitorCore {
+public class JulianMonitorCore implements IMonitorService {
 
 
     private final DiscordBot discordBot;
@@ -41,23 +43,63 @@ public class JulianMonitorCore {
     private String userPw;
 
 
-    public void runFindProductLogic(ChromeDriverTool chromeDriverTool, String pageUrl, String monitoringSite, Long discordChannelId) {
+    public void changeUrl(ChromeDriver driver, String url) {
+        driver.get(url);
+    }
+
+    @Override
+    public void runLoadLogic(ChromeDriverTool chromeDriverTool) {
+
+        try {
+            ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
+            WebDriverWait wait = chromeDriverTool.getWebDriverWait();
+            HashMap<String, JulianProduct> brandHashMap = this.getJulianBrandHashData().getBrandHashMap(ALL_CATEGORIES);
+
+            login(chromeDriver, wait);
+
+            for (int i = 1; i < 3; i++) {
+                String url = getUrl(ALL_CATEGORIES_URL, i);
+                //페이지 이동
+                changeUrl(chromeDriver, url);
+
+                //하위 데이터
+                List<WebElement> productDataDivs = getInnerProductDivs(wait);
+
+                //상품 하위 데이터 조회
+                List<JulianProduct> productData = getProductData(productDataDivs, url);
+
+                //정보가져오기
+                loadData(brandHashMap, productData);
+            }
+            //로드체크
+            chromeDriverTool.isLoadData(true);
+            log.info(JULIAN_LOG_PREFIX + "== ALL CATEGORIES LOAD DATA FINISH ==");
+        } catch (Exception e) {
+            log.error(JULIAN_LOG_PREFIX + "All Category Data Load Error");
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void runFindProductLogic(ChromeDriverTool chromeDriverTool) {
+
+
         ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
         WebDriverWait wait = chromeDriverTool.getWebDriverWait();
 
-        HashMap<String, JulianProduct> dataHashMap = julianBrandHashData.getBrandHashMap(monitoringSite);
+        HashMap<String, JulianProduct> dataHashMap = julianBrandHashData.getBrandHashMap(ALL_CATEGORIES);
         HashSet<String> dataKeySet = julianBrandHashData.getProductKeySet();
 
         if (!chromeDriverTool.isLoadData() || !chromeDriverTool.isRunning()) {
             log.error(JULIAN_LOG_PREFIX + "Data Load or isRunning OFF");
             return;
         }
-        log.info(JULIAN_LOG_PREFIX + "START: " + monitoringSite + " FIND NEW PRODUCT ");
+        log.info(JULIAN_LOG_PREFIX + "START: " + ALL_CATEGORIES + " FIND NEW PRODUCT ");
         List<JulianProduct> findJulianProductList = new ArrayList<>();
 
         try {
             for (int i = 1; i < 3; i++) {
-                String url = getUrl(pageUrl, i);
+                String url = getUrl(ALL_CATEGORIES_URL, i);
 
                 //페이지 이동
                 changeUrl(chromeDriver, url);
@@ -92,8 +134,8 @@ public class JulianMonitorCore {
                         dataKeySet.add(julianProduct.getSku());
                         getProductMoreInfo(chromeDriver, wait, julianProduct);
 
-                        discordBot.sendNewProductInfo(discordChannelId, julianProduct);
-                        productFileWriter.writeProductInfo(julianProduct.changeToProductFileInfo(JULIAN + " / " + monitoringSite, NEW_PRODUCT));
+                        discordBot.sendNewProductInfo(ALL_CATEGORIES_CHANNEL, julianProduct);
+                        productFileWriter.writeProductInfo(julianProduct.changeToProductFileInfo(JULIAN + " / " + ALL_CATEGORIES, NEW_PRODUCT));
                         log.info(JULIAN_LOG_PREFIX + "New Product = " + julianProduct);
                     }
                 }
@@ -101,7 +143,6 @@ public class JulianMonitorCore {
             // 이후에 HashMap 재 정립
             dataHashMap.clear();
             loadData(dataHashMap, findJulianProductList);
-
 
         } catch (NoSuchWindowException e) {
 
@@ -115,13 +156,10 @@ public class JulianMonitorCore {
         }
 
         log.info(JULIAN_LOG_PREFIX + "END:  FIND NEW PRODUCT FINISH");
+
     }
 
-
-    public void changeUrl(ChromeDriver driver, String url) {
-        driver.get(url);
-    }
-
+    @Override
     public void login(ChromeDriver driver, WebDriverWait wait) {
         assert (driver != null);
 

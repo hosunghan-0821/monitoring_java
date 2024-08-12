@@ -5,6 +5,7 @@ import com.example.monitor.file.ProductFileWriter;
 import com.example.monitor.infra.converter.controller.IConverterFacade;
 import com.example.monitor.infra.converter.dto.ConvertProduct;
 import com.example.monitor.infra.discord.DiscordBot;
+import com.example.monitor.monitoring.global.IMonitorService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +38,7 @@ import static com.example.monitor.monitoring.dobulef.DoubleFFindString.*;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class BiffiMonitorCore {
+public class BiffiMonitorCore implements IMonitorService {
 
 
     private final DiscordBot discordBot;
@@ -56,6 +57,7 @@ public class BiffiMonitorCore {
     private String userPw;
 
 
+    @Override
     public void runLoadLogic(ChromeDriverTool chromeDriverTool) {
 
         ChromeDriver driver = chromeDriverTool.getChromeDriver();
@@ -70,6 +72,7 @@ public class BiffiMonitorCore {
         chromeDriverTool.isLoadData(true);
     }
 
+    @Override
     public void runFindProductLogic(ChromeDriverTool chromeDriverTool) {
         ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
         WebDriverWait wait = chromeDriverTool.getWebDriverWait();
@@ -113,6 +116,7 @@ public class BiffiMonitorCore {
 
     }
 
+    @Override
     public void login(ChromeDriver driver, WebDriverWait wait) {
         driver.get(BIFFI_MAIN_URL);
 

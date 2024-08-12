@@ -5,6 +5,7 @@ import com.example.monitor.file.ProductFileWriter;
 import com.example.monitor.infra.converter.controller.IConverterFacade;
 import com.example.monitor.infra.discord.DiscordBot;
 
+import com.example.monitor.monitoring.global.IMonitorService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +40,7 @@ import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindStri
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class GebenegoziMonitorCore {
+public class GebenegoziMonitorCore implements IMonitorService{
 
 
     private final DiscordBot discordBot;
@@ -63,6 +64,7 @@ public class GebenegoziMonitorCore {
     private final RestTemplate restTemplate;
 
 
+    @Override
     public void runLoadLogic(ChromeDriverTool chromeDriverTool) {
 
         ChromeDriver driver = chromeDriverTool.getChromeDriver();
@@ -77,6 +79,7 @@ public class GebenegoziMonitorCore {
     }
 
 
+    @Override
     public void runFindProductLogic(ChromeDriverTool chromeDriverTool) {
 
         ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
@@ -172,6 +175,7 @@ public class GebenegoziMonitorCore {
     }
 
 
+    @Override
     public void login(ChromeDriver driver, WebDriverWait wait) {
         //로그인페이지 로그인
         driver.get(GEBENE_MAIN_URL);
