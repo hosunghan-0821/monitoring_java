@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.example.monitor'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+
+    implementation 'org.springframework.boot:spring-boot-starter'
+    //crawling
+    implementation 'org.jsoup:jsoup:1.17.2'
+    implementation 'org.seleniumhq.selenium:selenium-java:4.18.1'
+}
+
+test {
+    useJUnitPlatform()
+}

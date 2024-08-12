@@ -1,0 +1,21 @@
+plugins {
+    id 'java'
+}
+
+group = 'dopee.common'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // AWS S3
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+}
+
+test {
+    useJUnitPlatform()
+}
