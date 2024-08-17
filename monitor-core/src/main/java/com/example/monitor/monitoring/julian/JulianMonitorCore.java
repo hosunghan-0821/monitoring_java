@@ -217,6 +217,7 @@ public class JulianMonitorCore implements IMonitorService {
 
             JulianProduct julianProduct = JulianProduct.builder()
                     .name(name.getText())
+                    .brandName(name.getText())
                     .sku(reference.getText())
                     .imageUrl(imageSrc)
                     .price(priceString)
@@ -296,7 +297,7 @@ public class JulianMonitorCore implements IMonitorService {
     }
 
     @Recover
-    public void recover(Exception e){
+    public void recover(Exception e) {
         log.info("상품정보 못불러오는 에러" + e.getMessage());
     }
 

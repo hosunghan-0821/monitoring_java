@@ -1,6 +1,7 @@
 package com.example.monitor.integration;
 
 import com.example.monitor.infra.discord.DiscordBot;
+import com.example.monitor.infra.discord.DiscordString;
 import com.example.monitor.monitoring.julian.JulianFindString;
 import com.example.monitor.monitoring.julian.JulianMonitorCore;
 import com.example.monitor.monitoring.julian.JulianProduct;
@@ -23,9 +24,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Import({TestConfiguration.class})
 class JulianMonitorCoreIntegrationTest {
 
     @Value("${julian.user.id}")
@@ -109,8 +108,16 @@ class JulianMonitorCoreIntegrationTest {
 //            julianMonitorCore.getProductMoreInfo(driver, wait, julianProduct);
 //            System.out.println(julianProduct);
         }
-//        julianMonitorCore.getProductMoreInfo(driver, wait, julianProductList.get(4));
-//        System.out.println( julianProductList.get(4));
+        julianMonitorCore.getProductMoreInfo(driver, wait, julianProductList.get(5));
+        System.out.println( julianProductList.get(5));
+
+        discordBot.sendNewProductInfo(DiscordString.ALL_CATEGORIES_CHANNEL,julianProductList.get(5));
+        try{
+            Thread.sleep(10000);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
 

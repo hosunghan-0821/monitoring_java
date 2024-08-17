@@ -8,6 +8,7 @@ import com.example.monitor.monitoring.biffi.BiffiMonitorCore;
 import com.example.monitor.monitoring.dobulef.DoubleFMonitorCore;
 import com.example.monitor.monitoring.gebnegozi.GebenegoziMonitorCore;
 import com.example.monitor.monitoring.julian.JulianMonitorCore;
+import com.example.monitor.monitoring.style.StyleMonitorCore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
@@ -16,8 +17,15 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import s3.service.S3UploaderService;
 
+import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI;
+import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI_LOG_PREFIX;
+import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F;
+import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F_LOG_PREFIX;
+import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.GEBE;
+import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.GEBENE_LOG_PREFIX;
 import static com.example.monitor.monitoring.julian.JulianFindString.ALL_CATEGORIES;
 import static com.example.monitor.monitoring.julian.JulianFindString.JULIAN_LOG_PREFIX;
+import static com.example.monitor.monitoring.julian.JulianFindString.PROMO;
 
 @Slf4j
 @Component
@@ -36,6 +44,8 @@ public class CustomApplicationRunner implements ApplicationRunner {
 
     private final GebenegoziMonitorCore gebenegoziMonitorCore;
 
+    private final StyleMonitorCore styleMonitorCore;
+
     private final DiscordBot discordBot;
 
     private final S3UploaderService s3UploaderService;
@@ -44,19 +54,19 @@ public class CustomApplicationRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-//        chromeDriverToolFactory.makePrivateChromeDriverTool("test");
+//        chromeDriverToolFactory.makeChromeDriverTool("style");
 //
-//        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool("test");
+//        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool("style");
 //
-//        ChromeDriver driver = chromeDriverTool.getChromeDriver();
-//        WebDriverWait wait = chromeDriverTool.getWebDriverWait();
+//        styleMonitorCore.login(chromeDriverTool.getChromeDriver(),chromeDriverTool.getWebDriverWait());
 //
-//        driver.get("https://stores.antonioli.eu");
+//
+//        //loadData
+//        styleMonitorCore.loadData(chromeDriverTool.getChromeDriver(),chromeDriverTool.getWebDriverWait());
 
-
-//        chromeDriverToolFactory.makeChromeDriverTool(DOUBLE_F);
 //        chromeDriverToolFactory.makeChromeDriverTool(ALL_CATEGORIES);
-//        chromeDriverToolFactory.makeChromeDriverTool(PROMO);
+//
+//        chromeDriverToolFactory.makeChromeDriverTool(DOUBLE_F);
 //        chromeDriverToolFactory.makeChromeDriverTool(BIFFI);
 //        chromeDriverToolFactory.makeChromeDriverTool(GEBE);
 //        discordBot.setChromeDriverTool(chromeDriverToolFactory);
