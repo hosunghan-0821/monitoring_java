@@ -8,6 +8,8 @@ public class JulianSaleInfoString {
 
     public static final String FALL_WINTER_2024_2025 = "FALL WINTER 2024/2025";
     public static final String SPRING_SUMMER_2024 = "SPRING SUMMER 2024";
+
+    public static final String OUTLET ="OUTLET";
     public static final int WOMAN_CLOTHES_COLUMN_INDEX = 2;
     public static final int WOMAN_SHOES_COLUMN_INDEX = 3;
     public static final int WOMAN_BAGS_COLUMN_INDEX = 4;

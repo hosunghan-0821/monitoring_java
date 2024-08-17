@@ -1,7 +1,6 @@
 package com.example.monitor.monitoring.julian;
 
 
-import com.example.monitor.monitoring.gebnegozi.GebenegoziSaleInfoString;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -29,6 +28,7 @@ import java.util.stream.Collectors;
 
 import static com.example.monitor.monitoring.julian.JulianFindString.JULIAN_MONITORING_SITE;
 import static com.example.monitor.monitoring.julian.JulianSaleInfoString.FALL_WINTER_2024_2025;
+import static com.example.monitor.monitoring.julian.JulianSaleInfoString.OUTLET;
 import static com.example.monitor.monitoring.julian.JulianSaleInfoString.SPRING_SUMMER_2024;
 
 
@@ -75,7 +75,7 @@ public class JulianBrandHashData {
             ) {
 
                 Sheet sheet = workbook.getSheetAt(0);
-                int startIndex = 4;
+                int startIndex = 2;
                 int lastIndex = sheet.getLastRowNum();
                 for (int i = startIndex; i <= lastIndex; i++) {
                     Row row = sheet.getRow(i);
@@ -97,6 +97,37 @@ public class JulianBrandHashData {
                     String man_bags = getCellValue(row.getCell(JulianSaleInfoString.MAN_BAGS_COLUMN_INDEX));
                     String man_acc = getCellValue(row.getCell(JulianSaleInfoString.MAN_ACC_COLUMN_INDEX));
 
+                    String unisex_clothes = "";
+                    String unisex_shoes = "";
+                    String unisex_bags = "";
+                    String unisex_acc = "";
+
+                    //TO-DO UNISEX 처리
+                    String clothesResult = getHighPercentSexOrNull(woman_clothes, man_clothes);
+                    if (clothesResult != null) {
+                        unisex_clothes = clothesResult;
+                        julianSaleInfoHashMap.put(makeSalesInfoKey(brandName, season, "CLOTHING", "UNISEX"), getJulianSaleInfo(season, unisex_clothes, brandName, "CLOTHING"));
+                    }
+
+                    String shoesResult = getHighPercentSexOrNull(woman_shoes, man_shoes);
+                    if (shoesResult != null) {
+                        unisex_shoes = shoesResult;
+                        julianSaleInfoHashMap.put(makeSalesInfoKey(brandName, season, "SHOES", "UNISEX"), getJulianSaleInfo(season, unisex_shoes, brandName, "SHOES"));
+                    }
+
+                    String bagsResult = getHighPercentSexOrNull(woman_bags, man_bags);
+                    if (bagsResult != null) {
+                        unisex_bags = bagsResult;
+                        julianSaleInfoHashMap.put(makeSalesInfoKey(brandName, season, "BAGS", "UNISEX"), getJulianSaleInfo(season, unisex_bags, brandName, "BAGS"));
+                    }
+                    String accResult = getHighPercentSexOrNull(woman_acc, man_acc);
+
+                    if (accResult != null) {
+                        unisex_acc = accResult;
+                        julianSaleInfoHashMap.put(makeSalesInfoKey(brandName, season, "ACCESSORIES", "UNISEX"), getJulianSaleInfo(season, unisex_acc, brandName, "ACCESSORIES"));
+                    }
+
+
                     //log.info("{}, \t// {} ,{}, {}, {}, \t// {}, {}, {}, {}", brandName, woman_clothes, woman_shoes, woman_bags, woman_acc, man_clothes, man_shoes, man_bags, man_acc);
 
                     julianSaleInfoHashMap.put(makeSalesInfoKey(brandName, season, "CLOTHING", "WOMAN"), getJulianSaleInfo(season, woman_clothes, brandName, "CLOTHING"));
@@ -116,14 +147,27 @@ public class JulianBrandHashData {
                 log.error("액셀 데이터 로드 오류");
             }
         }
+//        System.out.println(julianSaleInfoHashMap);
+    }
+
+    private String getHighPercentSexOrNull(String woman_category, String man_category) {
+        String unisex_clothes = null;
+        if (!woman_category.isBlank() && !man_category.isBlank()) {
+            if (Integer.parseInt(woman_category) > Integer.parseInt(man_category)) {
+                unisex_clothes = woman_category;
+            } else {
+                unisex_clothes = man_category;
+            }
+        } else if (!woman_category.isBlank()) {
+            unisex_clothes = woman_category;
+        } else if (!man_category.isBlank()) {
+            unisex_clothes = man_category;
+        }
+        return unisex_clothes;
     }
 
 
     public String makeSalesInfoKey(String brandName, String season, String category, String sex) {
-        //unisex일 경우 woman으로 가격계산을 함.
-        if (sex.equals("unisex")) {
-            sex = "woman";
-        }
 
         StringBuilder sb = new StringBuilder();
         sb.append(brandName);
@@ -156,6 +200,8 @@ public class JulianBrandHashData {
                 return FALL_WINTER_2024_2025;
             case "SS24":
                 return SPRING_SUMMER_2024;
+            case "OUTLET":
+                return OUTLET;
             default:
                 assert (false) : "cannot come here";
                 return "Error";
@@ -191,7 +237,7 @@ public class JulianBrandHashData {
         }
         switch (cell.getCellType()) {
             case STRING:
-                return cell.getStringCellValue();
+                return cell.getStringCellValue().trim();
             case NUMERIC:
                 return String.valueOf((int) cell.getNumericCellValue());
             case BOOLEAN:
