@@ -15,4 +15,8 @@ public class DiscordString {
     public static final Long BIFFI_DISCOUNT_CHANNEL = 1231795464110866503L;
 
     public static final Long GEBENE_NEW_PRODUCT_CHANNEL = 1238458755675586580L;
+
+    public static final Long STYLE_NEW_PRODUCT_CHANNEL = 1274251649761939476L;
+
+    public static final Long STYLE_DISCOUNT_CHANNEL = 1274251692829052989L;
 }
