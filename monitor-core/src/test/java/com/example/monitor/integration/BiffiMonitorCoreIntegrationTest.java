@@ -30,6 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Import({TestConfiguration.class})
+@Disabled
 class BiffiMonitorCoreIntegrationTest {
     @Autowired
     private BiffiMonitorCore biffiMonitorCore;

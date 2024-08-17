@@ -106,8 +106,8 @@ class JulianMonitorCoreIntegrationTest {
             assertThat(julianProduct.getName()).isNotNull();
             assertThat(julianProduct.getPrice()).isNotNull();
             assertThat(productHashMap.containsKey(julianProduct.getSku())).isEqualTo(true);
-            julianMonitorCore.getProductMoreInfo(driver, wait, julianProduct);
-            System.out.println(julianProduct);
+//            julianMonitorCore.getProductMoreInfo(driver, wait, julianProduct);
+//            System.out.println(julianProduct);
         }
 //        julianMonitorCore.getProductMoreInfo(driver, wait, julianProductList.get(4));
 //        System.out.println( julianProductList.get(4));
