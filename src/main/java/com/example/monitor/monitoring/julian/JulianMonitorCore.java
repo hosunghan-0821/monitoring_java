@@ -16,9 +16,12 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.concurrent.TimeoutException;
 
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.NEW_PRODUCT;
 import static com.example.monitor.monitoring.julian.JulianFindString.*;
@@ -214,51 +217,54 @@ public class JulianMonitorCore {
         return newJulianProductList;
     }
 
+    @Retryable
     public void getProductMoreInfo(WebDriver driver, WebDriverWait wait, JulianProduct julianProduct) {
 
         if (!julianProduct.getProductLink().equals(driver.getCurrentUrl())) {
             driver.get(julianProduct.getProductLink());
         }
-        try {
-            getInnerProductDivs(wait);
-            WebElement element = driver.findElement(By.xpath("//div[@class='produt_reference' and contains(text(),'" + julianProduct.getSku() + "')]/.."));
-            //정보가져오기
-            WebElement detailLink = element.findElement(By.xpath(".//a[@class='button-action quick-view']"));
-            //해당상품으로 이동
-            Actions actions = new Actions(driver);
-            actions.moveToElement(detailLink);
-            actions.click().perform();
 
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@class='name']")));
-            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[@class='close']//span")));
-            List<WebElement> productDataList = driver.findElements(By.xpath("//li[@class='name']"));
-            for (WebElement productDataElement : productDataList) {
-                String text = productDataElement.getText();
-                text = text.toLowerCase(Locale.ENGLISH);
-                if (text.contains("made in")) {
-                    String madeBy = text.split(":")[1].strip();
-                    julianProduct.setMadeBy(madeBy);
-                } else if (text.contains("gender")) {
-                    String gender = text.split(":")[1].strip().toUpperCase();
-                    julianProduct.setGender(gender);
-                } else if (text.contains("season")) {
-                    String season = text.split(":")[1].strip().toUpperCase();
-                    julianProduct.setSeason(season);
-                } else if (text.contains("type")) {
-                    String category = text.split(":")[1].strip().toUpperCase();
-                    julianProduct.setCategory(category);
-                }
+        getInnerProductDivs(wait);
+        WebElement element = driver.findElement(By.xpath("//div[@class='produt_reference' and contains(text(),'" + julianProduct.getSku() + "')]/.."));
+        //정보가져오기
+        WebElement detailLink = element.findElement(By.xpath(".//a[@class='button-action quick-view']"));
+        //해당상품으로 이동
+        Actions actions = new Actions(driver);
+        actions.moveToElement(detailLink);
+        actions.click().perform();
+
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@class='name']")));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[@class='close']//span")));
+        List<WebElement> productDataList = driver.findElements(By.xpath("//li[@class='name']"));
+        for (WebElement productDataElement : productDataList) {
+            String text = productDataElement.getText();
+            text = text.toLowerCase(Locale.ENGLISH);
+            if (text.contains("made in")) {
+                String madeBy = text.split(":")[1].strip();
+                julianProduct.setMadeBy(madeBy);
+            } else if (text.contains("gender")) {
+                String gender = text.split(":")[1].strip().toUpperCase();
+                julianProduct.setGender(gender);
+            } else if (text.contains("season")) {
+                String season = text.split(":")[1].strip().toUpperCase();
+                julianProduct.setSeason(season);
+            } else if (text.contains("type")) {
+                String category = text.split(":")[1].strip().toUpperCase();
+                julianProduct.setCategory(category);
             }
-            //닫기버튼
-            driver.findElement(By.xpath("//button[@class='close']//span")).click();
-            setProductPriceInfo(julianProduct);
-        } catch (Exception e) {
-            log.error(JULIAN_LOG_PREFIX + "추가정보 못찾는 에러\n" + "상품정보 " + julianProduct.toString());
-            log.error(e.toString());
         }
+        //닫기버튼
+        driver.findElement(By.xpath("//button[@class='close']//span")).click();
+        setProductPriceInfo(julianProduct);
+    }
+
+    @Recover
+    public void recover(Exception e){
+        log.info("상품정보 못불러오는 에러" + e.getMessage());
     }
 
     public void setProductPriceInfo(JulianProduct julianProduct) {
+
         String key = julianBrandHashData.makeSalesInfoKey(julianProduct.getName(), julianProduct.getSeason(), julianProduct.getCategory(), julianProduct.getGender());
         String defaultKey = julianBrandHashData.makeSalesInfoKey("OTHER BRANDS", julianProduct.getSeason(), julianProduct.getCategory(), julianProduct.getGender());
         JulianSaleInfo defaultSalesInfoOrNull = julianBrandHashData.getJulianSaleInfoHashMap().getOrDefault(defaultKey, null);
@@ -269,7 +275,7 @@ public class JulianMonitorCore {
         int wholeSalePercent = 0;
 
         if (julianSaleInfoOrNull != null) {
-            wholeSaleOrigin = julianProduct.getPrice().split("€")[1].replaceAll(",","");
+            wholeSaleOrigin = julianProduct.getPrice().split("€")[1].replaceAll(",", "");
             wholeSalePercent = julianSaleInfoOrNull.getSalesPercent();
             double wholeSaleAfter = Double.parseDouble(wholeSaleOrigin) * (wholeSalePercent + 100) / 100;
             wholeSale = String.valueOf(wholeSaleAfter);

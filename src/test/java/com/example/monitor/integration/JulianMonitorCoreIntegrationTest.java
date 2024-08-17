@@ -60,7 +60,7 @@ class JulianMonitorCoreIntegrationTest {
         options.setExperimentalOption("detach", true);
 
         driver = new ChromeDriver(options);
-        wait = new WebDriverWait(driver, Duration.ofMillis(20000)); // 최대 10초 대기
+        wait = new WebDriverWait(driver, Duration.ofMillis(3000)); // 최대 10초 대기
 
 
     }
@@ -111,12 +111,9 @@ class JulianMonitorCoreIntegrationTest {
             julianMonitorCore.getProductMoreInfo(driver, wait, julianProduct);
             System.out.println(julianProduct);
         }
-
+//        julianMonitorCore.getProductMoreInfo(driver, wait, julianProductList.get(4));
+//        System.out.println( julianProductList.get(4));
     }
-
-
-
-
 
 
     private List<JulianProduct> getJulianProducts(String category) {
