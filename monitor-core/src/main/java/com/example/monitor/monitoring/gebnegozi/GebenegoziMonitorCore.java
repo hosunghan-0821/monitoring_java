@@ -3,13 +3,13 @@ package com.example.monitor.monitoring.gebnegozi;
 import chrome.ChromeDriverTool;
 import com.example.monitor.file.ProductFileWriter;
 import com.example.monitor.infra.converter.controller.IConverterFacade;
-import com.example.monitor.infra.discord.DiscordBot;
+import module.discord.DiscordBot;
 
 import com.example.monitor.monitoring.global.IMonitorService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -34,7 +34,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static com.example.monitor.infra.discord.DiscordString.GEBENE_NEW_PRODUCT_CHANNEL;
+import static module.discord.DiscordString.GEBENE_NEW_PRODUCT_CHANNEL;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.*;
 import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.*;
 
@@ -445,7 +445,7 @@ public class GebenegoziMonitorCore implements IMonitorService {
 
     }
 
-    @NotNull
+
     public static String getFileNameByTimeFormat() {
         // 현재 날짜와 시간 가져오기
         LocalDateTime currentDateTime = LocalDateTime.now();

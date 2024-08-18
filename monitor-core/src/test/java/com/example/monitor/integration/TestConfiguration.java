@@ -1,7 +1,6 @@
 package com.example.monitor.integration;
 
-import com.example.monitor.infra.discord.DiscordBot;
-import com.example.monitor.monitoring.dobulef.DoubleFProduct;
+import module.discord.DiscordBot;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;

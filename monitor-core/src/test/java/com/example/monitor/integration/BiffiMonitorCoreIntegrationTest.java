@@ -2,7 +2,7 @@ package com.example.monitor.integration;
 
 import chrome.ChromeDriverToolFactory;
 import com.example.monitor.infra.converter.controller.IConverterFacade;
-import com.example.monitor.infra.discord.DiscordBot;
+import module.discord.DiscordBot;
 import com.example.monitor.monitoring.biffi.BiffiBrandHashData;
 import com.example.monitor.monitoring.biffi.BiffiFindString;
 import com.example.monitor.monitoring.biffi.BiffiMonitorCore;

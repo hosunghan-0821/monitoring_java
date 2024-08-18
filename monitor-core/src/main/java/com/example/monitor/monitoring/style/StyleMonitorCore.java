@@ -2,7 +2,7 @@ package com.example.monitor.monitoring.style;
 
 import chrome.ChromeDriverTool;
 import com.example.monitor.file.ProductFileWriter;
-import com.example.monitor.infra.discord.DiscordBot;
+import module.discord.DiscordBot;
 import com.example.monitor.monitoring.global.IMonitorService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static com.example.monitor.infra.discord.DiscordString.STYLE_DISCOUNT_CHANNEL;
-import static com.example.monitor.infra.discord.DiscordString.STYLE_NEW_PRODUCT_CHANNEL;
+import static module.discord.DiscordString.STYLE_DISCOUNT_CHANNEL;
+import static module.discord.DiscordString.STYLE_NEW_PRODUCT_CHANNEL;
 import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI_BRAND_NAME_LIST;
 import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI_BRAND_URL_LIST;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DISCOUNT_CHANGE;

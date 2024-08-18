@@ -3,11 +3,13 @@ dependencies {
 
     implementation(project(':modules:chrome'))
     implementation(project(':modules:s3'))
+    implementation(project(':modules:discord'))
+
+
+//    api()
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
-    implementation 'net.dv8tion:JDA:5.0.0-beta.5'
 
     //crawling
     implementation 'org.jsoup:jsoup:1.17.2'
@@ -20,8 +22,6 @@ dependencies {
     // AWS S3
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
-    //discord
-    implementation 'net.dv8tion:JDA:5.0.0-beta.5'
 
     implementation 'org.springframework.retry:spring-retry'
     implementation 'org.springframework:spring-aspects'

@@ -12,8 +12,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 
-import static com.example.monitor.infra.discord.DiscordString.ALL_CATEGORIES_CHANNEL;
-import static com.example.monitor.infra.discord.DiscordString.PROMO_CHANNEL;
 import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI;
 import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI_LOG_PREFIX;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F;

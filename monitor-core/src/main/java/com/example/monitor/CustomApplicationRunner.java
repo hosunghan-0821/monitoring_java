@@ -1,8 +1,7 @@
 package com.example.monitor;
 
-import chrome.ChromeDriverTool;
 import chrome.ChromeDriverToolFactory;
-import com.example.monitor.infra.discord.DiscordBot;
+import module.discord.DiscordBot;
 
 import com.example.monitor.monitoring.biffi.BiffiMonitorCore;
 import com.example.monitor.monitoring.dobulef.DoubleFMonitorCore;
@@ -16,16 +15,6 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import s3.service.S3UploaderService;
-
-import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI;
-import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI_LOG_PREFIX;
-import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F;
-import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F_LOG_PREFIX;
-import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.GEBE;
-import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.GEBENE_LOG_PREFIX;
-import static com.example.monitor.monitoring.julian.JulianFindString.ALL_CATEGORIES;
-import static com.example.monitor.monitoring.julian.JulianFindString.JULIAN_LOG_PREFIX;
-import static com.example.monitor.monitoring.julian.JulianFindString.PROMO;
 
 @Slf4j
 @Component

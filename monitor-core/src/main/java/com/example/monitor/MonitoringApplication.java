@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 
 @RequiredArgsConstructor
-@SpringBootApplication(scanBasePackages = {"com.example.monitor", "chrome","s3"})
+@SpringBootApplication(scanBasePackages = {"com.example.monitor", "chrome","s3","module.discord"})
 public class MonitoringApplication {
 
     public static void main(String[] args) {

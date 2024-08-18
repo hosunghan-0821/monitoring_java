@@ -5,7 +5,7 @@ import chrome.ChromeDriverTool;
 import com.example.monitor.file.ProductFileWriter;
 import com.example.monitor.infra.converter.controller.IConverterFacade;
 import com.example.monitor.infra.converter.dto.ConvertProduct;
-import com.example.monitor.infra.discord.DiscordBot;
+import module.discord.DiscordBot;
 import com.example.monitor.monitoring.global.IMonitorService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +26,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
-import static com.example.monitor.infra.discord.DiscordString.DOUBLE_F_DISCOUNT_CHANNEL;
-import static com.example.monitor.infra.discord.DiscordString.DOUBLE_F_NEW_PRODUCT_CHANNEL;
+import static module.discord.DiscordString.DOUBLE_F_DISCOUNT_CHANNEL;
+import static module.discord.DiscordString.DOUBLE_F_NEW_PRODUCT_CHANNEL;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.*;
 
 @Slf4j

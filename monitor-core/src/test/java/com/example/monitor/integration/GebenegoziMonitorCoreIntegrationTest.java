@@ -1,7 +1,7 @@
 package com.example.monitor.integration;
 
 import chrome.ChromeDriverToolFactory;
-import com.example.monitor.infra.discord.DiscordBot;
+import module.discord.DiscordBot;
 import com.example.monitor.monitoring.gebnegozi.GebenegoziBrandHashData;
 import com.example.monitor.monitoring.gebnegozi.GebenegoziMonitorCore;
 import com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString;

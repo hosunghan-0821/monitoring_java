@@ -1,7 +1,6 @@
 package com.example.monitor.integration;
 
-import com.example.monitor.infra.discord.DiscordBot;
-import com.example.monitor.monitoring.julian.JulianFindString;
+import module.discord.DiscordBot;
 import com.example.monitor.monitoring.style.StyleFindString;
 import com.example.monitor.monitoring.style.StyleMonitorCore;
 import com.example.monitor.monitoring.style.StyleProduct;
@@ -17,7 +16,6 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -25,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static com.example.monitor.infra.discord.DiscordString.STYLE_NEW_PRODUCT_CHANNEL;
+import static module.discord.DiscordString.STYLE_NEW_PRODUCT_CHANNEL;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest

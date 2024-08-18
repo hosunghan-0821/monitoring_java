@@ -2,7 +2,7 @@ package com.example.monitor.monitoring.julian;
 
 import chrome.ChromeDriverTool;
 import com.example.monitor.file.ProductFileWriter;
-import com.example.monitor.infra.discord.DiscordBot;
+import module.discord.DiscordBot;
 import com.example.monitor.monitoring.global.IMonitorService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -21,10 +21,9 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.concurrent.TimeoutException;
 import java.util.stream.Stream;
 
-import static com.example.monitor.infra.discord.DiscordString.ALL_CATEGORIES_CHANNEL;
+import static module.discord.DiscordString.ALL_CATEGORIES_CHANNEL;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.NEW_PRODUCT;
 import static com.example.monitor.monitoring.julian.JulianFindString.*;
 
