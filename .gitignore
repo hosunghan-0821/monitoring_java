@@ -45,3 +45,5 @@ application.properties
 /*/product
 data.xlsx
 *.xlsx
+
+*.yaml

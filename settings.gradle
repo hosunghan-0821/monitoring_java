@@ -3,5 +3,6 @@ rootProject.name = 'monitoring'
 include ':monitor-core'
 include 'modules:chrome'
 include 'modules:s3'
-
+include 'database-sync-core'
+include 'modules:database'
 
