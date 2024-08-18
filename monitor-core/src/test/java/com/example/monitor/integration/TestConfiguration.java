@@ -16,7 +16,7 @@ public class TestConfiguration {
     DiscordBot getDiscordBot() {
 
         DiscordBot discordBot = Mockito.mock(DiscordBot.class);
-        Mockito.doNothing().when(discordBot).sendNewProductInfo(any(), any(DoubleFProduct.class),any());
+        Mockito.doNothing().when(discordBot).sendNewProductInfoCommon(any(),any(),any(),any(),any());
         return discordBot;
 
     }

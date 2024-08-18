@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Stream;
 
 import static com.example.monitor.infra.discord.DiscordString.ALL_CATEGORIES_CHANNEL;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.NEW_PRODUCT;
@@ -137,7 +138,15 @@ public class JulianMonitorCore implements IMonitorService {
                         dataKeySet.add(julianProduct.getSku());
                         getProductMoreInfo(chromeDriver, wait, julianProduct);
 
-                        discordBot.sendNewProductInfo(ALL_CATEGORIES_CHANNEL, julianProduct);
+                        //discordBot.sendNewProductInfo(ALL_CATEGORIES_CHANNEL, julianProduct);
+                        discordBot.sendNewProductInfoCommon(
+                                ALL_CATEGORIES_CHANNEL,
+                                julianProduct.makeDiscordMessageDescription(),
+                                julianProduct.getProductLink(),
+                                julianProduct.getImageUrl(),
+                                Stream.of(julianProduct.getSku()).toArray(String[]::new)
+                        );
+
                         productFileWriter.writeProductInfo(julianProduct.changeToProductFileInfo(JULIAN + " / " + ALL_CATEGORIES, NEW_PRODUCT));
                         log.info(JULIAN_LOG_PREFIX + "New Product = " + julianProduct);
                     }

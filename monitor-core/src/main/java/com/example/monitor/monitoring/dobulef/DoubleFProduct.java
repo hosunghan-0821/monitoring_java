@@ -1,7 +1,6 @@
 package com.example.monitor.monitoring.dobulef;
 
 import com.example.monitor.monitoring.global.MonitoringProduct;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
@@ -25,5 +24,40 @@ public class DoubleFProduct extends MonitoringProduct {
 
     public void updateDiscountPercentage(String discountPercentage) {
         this.discountPercentage = discountPercentage;
+    }
+
+    public String makeDiscordMessageDescription() {
+
+        return String.format(DISCORD_NEW_PRODUCT_MESSAGE_FORMAT,
+                this.name,
+                null,
+                this.sku,
+                this.brandName,
+                null,
+                this.madeBy,
+                this.price,
+                this.discountPercentage,
+                null,
+                null,
+                null
+        );
+    }
+
+    public String makeDiscordDiscountMessageDescription(String beforeSalesPercent) {
+
+        return String.format(DISCORD_DISCOUNT_CHANGE_MESSAGE_FORMAT,
+                this.name,
+                null,
+                this.sku,
+                this.brandName,
+                null,
+                this.madeBy,
+                this.price,
+                beforeSalesPercent,
+                this.discountPercentage,
+                null,
+                null,
+                null
+        );
     }
 }

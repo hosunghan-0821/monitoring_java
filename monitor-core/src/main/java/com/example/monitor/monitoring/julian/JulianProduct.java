@@ -22,25 +22,43 @@ public class JulianProduct extends MonitoringProduct {
     private String season;
 
 
-    private String wholeSaleOrigin;
+    private String originPrice;
 
 
-    private String wholeSale;
+    private String finalPrice;
 
 
-    private int wholeSalePercent;
+    private int salePercent;
 
-    private String wholeSaleKeyInfo;
+    private String excelKeyInfo;
 
 
     public void setMadeBy(String madeBy) {
         this.madeBy = madeBy;
     }
 
-    public void setMorePriceInfo(String wholeSaleOrigin, String wholeSale, int wholeSalePercent, String wholeSaleKeyInfo) {
-        this.wholeSaleOrigin = wholeSaleOrigin;
-        this.wholeSale = wholeSale;
-        this.wholeSalePercent = wholeSalePercent;
-        this.wholeSaleKeyInfo = wholeSaleKeyInfo;
+    public void setMorePriceInfo(String originPrice, String finalPrice, int salePercent, String keyInfo) {
+        this.originPrice = originPrice;
+        this.finalPrice = finalPrice;
+        this.salePercent = salePercent;
+        this.excelKeyInfo = keyInfo;
+    }
+
+
+    public String makeDiscordMessageDescription() {
+
+        return String.format(DISCORD_NEW_PRODUCT_MESSAGE_FORMAT,
+                this.name,
+                this.season,
+                this.sku,
+                this.brandName,
+                this.category,
+                this.madeBy,
+                this.finalPrice,
+                this.salePercent,
+                this.originPrice,
+                null,
+                this.excelKeyInfo
+        );
     }
 }

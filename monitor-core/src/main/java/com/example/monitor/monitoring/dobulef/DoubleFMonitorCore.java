@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 import static com.example.monitor.infra.discord.DiscordString.DOUBLE_F_DISCOUNT_CHANNEL;
@@ -318,7 +319,16 @@ public class DoubleFMonitorCore implements IMonitorService {
                     if (!productKeySet.contains(getDoubleFProductKey(product))) {
                         log.info(DOUBLE_F_LOG_PREFIX + "새로운 제품" + product);
                         getDetailProductInfo(driver, wait, product);
-                        discordBot.sendNewProductInfo(DOUBLE_F_NEW_PRODUCT_CHANNEL, product, url);
+                        discordBot.sendNewProductInfoCommon(
+                                DOUBLE_F_NEW_PRODUCT_CHANNEL,
+                                product.makeDiscordMessageDescription(),
+                                product.getProductLink(),
+                                null,
+                                Stream.of(product.getSku(), product.getColorCode()).toArray(String[]::new)
+                        );
+
+
+                        //discordBot.sendNewProductInfo(DOUBLE_F_NEW_PRODUCT_CHANNEL, product, url);
 
                         product.updateDetectedCause(NEW_PRODUCT);
                         findDoubleFProduct.add(product);
@@ -337,8 +347,14 @@ public class DoubleFMonitorCore implements IMonitorService {
                     if (!beforeProduct.getDiscountPercentage().equals(product.getDiscountPercentage())) {
                         log.info(DOUBLE_F_LOG_PREFIX + "할인율 변경" + beforeProduct.getDiscountPercentage() + " -> " + product.getDiscountPercentage());
                         getDetailProductInfo(driver, wait, product);
-                        discordBot.sendDiscountChangeInfo(DOUBLE_F_DISCOUNT_CHANNEL, product, url, beforeProduct.getDiscountPercentage());
-
+                        //discordBot.sendDiscountChangeInfo(DOUBLE_F_DISCOUNT_CHANNEL, product, url, beforeProduct.getDiscountPercentage());
+                        discordBot.sendDiscountChangeInfoCommon(
+                                DOUBLE_F_DISCOUNT_CHANNEL,
+                                product.makeDiscordDiscountMessageDescription(beforeProduct.getDiscountPercentage()),
+                                product.getProductLink(),
+                                null,
+                                Stream.of(product.getSku(), product.getColorCode()).toArray(String[]::new)
+                        );
                         product.updateDetectedCause(DISCOUNT_CHANGE);
                         productFileWriter.writeProductInfo(product.changeToProductFileInfo(DOUBLE_F, DISCOUNT_CHANGE));
 

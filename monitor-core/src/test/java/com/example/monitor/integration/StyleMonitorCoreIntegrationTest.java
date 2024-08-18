@@ -23,6 +23,7 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static com.example.monitor.infra.discord.DiscordString.STYLE_NEW_PRODUCT_CHANNEL;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -91,8 +92,14 @@ public class StyleMonitorCoreIntegrationTest {
         assertThat(brandHashMap.size()).isGreaterThan(1);
 
         System.out.println(styleProductList.get(4));
-
-        discordBot.sendNewProductInfo(STYLE_NEW_PRODUCT_CHANNEL,styleProductList.get(4));
+        StyleProduct styleProduct = styleProductList.get(4);
+        discordBot.sendNewProductInfoCommon(
+                STYLE_NEW_PRODUCT_CHANNEL,
+                styleProduct.makeDiscordMessageDescription(),
+                styleProduct.getProductLink(),
+                styleProduct.getImageUrl(),
+                Stream.of(styleProduct.getSku()).toArray(String[]::new)
+        );
         try{
             Thread.sleep(10000);
         }catch (Exception e) {

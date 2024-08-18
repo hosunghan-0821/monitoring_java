@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static com.example.monitor.infra.discord.DiscordString.STYLE_DISCOUNT_CHANNEL;
 import static com.example.monitor.infra.discord.DiscordString.STYLE_NEW_PRODUCT_CHANNEL;
@@ -168,6 +169,7 @@ public class StyleMonitorCore implements IMonitorService {
                 String imageSrc = "";
                 String id = "";
                 String detailLink = "";
+                String originPrice = "";
                 double finalPrice = 0;
 
                 try {
@@ -192,14 +194,14 @@ public class StyleMonitorCore implements IMonitorService {
                         if (priceElements.size() > 1) {
                             discountPercentage = priceElements.get(1).getText();
                             price = priceElements.get(2).getText().replaceAll(",", "");
-
+                            originPrice = priceElements.get(0).getText().replaceAll(",", "");
                         } else {
                             price = priceElements.get(0).getText().replaceAll(",", "");
 
                         }
 
-                        double originPrice = Double.parseDouble(price.split("€")[1]);
-                        finalPrice = (originPrice * 0.95);
+                        double noSaleFinalPrice = Double.parseDouble(price.split("€")[1]);
+                        finalPrice = (noSaleFinalPrice * 0.95);
 
                         WebElement imageElement = product.findElement(By.xpath(".//img[@class='group-hover:hidden max-listing-img']"));
                         imageSrc = imageElement.getAttribute("src");
@@ -215,12 +217,13 @@ public class StyleMonitorCore implements IMonitorService {
                         .id(id)
                         .brandName(brandName)
                         .name(name)
-                        .discountPercentage(discountPercentage)
+                        .salePercent(discountPercentage)
                         .price(price)
                         .doublePrice(finalPrice)
                         .productLink(detailLink)
                         .imageUrl(imageSrc)
                         .monitoringSite("Style")
+                        .originPrice(originPrice)
                         .build();
 
                 styleProductList.add(styleProduct);
@@ -259,7 +262,13 @@ public class StyleMonitorCore implements IMonitorService {
                         getProductMoreInfo(chromeDriver, wait, styleProduct);
                         log.info(STYLE_LOG_PREFIX + "새로운 제품" + styleProduct);
 
-                        discordBot.sendNewProductInfo(STYLE_NEW_PRODUCT_CHANNEL, styleProduct);
+                        discordBot.sendNewProductInfoCommon(
+                                STYLE_NEW_PRODUCT_CHANNEL,
+                                styleProduct.makeDiscordMessageDescription(),
+                                styleProduct.getProductLink(),
+                                styleProduct.getImageUrl(),
+                                Stream.of(styleProduct.getSku()).toArray(String[]::new)
+                        );
                         findStyleProductList.add(styleProduct);
 
                         productFileWriter.writeProductInfo(styleProduct.changeToProductFileInfo(STYLE, NEW_PRODUCT));
@@ -269,11 +278,18 @@ public class StyleMonitorCore implements IMonitorService {
                     }
                 } else {
                     StyleProduct beforeProduct = eachBrandHashMap.get(styleProduct.getId());
-                    if (!beforeProduct.getDiscountPercentage().equals(styleProduct.getDiscountPercentage())) {
-                        log.info(STYLE_LOG_PREFIX + "할인율 변경" + beforeProduct.getDiscountPercentage() + " -> " + styleProduct.getDiscountPercentage());
+                    if (!beforeProduct.getSalePercent().equals(styleProduct.getSalePercent())) {
+                        log.info(STYLE_LOG_PREFIX + "할인율 변경" + beforeProduct.getSalePercent() + " -> " + styleProduct.getSalePercent());
                         //discord bot 알람
                         getProductMoreInfo(chromeDriver, wait, styleProduct);
-                        discordBot.sendDiscountChangeInfo(STYLE_DISCOUNT_CHANNEL, styleProduct, beforeProduct.getDiscountPercentage());
+                        //discordBot.sendDiscountChangeInfo(STYLE_DISCOUNT_CHANNEL, styleProduct, beforeProduct.getSalePercent());
+                        discordBot.sendDiscountChangeInfoCommon(
+                                STYLE_DISCOUNT_CHANNEL,
+                                styleProduct.makeDiscordDiscountMessageDescription(beforeProduct.getSalePercent()),
+                                styleProduct.getProductLink(),
+                                styleProduct.getImageUrl(),
+                                Stream.of(styleProduct.getSku()).toArray(String[]::new)
+                        );
                         findStyleProductList.add(styleProduct);
                         productFileWriter.writeProductInfo(styleProduct.changeToProductFileInfo(STYLE, DISCOUNT_CHANGE));
                     }

@@ -2,7 +2,6 @@ package com.example.monitor.monitoring.biffi;
 
 
 import com.example.monitor.monitoring.global.MonitoringProduct;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
@@ -19,4 +18,43 @@ public class BiffiProduct extends MonitoringProduct {
     public void updateMadeBy(String origin) {
         this.madeBy = origin;
     }
+
+
+    public String makeDiscordMessageDescription() {
+
+        return String.format(DISCORD_NEW_PRODUCT_MESSAGE_FORMAT,
+                this.name,
+                null,
+                this.sku,
+                this.brandName,
+                null,
+                this.madeBy,
+                this.price,
+                this.discountPercentage,
+                null,
+                null,
+                null
+
+        );
+    }
+
+    public String makeDiscordDiscountMessageDescription(String beforeSalesPercent) {
+
+        return String.format(DISCORD_DISCOUNT_CHANGE_MESSAGE_FORMAT,
+                this.name,
+                null,
+                this.sku,
+                this.brandName,
+                null,
+                this.madeBy,
+                this.price,
+                beforeSalesPercent,
+                this.discountPercentage,
+                null,
+                null,
+                null
+
+        );
+    }
+
 }

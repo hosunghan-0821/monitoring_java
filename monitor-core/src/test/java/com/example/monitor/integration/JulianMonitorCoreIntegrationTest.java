@@ -20,7 +20,9 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Stream;
 
+import static com.example.monitor.infra.discord.DiscordString.ALL_CATEGORIES_CHANNEL;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -105,13 +107,19 @@ class JulianMonitorCoreIntegrationTest {
             assertThat(julianProduct.getName()).isNotNull();
             assertThat(julianProduct.getPrice()).isNotNull();
             assertThat(productHashMap.containsKey(julianProduct.getSku())).isEqualTo(true);
-//            julianMonitorCore.getProductMoreInfo(driver, wait, julianProduct);
-//            System.out.println(julianProduct);
-        }
-        julianMonitorCore.getProductMoreInfo(driver, wait, julianProductList.get(5));
-        System.out.println( julianProductList.get(5));
 
-        discordBot.sendNewProductInfo(DiscordString.ALL_CATEGORIES_CHANNEL,julianProductList.get(5));
+        }
+        julianMonitorCore.getProductMoreInfo(driver, wait, julianProductList.get(4));
+        JulianProduct julianProduct = julianProductList.get(4);
+
+        discordBot.sendNewProductInfoCommon(
+                1233325054826250320L,
+                julianProduct.makeDiscordMessageDescription(),
+                julianProduct.getProductLink(),
+                julianProduct.getImageUrl(),
+                Stream.of(julianProduct.getSku()).toArray(String[]::new)
+        );
+        //discordBot.sendNewProductInfo(DiscordString.ALL_CATEGORIES_CHANNEL,julianProductList.get(5));
         try{
             Thread.sleep(10000);
         }catch (Exception e) {

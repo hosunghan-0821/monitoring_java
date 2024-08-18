@@ -17,12 +17,29 @@ public class GebenegoziProduct extends MonitoringProduct {
     @Setter
     private String category;
 
-    private String wholeSaleOrigin;
-    private String wholeSale;
-    private int wholeSalePercent;
+    private String originPrice;
+    private String finalPrice;
+    private int salePercent;
     private boolean isColored;
 
     public void updateImageUrl(String imageSrc) {
         this.imageSrc = imageSrc;
+    }
+
+    public String makeDiscordMessageDescription() {
+
+        return String.format(DISCORD_NEW_PRODUCT_MESSAGE_FORMAT,
+                this.name,
+                this.season,
+                this.sku,
+                this.brandName,
+                this.category,
+                this.madeBy,
+                this.finalPrice,
+                this.salePercent,
+                this.originPrice,
+                this.isColored,
+                this.price
+        );
     }
 }

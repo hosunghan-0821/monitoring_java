@@ -32,6 +32,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static com.example.monitor.infra.discord.DiscordString.GEBENE_NEW_PRODUCT_CHANNEL;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.*;
@@ -40,7 +41,7 @@ import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindStri
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class GebenegoziMonitorCore implements IMonitorService{
+public class GebenegoziMonitorCore implements IMonitorService {
 
 
     private final DiscordBot discordBot;
@@ -145,7 +146,15 @@ public class GebenegoziMonitorCore implements IMonitorService{
                             product.updateImageUrl(null);
                         }
 
-                        discordBot.sendNewProductInfo(GEBENE_NEW_PRODUCT_CHANNEL, product);
+
+                        discordBot.sendNewProductInfoCommon(
+                                GEBENE_NEW_PRODUCT_CHANNEL,
+                                product.makeDiscordMessageDescription(),
+                                product.getProductLink(),
+                                product.getImageSrc(),
+                                Stream.of(product.getSku()).toArray(String[]::new)
+                        );
+
                         findGebeneProductList.add(product);
                         productKeySet.add(getGebeneProductKey(product));
 
@@ -349,9 +358,9 @@ public class GebenegoziMonitorCore implements IMonitorService{
                             .productLink(url)
                             .imageSrc(imageSrc)
                             .category(category)
-                            .wholeSalePercent(wholeSalePercent)
-                            .wholeSale(wholeSale)
-                            .wholeSaleOrigin(wholeSaleOrigin)
+                            .salePercent(wholeSalePercent)
+                            .finalPrice(wholeSale)
+                            .originPrice(wholeSaleOrigin)
                             .id(id)
                             .isColored(isColored)
                             .build();
@@ -426,7 +435,7 @@ public class GebenegoziMonitorCore implements IMonitorService{
             Files.write(path, imageData);
         } catch (Exception e) {
 
-            log.error(GEBENE_LOG_PREFIX + "이미지 다운로드 실패 : url =  "+ imageSrcUrl+" cookie = " + cookie + "message : " + e.getMessage());
+            log.error(GEBENE_LOG_PREFIX + "이미지 다운로드 실패 : url =  " + imageSrcUrl + " cookie = " + cookie + "message : " + e.getMessage());
             return null;
         }
 

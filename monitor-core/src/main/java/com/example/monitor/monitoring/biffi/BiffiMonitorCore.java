@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.example.monitor.infra.discord.DiscordString.BIFFI_DISCOUNT_CHANNEL;
 import static com.example.monitor.infra.discord.DiscordString.BIFFI_NEW_PRODUCT_CHANNEL;
@@ -178,11 +179,11 @@ public class BiffiMonitorCore implements IMonitorService {
                         log.error("상품 할인정보 없음 id = " + id);
                     }
 
-                    try{
+                    try {
                         WebElement price = productElement.findElement(By.xpath(PRICE_ELMENT_XPATH));
                         finalPrice = price.getText();
-                    }catch (Exception e){
-                        log.error("**확인요망** 상품스킵 가격 정보 없음 id = " +id + " url = "+ url);
+                    } catch (Exception e) {
+                        log.error("**확인요망** 상품스킵 가격 정보 없음 id = " + id + " url = " + url);
                         continue;
                     }
 
@@ -264,7 +265,14 @@ public class BiffiMonitorCore implements IMonitorService {
                     if (!productKeySet.contains(biffiProduct.getSku())) {
                         getProductOrigin(chromeDriver, wait, biffiProduct);
                         log.info(BIFFI_LOG_PREFIX + "새로운 제품" + biffiProduct);
-                        discordBot.sendNewProductInfo(BIFFI_NEW_PRODUCT_CHANNEL, biffiProduct, biffiBrandUrlList[i]);
+                        discordBot.sendNewProductInfoCommon(
+                                BIFFI_NEW_PRODUCT_CHANNEL,
+                                biffiProduct.makeDiscordMessageDescription(),
+                                biffiProduct.getProductLink(),
+                                biffiProduct.getImgUrl(),
+                                Stream.of(biffiProduct.getSku()).toArray(String[]::new)
+                        );
+                        //discordBot.sendNewProductInfo(BIFFI_NEW_PRODUCT_CHANNEL, biffiProduct);
                         findBiffiProductList.add(biffiProduct);
 
                         productFileWriter.writeProductInfo(biffiProduct.changeToProductFileInfo(BIFFI, NEW_PRODUCT));
@@ -278,7 +286,14 @@ public class BiffiMonitorCore implements IMonitorService {
                         log.info(BIFFI_LOG_PREFIX + "할인율 변경" + beforeProduct.getDiscountPercentage() + " -> " + biffiProduct.getDiscountPercentage());
                         //discord bot 알람
                         getProductOrigin(chromeDriver, wait, biffiProduct);
-                        discordBot.sendDiscountChangeInfo(BIFFI_DISCOUNT_CHANNEL, biffiProduct, biffiBrandUrlList[i], beforeProduct.getDiscountPercentage());
+                        //discordBot.sendDiscountChangeInfo(BIFFI_DISCOUNT_CHANNEL, biffiProduct, biffiBrandUrlList[i], beforeProduct.getDiscountPercentage());
+                        discordBot.sendDiscountChangeInfoCommon(
+                                BIFFI_DISCOUNT_CHANNEL,
+                                biffiProduct.makeDiscordDiscountMessageDescription(beforeProduct.getDiscountPercentage()),
+                                biffiProduct.getProductLink(),
+                                biffiProduct.getImgUrl(),
+                                Stream.of(biffiProduct.getSku()).toArray(String[]::new)
+                                );
                         findBiffiProductList.add(biffiProduct);
                         productFileWriter.writeProductInfo(biffiProduct.changeToProductFileInfo(BIFFI, DISCOUNT_CHANGE));
                     }
@@ -299,10 +314,7 @@ public class BiffiMonitorCore implements IMonitorService {
     }
 
     private double changePriceToDouble(String finalPrice) {
-
-
         return Double.parseDouble(finalPrice.replace("€", "").replace(".", "").replace(",", ".").strip());
     }
-
 
 }
