@@ -23,14 +23,12 @@ import java.util.stream.Stream;
 
 import static module.discord.DiscordString.STYLE_DISCOUNT_CHANNEL;
 import static module.discord.DiscordString.STYLE_NEW_PRODUCT_CHANNEL;
-import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI_BRAND_NAME_LIST;
-import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI_BRAND_URL_LIST;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DISCOUNT_CHANGE;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.NEW_PRODUCT;
 import static com.example.monitor.monitoring.style.StyleFindString.STYLE;
 import static com.example.monitor.monitoring.style.StyleFindString.STYLE_LOG_PREFIX;
-import static com.example.monitor.monitoring.style.StyleFindString.brandNameList;
-import static com.example.monitor.monitoring.style.StyleFindString.brandUrlList;
+import static com.example.monitor.monitoring.style.StyleFindString.STYLE_BRAND_NAME_LIST;
+import static com.example.monitor.monitoring.style.StyleFindString.STYLE_BRAND_URL_LIST;
 
 @Slf4j
 @Component
@@ -62,7 +60,7 @@ public class StyleMonitorCore implements IMonitorService {
         login(driver, wait);
 
         //데이터 로드
-        loadData(driver, wait, brandUrlList, brandNameList);
+        loadData(driver, wait, STYLE_BRAND_URL_LIST, STYLE_BRAND_NAME_LIST);
 
         chromeDriverTool.isLoadData(true);
 
@@ -80,7 +78,7 @@ public class StyleMonitorCore implements IMonitorService {
         }
 
         log.info(STYLE_LOG_PREFIX + "STYLE FIND NEW PRODUCT START==");
-        List<StyleProduct> styleFindList = findDifferentAndAlarm(chromeDriver, wait, BIFFI_BRAND_URL_LIST, BIFFI_BRAND_NAME_LIST);
+        List<StyleProduct> styleFindList = findDifferentAndAlarm(chromeDriver, wait, STYLE_BRAND_URL_LIST, STYLE_BRAND_NAME_LIST);
 
         log.info(STYLE_LOG_PREFIX + "STYLE FIND NEW PRODUCT FINISH==");
 

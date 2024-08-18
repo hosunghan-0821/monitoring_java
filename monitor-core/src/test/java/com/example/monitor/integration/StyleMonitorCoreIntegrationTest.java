@@ -69,11 +69,11 @@ public class StyleMonitorCoreIntegrationTest {
     void dataLoad() {
 
         //given
-        Map<String, StyleProduct> brandHashMap = styleMonitorCore.getStyleBrandHashData().getBrandHashMap(StyleFindString.brandNameList[0]);
+        Map<String, StyleProduct> brandHashMap = styleMonitorCore.getStyleBrandHashData().getBrandHashMap(StyleFindString.STYLE_BRAND_NAME_LIST[0]);
         styleMonitorCore.login(driver, wait);
         
         //when
-        List<StyleProduct> styleProductList = styleMonitorCore.getPageProductData(driver, wait, StyleFindString.brandUrlList[0], StyleFindString.brandNameList[0]);
+        List<StyleProduct> styleProductList = styleMonitorCore.getPageProductData(driver, wait, StyleFindString.STYLE_BRAND_URL_LIST[0], StyleFindString.STYLE_BRAND_NAME_LIST[0]);
 
         //then
         for (StyleProduct styleProduct : styleProductList) {

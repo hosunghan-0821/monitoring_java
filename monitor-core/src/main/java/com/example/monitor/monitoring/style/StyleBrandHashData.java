@@ -1,6 +1,5 @@
 package com.example.monitor.monitoring.style;
 
-import com.example.monitor.monitoring.dobulef.DoubleFProduct;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +18,7 @@ public class StyleBrandHashData {
 
     public StyleBrandHashData() {
         styleHashMap = new HashMap<>();
-        for (String brandName : StyleFindString.brandNameList) {
+        for (String brandName : StyleFindString.STYLE_BRAND_NAME_LIST) {
             styleHashMap.put(brandName, new HashMap<>());
         }
         productKeySet = new HashSet<>();

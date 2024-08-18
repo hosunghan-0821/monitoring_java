@@ -6,7 +6,7 @@ public class StyleFindString {
 
     public static final String STYLE = "style";
 
-    public static final String[] brandNameList =
+    public static final String[] STYLE_BRAND_NAME_LIST =
             {
                     "BALENCIAGA",
                     "BURBERRY",
@@ -18,7 +18,7 @@ public class StyleFindString {
                     "NEW BLANACE",
                     "UGG"
             };
-    public static final String[] brandUrlList =
+    public static final String[] STYLE_BRAND_URL_LIST =
             {
                     "https://www.styleisnow.com/business/designers/balenciaga/category_wallets_and_small_leather_goods-category_accessories_1-category_bags-category_bags_1-category_shoes-category_shoes_1.html",
                     "https://www.styleisnow.com/business/designers/burberry/category_bags-category_bags_1-category_scarves_and_gloves-category_sneakers-category_sneakers_1-category_wallets_and_small_leather_goods-category_wallets_and_small_leather_goods_1.html",
