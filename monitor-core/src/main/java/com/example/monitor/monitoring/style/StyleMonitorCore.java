@@ -147,7 +147,6 @@ public class StyleMonitorCore implements IMonitorService {
             totalPage = totalSize / sizePerPage + 1;
 
         } catch (Exception e) {
-            log.info("total page 1개 url 체크확인 = " + url);
         }
 
         //상품 데이터 페이지별 Get
@@ -257,8 +256,8 @@ public class StyleMonitorCore implements IMonitorService {
                 if (!eachBrandHashMap.containsKey(styleProduct.getId())) {
                     if (!productKeySet.contains(styleProduct.getId())) {
                         //discord bot 알람
-                        getProductMoreInfo(chromeDriver, wait, styleProduct);
                         log.info(STYLE_LOG_PREFIX + "새로운 제품" + styleProduct);
+                        getProductMoreInfo(chromeDriver, wait, styleProduct);
 
                         discordBot.sendNewProductInfoCommon(
                                 STYLE_NEW_PRODUCT_CHANNEL,
@@ -313,23 +312,31 @@ public class StyleMonitorCore implements IMonitorService {
         if (!styleProduct.getProductLink().equals(driver.getCurrentUrl())) {
             driver.get(styleProduct.getProductLink());
         }
+        log.info("현재 url" + driver.getCurrentUrl());
+        log.info("현재 상품 디테일 경로 " + styleProduct.getProductLink());
 
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//tr[@class='text-black']")));
-        List<WebElement> detailElementList = driver.findElements(By.xpath("//tr[@class='text-black']"));
+        try{
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//tr[@class='text-black']")));
+            List<WebElement> detailElementList = driver.findElements(By.xpath("//tr[@class='text-black']"));
 
-        for (WebElement webElement : detailElementList) {
-            String text = webElement.findElement(By.xpath(".//th")).getText().toLowerCase();
-            if (text.contains("made in")) {
-                String madeBy = webElement.findElement(By.xpath(".//td")).getText();
-                styleProduct.setMadeBy(madeBy);
-            } else if (text.contains("supplier code")) {
-                String sku = webElement.findElement(By.xpath(".//td")).getText();
-                styleProduct.setSku(sku);
-            } else if (text.contains("season")) {
-                String season = webElement.findElement(By.xpath(".//td")).getText();
-                styleProduct.setSeason(season);
+            for (WebElement webElement : detailElementList) {
+                String text = webElement.findElement(By.xpath(".//th")).getText().toLowerCase();
+                if (text.contains("made in")) {
+                    String madeBy = webElement.findElement(By.xpath(".//td")).getText();
+                    styleProduct.setMadeBy(madeBy);
+                } else if (text.contains("supplier code")) {
+                    String sku = webElement.findElement(By.xpath(".//td")).getText();
+                    styleProduct.setSku(sku);
+                } else if (text.contains("season")) {
+                    String season = webElement.findElement(By.xpath(".//td")).getText();
+                    styleProduct.setSeason(season);
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("style detail 정보 가져오기 에러");
         }
+
 
     }
 

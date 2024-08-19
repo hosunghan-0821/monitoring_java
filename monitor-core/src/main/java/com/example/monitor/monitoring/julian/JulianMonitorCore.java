@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchWindowException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -16,6 +17,7 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
@@ -133,8 +135,6 @@ public class JulianMonitorCore implements IMonitorService {
                             continue;
                         }
 
-                        //새 상품 set에 없다면, 알람 보내고, 보낸걸 기록
-                        dataKeySet.add(julianProduct.getSku());
                         getProductMoreInfo(chromeDriver, wait, julianProduct);
 
                         //discordBot.sendNewProductInfo(ALL_CATEGORIES_CHANNEL, julianProduct);
@@ -145,6 +145,8 @@ public class JulianMonitorCore implements IMonitorService {
                                 julianProduct.getImageUrl(),
                                 Stream.of(julianProduct.getSku()).toArray(String[]::new)
                         );
+                        //새 상품 set에 없다면, 알람 보내고, 보낸걸 기록
+                        dataKeySet.add(julianProduct.getSku());
 
                         productFileWriter.writeProductInfo(julianProduct.changeToProductFileInfo(JULIAN + " / " + ALL_CATEGORIES, NEW_PRODUCT));
                         log.info(JULIAN_LOG_PREFIX + "New Product = " + julianProduct);
@@ -211,17 +213,10 @@ public class JulianMonitorCore implements IMonitorService {
             WebElement reference = child.findElement(By.xpath(PRODUCT_SKU));
 
             String imageSrc = image.getAttribute("src");
-            List<WebElement> priceElementList = child.findElements(By.xpath(".//p[@class='price']"));
-            String priceString = "가격정보 없음";
 
-            if (!priceElementList.isEmpty()) {
-                priceString = priceElementList.get(0).getText();
-            } else {
-                List<WebElement> originlPriceList = child.findElements(By.xpath(".//span[@class='price']"));
-                if (!originlPriceList.isEmpty()) {
-                    priceString = originlPriceList.get(0).getText();
-                }
-            }
+            WebElement priceElement = child.findElement(By.xpath(".//div[@class='product-description']//p"));
+            String priceString = "가격정보 없음";
+            priceString = priceElement.getText().trim().split(" ")[1];
 
             JulianProduct julianProduct = JulianProduct.builder()
                     .name(name.getText())
@@ -230,6 +225,7 @@ public class JulianMonitorCore implements IMonitorService {
                     .imageUrl(imageSrc)
                     .price(priceString)
                     .productLink(findUrl)
+                    .originPrice(priceString)
                     .build();
             julianProductList.add(julianProduct);
 
@@ -263,45 +259,52 @@ public class JulianMonitorCore implements IMonitorService {
         return newJulianProductList;
     }
 
-    @Retryable
+    @Retryable(retryFor = TimeoutException.class,
+            backoff = @Backoff(
+                    delay = 1000L
+            ))
     public void getProductMoreInfo(WebDriver driver, WebDriverWait wait, JulianProduct julianProduct) {
 
-        if (!julianProduct.getProductLink().equals(driver.getCurrentUrl())) {
-            driver.get(julianProduct.getProductLink());
-        }
+        driver.get(julianProduct.getProductLink());
 
-        getInnerProductDivs(wait);
-        WebElement element = driver.findElement(By.xpath("//div[@class='produt_reference' and contains(text(),'" + julianProduct.getSku() + "')]/.."));
-        //정보가져오기
-        WebElement detailLink = element.findElement(By.xpath(".//a[@class='button-action quick-view']"));
-        //해당상품으로 이동
-        Actions actions = new Actions(driver);
-        actions.moveToElement(detailLink);
-        actions.click().perform();
+        try {
+            getInnerProductDivs(wait);
+            WebElement element = driver.findElement(By.xpath("//div[@class='produt_reference' and contains(text(),'" + julianProduct.getSku() + "')]/.."));
+            //정보가져오기
+            WebElement detailLink = element.findElement(By.xpath(".//a[@class='button-action quick-view']"));
+            //해당상품으로 이동
+            Actions actions = new Actions(driver);
+            actions.moveToElement(detailLink);
+            actions.click().perform();
 
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@class='name']")));
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[@class='close']//span")));
-        List<WebElement> productDataList = driver.findElements(By.xpath("//li[@class='name']"));
-        for (WebElement productDataElement : productDataList) {
-            String text = productDataElement.getText();
-            text = text.toLowerCase(Locale.ENGLISH);
-            if (text.contains("made in")) {
-                String madeBy = text.split(":")[1].strip();
-                julianProduct.setMadeBy(madeBy);
-            } else if (text.contains("gender")) {
-                String gender = text.split(":")[1].strip().toUpperCase();
-                julianProduct.setGender(gender);
-            } else if (text.contains("season")) {
-                String season = text.split(":")[1].strip().toUpperCase();
-                julianProduct.setSeason(season);
-            } else if (text.contains("type")) {
-                String category = text.split(":")[1].strip().toUpperCase();
-                julianProduct.setCategory(category);
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@class='name']")));
+            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[@class='close']//span")));
+            List<WebElement> productDataList = driver.findElements(By.xpath("//li[@class='name']"));
+            for (WebElement productDataElement : productDataList) {
+                String text = productDataElement.getText();
+                text = text.toLowerCase(Locale.ENGLISH);
+                if (text.contains("made in")) {
+                    String madeBy = text.split(":")[1].strip();
+                    julianProduct.setMadeBy(madeBy);
+                } else if (text.contains("gender")) {
+                    String gender = text.split(":")[1].strip().toUpperCase();
+                    julianProduct.setGender(gender);
+                } else if (text.contains("season")) {
+                    String season = text.split(":")[1].strip().toUpperCase();
+                    julianProduct.setSeason(season);
+                } else if (text.contains("type")) {
+                    String category = text.split(":")[1].strip().toUpperCase();
+                    julianProduct.setCategory(category);
+                }
             }
+            setProductPriceInfo(julianProduct);
+
+            driver.findElement(By.xpath("//button[@class='close']//span")).click();
+        } catch (Exception e) {
+            log.error("more info 오류");
         }
-        //닫기버튼
-        driver.findElement(By.xpath("//button[@class='close']//span")).click();
-        setProductPriceInfo(julianProduct);
+
+
     }
 
     @Recover
@@ -321,7 +324,7 @@ public class JulianMonitorCore implements IMonitorService {
         int wholeSalePercent = 0;
 
         if (julianSaleInfoOrNull != null) {
-            wholeSaleOrigin = julianProduct.getPrice().split("€")[1].replaceAll(",", "");
+            wholeSaleOrigin = julianProduct.getPrice().trim().replaceAll(",", "");
             wholeSalePercent = julianSaleInfoOrNull.getSalesPercent();
             double wholeSaleAfter = Double.parseDouble(wholeSaleOrigin) * (wholeSalePercent + 100) / 100;
             wholeSale = String.valueOf(wholeSaleAfter);

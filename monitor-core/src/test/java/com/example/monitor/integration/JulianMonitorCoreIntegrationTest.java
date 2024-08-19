@@ -103,10 +103,13 @@ class JulianMonitorCoreIntegrationTest {
             assertThat(julianProduct.getName()).isNotNull();
             assertThat(julianProduct.getPrice()).isNotNull();
             assertThat(productHashMap.containsKey(julianProduct.getSku())).isEqualTo(true);
-
+            System.out.println(julianProduct);
         }
         julianMonitorCore.getProductMoreInfo(driver, wait, julianProductList.get(4));
+        julianMonitorCore.getProductMoreInfo(driver, wait, julianProductList.get(15));
+        julianMonitorCore.getProductMoreInfo(driver, wait, julianProductList.get(2));
         JulianProduct julianProduct = julianProductList.get(4);
+
 
         discordBot.sendNewProductInfoCommon(
                 1233325054826250320L,
