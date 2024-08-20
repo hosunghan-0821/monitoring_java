@@ -92,7 +92,7 @@ public class MonitorScheduler {
         gebenegoziMonitorCore.runFindProductLogic(chromeDriverTool);
     }
 
-    @Scheduled(initialDelay = 60000 * 4, fixedDelay = 60000 * 12)// 12분마다 실행
+    @Scheduled(initialDelay = 60000 * 4, fixedDelay = 60000 * 5)// 12분마다 실행
     public void monitorStyle() {
         ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(STYLE);
         styleMonitorCore.runFindProductLogic(chromeDriverTool);

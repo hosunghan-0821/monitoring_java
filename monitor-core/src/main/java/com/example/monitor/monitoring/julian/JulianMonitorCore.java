@@ -123,7 +123,7 @@ public class JulianMonitorCore implements IMonitorService {
 
 
                 if (julianProductData.size() != 48) {
-                    log.info(JULIAN_LOG_PREFIX + "한 페이지에 size 개수 변동 확인요망! 현재사이즈 = " + newJulianProductList.size());
+                    log.info(JULIAN_LOG_PREFIX + "한 페이지에 size 개수 변동 확인요망! 현재사이즈 = " + julianProductData.size());
                 }
                 if (!newJulianProductList.isEmpty()) {
 
@@ -135,6 +135,9 @@ public class JulianMonitorCore implements IMonitorService {
                             continue;
                         }
 
+                        //새 상품 set에 없다면, 알람 보내고, 보낸걸 기록
+                        dataKeySet.add(julianProduct.getSku());
+
                         getProductMoreInfo(chromeDriver, wait, julianProduct);
 
                         //discordBot.sendNewProductInfo(ALL_CATEGORIES_CHANNEL, julianProduct);
@@ -145,8 +148,7 @@ public class JulianMonitorCore implements IMonitorService {
                                 julianProduct.getImageUrl(),
                                 Stream.of(julianProduct.getSku()).toArray(String[]::new)
                         );
-                        //새 상품 set에 없다면, 알람 보내고, 보낸걸 기록
-                        dataKeySet.add(julianProduct.getSku());
+
 
                         productFileWriter.writeProductInfo(julianProduct.changeToProductFileInfo(JULIAN + " / " + ALL_CATEGORIES, NEW_PRODUCT));
                         log.info(JULIAN_LOG_PREFIX + "New Product = " + julianProduct);
@@ -259,13 +261,12 @@ public class JulianMonitorCore implements IMonitorService {
         return newJulianProductList;
     }
 
-    @Retryable(retryFor = TimeoutException.class,
-            backoff = @Backoff(
-                    delay = 1000L
-            ))
+
     public void getProductMoreInfo(WebDriver driver, WebDriverWait wait, JulianProduct julianProduct) {
 
-        driver.get(julianProduct.getProductLink());
+        if (!julianProduct.getProductLink().equals(driver.getCurrentUrl())) {
+            driver.get(julianProduct.getProductLink());
+        }
 
         try {
             getInnerProductDivs(wait);
@@ -301,15 +302,8 @@ public class JulianMonitorCore implements IMonitorService {
 
             driver.findElement(By.xpath("//button[@class='close']//span")).click();
         } catch (Exception e) {
-            log.error("more info 오류");
+            log.error("more info 오류 sku = "+julianProduct.getSku());
         }
-
-
-    }
-
-    @Recover
-    public void recover(Exception e) {
-        log.info("상품정보 못불러오는 에러" + e.getMessage());
     }
 
     public void setProductPriceInfo(JulianProduct julianProduct) {
