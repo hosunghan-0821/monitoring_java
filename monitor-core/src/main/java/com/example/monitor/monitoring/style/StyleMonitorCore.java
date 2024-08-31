@@ -155,9 +155,18 @@ public class StyleMonitorCore implements IMonitorService {
             if (i != 1) {
                 driver.get(url + "?p=" + i);
             }
-            WebElement productContainerElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("custom-product-grid")));
+            WebElement productContainerElement = null;
+            try {
+                productContainerElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("custom-product-grid")));
+            } catch (Exception e) {
+                log.error("페이지 데이터 없음 확인해야함 오류 "+ url);
+                continue;
+            }
+
+            List<WebElement> outerProductBox = productContainerElement.findElements(By.xpath(".//form[@class='relative group bg-white text-sm  item product product-item p-0 product_addtocart_form card flex flex-col text-black w-full ']"));
             List<WebElement> products = productContainerElement.findElements(By.xpath(".//div[@class='w-full cursor-pointer']"));
             //상품 체크
+            int productIndex = 0;
             for (WebElement product : products) {
 
                 String name = "";
@@ -170,7 +179,7 @@ public class StyleMonitorCore implements IMonitorService {
                 double finalPrice = 0;
 
                 try {
-                    WebElement nameElement = product.findElement(By.xpath(".//span[@class='no-2grid-mobile hidden md:inline']"));
+                    WebElement nameElement = outerProductBox.get(productIndex).findElement(By.xpath(".//span[@class='md:inline']"));
                     name = nameElement.getText();
 
                     //Get ID,DetailLink
@@ -185,8 +194,7 @@ public class StyleMonitorCore implements IMonitorService {
 
                     //Get price, discountPercentage, imageSrc
                     {
-                        product.findElement(By.xpath(".//span[@class='no-2grid-mobile hidden md:inline']"));
-                        List<WebElement> priceElements = product.findElements(By.xpath(".//div[@class='price-box price-final_price text-right ']//span"));
+                        List<WebElement> priceElements = product.findElements(By.xpath(".//div[@class='price-box price-final_price text-left']//span"));
 
                         if (priceElements.size() > 1) {
                             discountPercentage = priceElements.get(1).getText();
@@ -200,7 +208,7 @@ public class StyleMonitorCore implements IMonitorService {
                         double noSaleFinalPrice = Double.parseDouble(price.split("€")[1]);
                         finalPrice = (noSaleFinalPrice * 0.95);
 
-                        WebElement imageElement = product.findElement(By.xpath(".//img[@class='group-hover:hidden max-listing-img']"));
+                        WebElement imageElement = outerProductBox.get(productIndex).findElement(By.xpath(".//img[@class='group-hover:hidden max-listing-img mt-4']"));
                         imageSrc = imageElement.getAttribute("src");
                     }
 
@@ -224,6 +232,8 @@ public class StyleMonitorCore implements IMonitorService {
                         .build();
 
                 styleProductList.add(styleProduct);
+                productIndex++;
+                log.info(styleProduct.toString());
             }
         }
 
@@ -315,7 +325,7 @@ public class StyleMonitorCore implements IMonitorService {
         log.info("현재 url" + driver.getCurrentUrl());
         log.info("현재 상품 디테일 경로 " + styleProduct.getProductLink());
 
-        try{
+        try {
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//tr[@class='text-black']")));
             List<WebElement> detailElementList = driver.findElements(By.xpath("//tr[@class='text-black']"));
 

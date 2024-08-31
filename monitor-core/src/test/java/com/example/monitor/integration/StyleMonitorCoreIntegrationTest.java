@@ -75,7 +75,8 @@ public class StyleMonitorCoreIntegrationTest {
         //given
         Map<String, StyleProduct> brandHashMap = styleMonitorCore.getStyleBrandHashData().getBrandHashMap(StyleFindString.STYLE_BRAND_NAME_LIST[0]);
         styleMonitorCore.login(driver, wait);
-        
+
+//        styleMonitorCore.loadData(driver, wait, StyleFindString.STYLE_BRAND_URL_LIST, StyleFindString.STYLE_BRAND_NAME_LIST);
         //when
         List<StyleProduct> styleProductList = styleMonitorCore.getPageProductData(driver, wait, StyleFindString.STYLE_BRAND_URL_LIST[0], StyleFindString.STYLE_BRAND_NAME_LIST[0]);
 
