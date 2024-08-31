@@ -71,7 +71,7 @@ class DoubleFMonitorCoreIntegrationTest {
 
         driver = new ChromeDriver(options);
         wait = new WebDriverWait(driver, Duration.ofMillis(5000)); // 최대 5초 대기
-        brandNameList = Arrays.copyOfRange(manBrandNameList, 10, 11);
+        brandNameList = Arrays.copyOfRange(manBrandNameList, 1, 2);
     }
 
     @AfterAll
@@ -183,7 +183,7 @@ class DoubleFMonitorCoreIntegrationTest {
         //given
         Map<String, DoubleFProduct> brandHashMap = doubleFBrandHashData.getBrandHashMap(MANS_PREFIX, brandNameList[0]);
         for (Map.Entry<String, DoubleFProduct> entry : brandHashMap.entrySet()) {
-            brandHashMap.get(entry.getKey()).updateDiscountPercentage("-100%");
+            brandHashMap.get(entry.getKey()).updateExtraDiscountPercentage("20%");
             break;
         }
 

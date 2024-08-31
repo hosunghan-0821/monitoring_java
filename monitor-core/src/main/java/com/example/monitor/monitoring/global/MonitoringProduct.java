@@ -42,6 +42,19 @@ public class MonitoringProduct {
             "엑셀 색 유무 %s \n\n " +
             "기타 정보: %s\n\n";
 
+    protected static final String DISCORD_NEW_PRODUCT_MESSAGE_FORMAT_DOUBLE_F =
+            "상품 이름 : %s \n " +
+                    "상품 시즌 : %s \n " +
+                    "상품 품번 : %s \n" +
+                    "상품 브랜드 : %s \n" +
+                    "상품 카테고리 : %s \n" +
+                    "원산지: %s \n\n"+
+                    "최종 가격 : %s \n" +
+                    "할인율 : %s \n" +
+                    "할인전 가격 : %s \n\n" +
+                    "엑셀 색 유무 %s \n\n " +
+                    "Extra 할인: %s\n\n";
+
     protected static final String DISCORD_DISCOUNT_CHANGE_MESSAGE_FORMAT =
                     "상품 이름 : %s \n " +
                     "상품 시즌 : %s \n " +
@@ -55,6 +68,21 @@ public class MonitoringProduct {
                     "할인전 가격 : %s \n\n" +
                     "엑셀 색 유무 %s \n\n " +
                     "기타 정보: %s\n\n";
+
+    protected static final String DISCORD_DISCOUNT_CHANGE_MESSAGE_FORMAT_DOUBLE_F =
+            "상품 이름 : %s \n " +
+                    "상품 시즌 : %s \n " +
+                    "상품 품번 : %s \n" +
+                    "상품 브랜드 : %s \n" +
+                    "상품 카테고리 : %s \n" +
+                    "원산지: %s \n\n"+
+                    "최종 가격 : %s \n" +
+                    "이전 할인율 : %s \n" +
+                    "현재 할인율 : %s \n" +
+                    "할인전 가격 : %s \n\n" +
+                    "엑셀 색 유무 %s \n\n " +
+                    "Extra 이전 할인: %s\n" +
+                    "Extra 변경 할인 %s\n\n";
 
 
     public ConvertProduct changeToConvertProduct(String monitoringSite) {

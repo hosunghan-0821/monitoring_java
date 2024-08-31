@@ -25,7 +25,9 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Import({TestConfiguration.class})
 
 class JulianMonitorCoreIntegrationTest {
 

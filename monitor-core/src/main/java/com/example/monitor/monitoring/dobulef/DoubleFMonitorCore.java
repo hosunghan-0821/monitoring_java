@@ -213,7 +213,9 @@ public class DoubleFMonitorCore implements IMonitorService {
                 String productLink = "";
                 String productSkU = "";
                 String productColorCode = "";
+                String extraDiscountPercentage = "0%";
                 double productDoublePrice = 0;
+                boolean extraSales = false;
 
                 //상품 id
                 try {
@@ -240,6 +242,16 @@ public class DoubleFMonitorCore implements IMonitorService {
                     //log.error(DOUBLE_F_LOG_PREFIX + "** 확인요망 **" + productDiscountPercentage + "의 상품에 할인율 없습니다. 홈페이지 및 프로그램 확인 바랍니다.");
                 }
 
+                //Extra 상품 할인 정보
+                try {
+                    WebElement extraDiscount = product.findElement(By.xpath(".//div[@class='product-card__extra-label text-center inline-block font-medium text-primary text-4xs tracking-0-12 uppercase border border-primary px-5px my-1 py-2px']"));
+                    extraDiscountPercentage = extraDiscount.getText();
+                    extraDiscountPercentage = extraDiscountPercentage.split(" ")[1];
+                    extraSales = true;
+                } catch (Exception e) {
+
+                }
+
                 // 상품 가격 정보
                 try {
                     List<WebElement> productPriceElementList = product.findElements(By.xpath(PRODUCT_PRICE_XPATH));
@@ -248,7 +260,10 @@ public class DoubleFMonitorCore implements IMonitorService {
                     }
                     productPrice = productPrice.strip();
                     productDoublePrice = changePriceToDouble(productPrice);
-
+                    if (extraSales) {
+                        double extraSalesDouble = Double.parseDouble(extraDiscountPercentage.split("%")[0]);
+                        productDoublePrice = productDoublePrice * (100 - extraSalesDouble) / 100;
+                    }
                 } catch (Exception e) {
                     log.info(DOUBLE_F_LOG_PREFIX + productName + " 의 가격 정보가 없습니다.");
                 }
@@ -286,6 +301,7 @@ public class DoubleFMonitorCore implements IMonitorService {
                         .sku(productSkU)
                         .colorCode(productColorCode)
                         .doublePrice(productDoublePrice)
+                        .extraSalesPercentage(extraDiscountPercentage)
                         .build();
 
 
@@ -342,8 +358,28 @@ public class DoubleFMonitorCore implements IMonitorService {
                     }
 
                 } else {
+
                     //포함 되어있고,할인 퍼센테이지가 다를 경우
                     DoubleFProduct beforeProduct = eachBrandHashMap.get(getDoubleFProductKey(product));
+
+                    if(!beforeProduct.getExtraSalesPercentage().equals(product.getExtraSalesPercentage())){
+                        log.info(DOUBLE_F_LOG_PREFIX + "Extra 할인율 변경" + beforeProduct.getExtraSalesPercentage() + " -> " + product.getExtraSalesPercentage());
+                        getDetailProductInfo(driver, wait, product);
+                        discordBot.sendDiscountChangeInfoCommon(
+                                DOUBLE_F_DISCOUNT_CHANNEL,
+                                product.makeDiscordDiscountExtraMessageDescription(beforeProduct.getExtraSalesPercentage()),
+                                product.getProductLink(),
+                                null,
+                                Stream.of(product.getSku(), product.getColorCode()).toArray(String[]::new)
+                        );
+                        product.updateDetectedCause(DISCOUNT_CHANGE);
+                        productFileWriter.writeProductInfo(product.changeToProductFileInfo(DOUBLE_F, DISCOUNT_CHANGE));
+
+                        findDoubleFProduct.add(product);
+                        continue;
+                    }
+
+
                     if (!beforeProduct.getDiscountPercentage().equals(product.getDiscountPercentage())) {
                         log.info(DOUBLE_F_LOG_PREFIX + "할인율 변경" + beforeProduct.getDiscountPercentage() + " -> " + product.getDiscountPercentage());
                         getDetailProductInfo(driver, wait, product);
