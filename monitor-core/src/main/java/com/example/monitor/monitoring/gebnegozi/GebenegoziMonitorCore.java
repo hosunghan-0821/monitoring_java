@@ -323,7 +323,7 @@ public class GebenegoziMonitorCore implements IMonitorService {
                         for (int i = 0; i < wholeSaleInfoList.size(); i++) {
                             if (wholeSaleInfoList.get(i).getText().toLowerCase().contains("whole")) {
                                 wholeSaleOrigin = wholeSaleInfoList.get(i).getText().split("€")[1].strip();
-                                String key = gebenegoziBrandHashData.makeSalesInfoKey(brand, season.toUpperCase(), category, "man");
+                                String key = gebenegoziBrandHashData.makeSalesInfoKey(brand, season.toUpperCase(), category, sex);
                                 GebenegoziSaleInfo gebenegoziSaleInfoOrNull = gebenegoziBrandHashData.getGebenegoziSaleMap().getOrDefault(key, null);
 
                                 if (gebenegoziSaleInfoOrNull != null) {
