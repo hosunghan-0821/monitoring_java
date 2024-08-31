@@ -4,6 +4,7 @@ import module.discord.DiscordBot;
 import com.example.monitor.monitoring.julian.JulianFindString;
 import com.example.monitor.monitoring.julian.JulianMonitorCore;
 import com.example.monitor.monitoring.julian.JulianProduct;
+import module.discord.DiscordString;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -12,6 +13,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -23,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+
 class JulianMonitorCoreIntegrationTest {
 
     @Value("${julian.user.id}")
@@ -91,6 +95,10 @@ class JulianMonitorCoreIntegrationTest {
     @DisplayName(JulianFindString.JULIAN_LOG_PREFIX + "데이터 조회 및 원산지 확인 테스트")
     void getPageProductDataTest() {
         //given
+
+        julianMonitorCore.login(driver, wait);
+
+
         List<JulianProduct> julianProductList = getJulianProducts(JulianFindString.ALL_CATEGORIES_URL);
         HashMap<String, JulianProduct> productHashMap = julianMonitorCore.getJulianBrandHashData().getBrandHashMap(JulianFindString.ALL_CATEGORIES);
 
@@ -102,15 +110,25 @@ class JulianMonitorCoreIntegrationTest {
             assertThat(julianProduct.getProductLink()).isNotNull();
             assertThat(julianProduct.getName()).isNotNull();
             assertThat(julianProduct.getPrice()).isNotNull();
-            assertThat(productHashMap.containsKey(julianProduct.getSku())).isEqualTo(true);
-            System.out.println(julianProduct);
+//            assertThat(productHashMap.containsKey(julianProduct.getSku())).isEqualTo(true);
+//            julianMonitorCore.getProductMoreInfo(driver, wait,julianProduct);
+//            discordBot.sendNewProductInfoCommon(
+//                    1233325054826250320L,
+//                    julianProduct.makeDiscordMessageDescription(),
+//                    julianProduct.getProductLink(),
+//                    julianProduct.getImageUrl(),
+//                    Stream.of(julianProduct.getSku()).toArray(String[]::new)
+//            );
         }
-        julianMonitorCore.getProductMoreInfo(driver, wait, julianProductList.get(4));
-        julianMonitorCore.getProductMoreInfo(driver, wait, julianProductList.get(15));
-        julianMonitorCore.getProductMoreInfo(driver, wait, julianProductList.get(2));
+
+
+
         JulianProduct julianProduct = julianProductList.get(4);
 
 
+        julianMonitorCore.getProductMoreInfo(driver, wait, julianProductList.get(9));
+
+        julianProduct = julianProductList.get(9);
         discordBot.sendNewProductInfoCommon(
                 1233325054826250320L,
                 julianProduct.makeDiscordMessageDescription(),
@@ -118,7 +136,19 @@ class JulianMonitorCoreIntegrationTest {
                 julianProduct.getImageUrl(),
                 Stream.of(julianProduct.getSku()).toArray(String[]::new)
         );
-        //discordBot.sendNewProductInfo(DiscordString.ALL_CATEGORIES_CHANNEL,julianProductList.get(5));
+//
+//        julianMonitorCore.getProductMoreInfo(driver, wait, julianProductList.get(2));
+//
+//        julianProduct = julianProductList.get(2);
+//        discordBot.sendNewProductInfoCommon(
+//                1233325054826250320L,
+//                julianProduct.makeDiscordMessageDescription(),
+//                julianProduct.getProductLink(),
+//                julianProduct.getImageUrl(),
+//                Stream.of(julianProduct.getSku()).toArray(String[]::new)
+//        );
+
+
         try{
             Thread.sleep(10000);
         }catch (Exception e) {

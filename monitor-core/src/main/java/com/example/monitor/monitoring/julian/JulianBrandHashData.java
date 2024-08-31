@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import static com.example.monitor.monitoring.julian.JulianFindString.JULIAN_MONITORING_SITE;
 import static com.example.monitor.monitoring.julian.JulianSaleInfoString.FALL_WINTER_2024_2025;
 import static com.example.monitor.monitoring.julian.JulianSaleInfoString.OUTLET;
+import static com.example.monitor.monitoring.julian.JulianSaleInfoString.SALE;
 import static com.example.monitor.monitoring.julian.JulianSaleInfoString.SPRING_SUMMER_2024;
 
 
@@ -172,9 +173,9 @@ public class JulianBrandHashData {
         StringBuilder sb = new StringBuilder();
         sb.append(brandName);
         sb.append("_");
-        sb.append(category);
-        sb.append("_");
         sb.append(season);
+        sb.append("_");
+        sb.append(category);
         sb.append("_");
         sb.append(sex);
         return sb.toString();
@@ -202,6 +203,8 @@ public class JulianBrandHashData {
                 return SPRING_SUMMER_2024;
             case "OUTLET":
                 return OUTLET;
+            case "SALE":
+                return SALE;
             default:
                 assert (false) : "cannot come here";
                 return "Error";

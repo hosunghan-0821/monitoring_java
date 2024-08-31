@@ -7,6 +7,7 @@ import com.example.monitor.monitoring.global.IMonitorService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchWindowException;
 import org.openqa.selenium.TimeoutException;
@@ -213,6 +214,7 @@ public class JulianMonitorCore implements IMonitorService {
             WebElement image = child.findElement(By.xpath(PRODUCT_IMAGE));
             WebElement name = child.findElement(By.xpath(PRODUCT_NAME));
             WebElement reference = child.findElement(By.xpath(PRODUCT_SKU));
+            WebElement season = child.findElement(By.xpath(".//div[@class='fea-min-prod']"));
 
             String imageSrc = image.getAttribute("src");
 
@@ -228,6 +230,7 @@ public class JulianMonitorCore implements IMonitorService {
                     .price(priceString)
                     .productLink(findUrl)
                     .originPrice(priceString)
+                    .season(season.getText().toUpperCase())
                     .build();
             julianProductList.add(julianProduct);
 
@@ -302,7 +305,65 @@ public class JulianMonitorCore implements IMonitorService {
 
             driver.findElement(By.xpath("//button[@class='close']//span")).click();
         } catch (Exception e) {
-            log.error("more info 오류 sku = "+julianProduct.getSku());
+            log.error("more info 오류 sku = " + julianProduct.getSku());
+            //대응하는 코드 짜야 TO-DO
+            setProductPriceInfoWhenFail(julianProduct);
+        }
+    }
+
+    public void setProductPriceInfoWhenFail(JulianProduct julianProduct) {
+        HashMap<String, JulianSaleInfo> julianSaleInfoHashMap = julianBrandHashData.getJulianSaleInfoHashMap();
+        String findKeyPrefix = julianProduct.getBrandName() + "_" + julianProduct.getSeason();
+        StringBuilder sb = new StringBuilder();
+        StringBuilder defaultBuilder = new StringBuilder();
+
+        List<InnerSortingContainer> specificContainer = new ArrayList<>();
+        List<InnerSortingContainer> defaultContainer = new ArrayList<>();
+
+        try {
+            for (var entry : julianSaleInfoHashMap.entrySet()) {
+                String key = entry.getKey();
+                if (key.contains(findKeyPrefix)) {
+                    String[] split = entry.getKey().split("_");
+                    if(!split[3].equals("UNISEX")){
+                        JulianSaleInfo saleInfo = entry.getValue();
+                        double wholeSaleAfter = Double.parseDouble(julianProduct.getOriginPrice()) * (saleInfo.getSalesPercent() + 100) / 100;
+                        //sb.append(split[3] + " " + saleInfo.getCategory() + saleInfo.getSalesPercent() + "%" + " = " + wholeSaleAfter +"\n");
+                        InnerSortingContainer innerSortingContainer = new InnerSortingContainer(split[3] + " " + saleInfo.getCategory(), split[3] + " " + saleInfo.getCategory() +" " + saleInfo.getSalesPercent() + "%" + " = " + wholeSaleAfter + "\n");
+                        specificContainer.add(innerSortingContainer);
+                    }
+
+                }
+
+                if (key.contains("OTHER BRANDS_SALE")) {
+                    String[] split = entry.getKey().split("_");
+                    if(!split[3].equals("UNISEX")){
+                        JulianSaleInfo saleInfo = entry.getValue();
+                        double wholeSaleAfter = Double.parseDouble(julianProduct.getOriginPrice()) * (saleInfo.getSalesPercent() + 100) / 100;
+                        //defaultBuilder.append(split[3] + " " + saleInfo.getCategory()+" " + saleInfo.getSalesPercent() + "%" + " = " + wholeSaleAfter + "\n");
+                        InnerSortingContainer innerSortingContainer = new InnerSortingContainer(split[3] + " " + saleInfo.getCategory(), split[3] + " " + saleInfo.getCategory() +" " + saleInfo.getSalesPercent() + "%" + " = " + wholeSaleAfter + "\n");
+                        defaultContainer.add(innerSortingContainer);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("more info 대응 실패");
+        }
+        if (sb.toString().equals("")) {
+            defaultBuilder.insert(0, "OTHER BRADNS \n");
+            defaultContainer.sort((o1, o2) -> o1.key.compareTo(o2.key));
+            for (var data:defaultContainer) {
+                defaultBuilder.append(data.resultString);
+            }
+            julianProduct.setKeyInfo(defaultBuilder.toString());
+        } else {
+            //key set
+            specificContainer.sort((o1, o2) -> o1.key.compareTo(o2.key));
+            for (var data:specificContainer) {
+                sb.append(data.resultString);
+            }
+            julianProduct.setKeyInfo(sb.toString());
         }
     }
 
@@ -324,6 +385,10 @@ public class JulianMonitorCore implements IMonitorService {
             wholeSale = String.valueOf(wholeSaleAfter);
         }
 
+        if (wholeSaleOrigin.equals("0.0")) {
+            wholeSaleOrigin = julianProduct.getOriginPrice();
+        }
+
         julianProduct.setMorePriceInfo(wholeSaleOrigin, wholeSale, wholeSalePercent, julianSaleInfoOrNull != null ? julianSaleInfoOrNull.toString() : null);
     }
 
@@ -335,5 +400,15 @@ public class JulianMonitorCore implements IMonitorService {
             findUrl = pageUrl + "?page=" + i;
         }
         return findUrl;
+    }
+
+    private static class InnerSortingContainer{
+        String key;
+        String resultString;
+
+        public InnerSortingContainer(String key, String resultString) {
+            this.key = key;
+            this.resultString = resultString;
+        }
     }
 }

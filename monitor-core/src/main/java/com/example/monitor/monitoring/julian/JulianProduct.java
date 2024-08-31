@@ -44,6 +44,9 @@ public class JulianProduct extends MonitoringProduct {
         this.excelKeyInfo = keyInfo;
     }
 
+    public void setKeyInfo(String exceptKeyInfo){
+        this.excelKeyInfo = exceptKeyInfo;
+    }
 
     public String makeDiscordMessageDescription() {
 
