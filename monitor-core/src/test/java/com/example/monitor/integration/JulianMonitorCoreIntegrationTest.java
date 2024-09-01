@@ -28,7 +28,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Import({TestConfiguration.class})
-
 class JulianMonitorCoreIntegrationTest {
 
     @Value("${julian.user.id}")
@@ -128,9 +127,9 @@ class JulianMonitorCoreIntegrationTest {
         JulianProduct julianProduct = julianProductList.get(4);
 
 
-        julianMonitorCore.getProductMoreInfo(driver, wait, julianProductList.get(9));
+        julianMonitorCore.getProductMoreInfo(driver, wait, julianProductList.get(7));
 
-        julianProduct = julianProductList.get(9);
+        julianProduct = julianProductList.get(7);
         discordBot.sendNewProductInfoCommon(
                 1233325054826250320L,
                 julianProduct.makeDiscordMessageDescription(),

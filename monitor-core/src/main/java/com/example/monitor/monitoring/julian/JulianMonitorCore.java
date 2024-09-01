@@ -335,7 +335,7 @@ public class JulianMonitorCore implements IMonitorService {
 
                 }
 
-                if (key.contains("OTHER BRANDS_SALE")) {
+                if (key.contains("OTHER BRANDS_"+julianProduct.getSeason())) {
                     String[] split = entry.getKey().split("_");
                     if(!split[3].equals("UNISEX")){
                         JulianSaleInfo saleInfo = entry.getValue();
