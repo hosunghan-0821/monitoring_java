@@ -233,7 +233,6 @@ public class StyleMonitorCore implements IMonitorService {
 
                 styleProductList.add(styleProduct);
                 productIndex++;
-                log.info(styleProduct.toString());
             }
         }
 
