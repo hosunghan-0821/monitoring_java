@@ -50,7 +50,7 @@ public class StyleProduct extends MonitoringProduct {
 
     public String makeDiscordDiscountMessageDescription(String beforeSalesPercent) {
 
-        return String.format(DISCORD_NEW_PRODUCT_MESSAGE_FORMAT,
+        return String.format(DISCORD_DISCOUNT_CHANGE_MESSAGE_FORMAT,
                 this.name,
                 this.season,
                 this.sku,
