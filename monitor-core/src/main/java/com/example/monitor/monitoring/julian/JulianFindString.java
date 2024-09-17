@@ -12,6 +12,53 @@ public class JulianFindString {
             PROMO,
     };
 
+    public static final String[] JULIAN_FW_24_25_BRAND_NAME_LIST={
+            "A.P.C",
+            "ADIDAS",
+            "ALEXANDER MCQUEEN",
+            "AMI PARIS",
+            "ASICS",
+            "BALENCIAGA",
+            "BARBOUR",
+            "BIRKENSTOCK",
+            "BURBERRY",
+            "C.P COMPANY",
+            "CANADA GOOSE",
+            "CARHARTT WIP ",
+            "CHLOE'",
+            "COMME DES GARCONS",
+            "COMME DES GARCONS PLAY",
+            "COURREGES",
+            "DIESEL",
+            "DRKSHDW",
+            "FENDI",
+            "GOLDEN GOOSE",
+            "GUCCI",
+            "HOKA ONE ONE",
+            "JACQUEMUS",
+            "JUNYA WATANABE",
+            "LEMAIRE",
+            "MAISON KITSUNE'",
+            "MAISON MARGIELA",
+            "MAISON MIHARA YASUHIRO",
+            "MARNI",
+            "MAX MARA",
+            "MIU MIU",
+            "MM6 MAISON MARGIELA",
+            "MONCLER",
+            "NEW BALANCE",
+            "PRADA",
+            "RICK OWENS",
+            "SAINT LAURENT",
+            "SALOMON",
+            "STONE ISLAND",
+            "THE NORTH FACE",
+            "THOM BROWNE",
+            "UGG",
+            "VIVIENNE WESTWOOD",
+            "WALES BONNER"
+    };
+
     //로그인 관련
     public static final String ID_FORM = "email";
     public static final String PASS_FORM = "pass";

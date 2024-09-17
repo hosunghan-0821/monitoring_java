@@ -24,8 +24,10 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.example.monitor.monitoring.julian.JulianSaleInfoString.FALL_WINTER_2024_2025;
 import static module.discord.DiscordString.ALL_CATEGORIES_CHANNEL;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.NEW_PRODUCT;
 import static com.example.monitor.monitoring.julian.JulianFindString.*;
@@ -133,6 +135,11 @@ public class JulianMonitorCore implements IMonitorService {
                         //새 상품 set에 있다면, 알람x 보내면 안됨.
                         if (dataKeySet.contains(julianProduct.getSku())) {
                             log.info(JULIAN_LOG_PREFIX + "이전에 알람 보냈던 제품 PASS 상품ID " + julianProduct.getSku());
+                            continue;
+                        }
+
+                        if (julianProduct.getSeason().equals(FALL_WINTER_2024_2025) && !Arrays.stream(JULIAN_FW_24_25_BRAND_NAME_LIST).toList().contains(julianProduct.getBrandName())) {
+                            log.info(JULIAN_LOG_PREFIX + "해당하지 않는 시즌의 브랜드 제품 PASS" + julianProduct.getSeason() + "\t" + julianProduct.getSku());
                             continue;
                         }
 
@@ -325,23 +332,23 @@ public class JulianMonitorCore implements IMonitorService {
                 String key = entry.getKey();
                 if (key.contains(findKeyPrefix)) {
                     String[] split = entry.getKey().split("_");
-                    if(!split[3].equals("UNISEX")){
+                    if (!split[3].equals("UNISEX")) {
                         JulianSaleInfo saleInfo = entry.getValue();
                         double wholeSaleAfter = Double.parseDouble(julianProduct.getOriginPrice()) * (saleInfo.getSalesPercent() + 100) / 100;
                         //sb.append(split[3] + " " + saleInfo.getCategory() + saleInfo.getSalesPercent() + "%" + " = " + wholeSaleAfter +"\n");
-                        InnerSortingContainer innerSortingContainer = new InnerSortingContainer(split[3] + " " + saleInfo.getCategory(), split[3] + " " + saleInfo.getCategory() +" " + saleInfo.getSalesPercent() + "%" + " = " + wholeSaleAfter + "\n");
+                        InnerSortingContainer innerSortingContainer = new InnerSortingContainer(split[3] + " " + saleInfo.getCategory(), split[3] + " " + saleInfo.getCategory() + " " + saleInfo.getSalesPercent() + "%" + " = " + wholeSaleAfter + "\n");
                         specificContainer.add(innerSortingContainer);
                     }
 
                 }
 
-                if (key.contains("OTHER BRANDS_"+julianProduct.getSeason())) {
+                if (key.contains("OTHER BRANDS_" + julianProduct.getSeason())) {
                     String[] split = entry.getKey().split("_");
-                    if(!split[3].equals("UNISEX")){
+                    if (!split[3].equals("UNISEX")) {
                         JulianSaleInfo saleInfo = entry.getValue();
                         double wholeSaleAfter = Double.parseDouble(julianProduct.getOriginPrice()) * (saleInfo.getSalesPercent() + 100) / 100;
                         //defaultBuilder.append(split[3] + " " + saleInfo.getCategory()+" " + saleInfo.getSalesPercent() + "%" + " = " + wholeSaleAfter + "\n");
-                        InnerSortingContainer innerSortingContainer = new InnerSortingContainer(split[3] + " " + saleInfo.getCategory(), split[3] + " " + saleInfo.getCategory() +" " + saleInfo.getSalesPercent() + "%" + " = " + wholeSaleAfter + "\n");
+                        InnerSortingContainer innerSortingContainer = new InnerSortingContainer(split[3] + " " + saleInfo.getCategory(), split[3] + " " + saleInfo.getCategory() + " " + saleInfo.getSalesPercent() + "%" + " = " + wholeSaleAfter + "\n");
                         defaultContainer.add(innerSortingContainer);
                     }
                 }
@@ -353,14 +360,14 @@ public class JulianMonitorCore implements IMonitorService {
         if (sb.toString().equals("")) {
             defaultBuilder.insert(0, "OTHER BRADNS \n");
             defaultContainer.sort((o1, o2) -> o1.key.compareTo(o2.key));
-            for (var data:defaultContainer) {
+            for (var data : defaultContainer) {
                 defaultBuilder.append(data.resultString);
             }
             julianProduct.setKeyInfo(defaultBuilder.toString());
         } else {
             //key set
             specificContainer.sort((o1, o2) -> o1.key.compareTo(o2.key));
-            for (var data:specificContainer) {
+            for (var data : specificContainer) {
                 sb.append(data.resultString);
             }
             julianProduct.setKeyInfo(sb.toString());
@@ -402,7 +409,7 @@ public class JulianMonitorCore implements IMonitorService {
         return findUrl;
     }
 
-    private static class InnerSortingContainer{
+    private static class InnerSortingContainer {
         String key;
         String resultString;
 
