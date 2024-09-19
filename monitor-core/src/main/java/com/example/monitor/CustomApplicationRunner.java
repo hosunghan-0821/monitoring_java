@@ -71,19 +71,19 @@ public class CustomApplicationRunner implements ApplicationRunner {
 //        chromeDriverToolFactory.makeChromeDriverTool(BIFFI);
 //        chromeDriverToolFactory.makeChromeDriverTool(GEBE);
 
-        chromeDriverToolFactory.makeChromeDriverTool(VIETTI, 60000 * 2);
-
-        Thread viettiThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                log.info(VIETTI_LOG_PREFIX + "============================ Load Vietti Product Start ============================");
-                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(VIETTI);
-                viettiMonitorCore.runLoadLogic(chromeDriverTool);
-                log.info(VIETTI_LOG_PREFIX + "============================ Load Vietti Product Finish ============================");
-            }
-        });
-        viettiThread.start();
+//        chromeDriverToolFactory.makeChromeDriverTool(VIETTI, 60000);
+//
+//        Thread viettiThread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//
+//                log.info(VIETTI_LOG_PREFIX + "============================ Load Vietti Product Start ============================");
+//                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(VIETTI);
+//                viettiMonitorCore.runLoadLogic(chromeDriverTool);
+//                log.info(VIETTI_LOG_PREFIX + "============================ Load Vietti Product Finish ============================");
+//            }
+//        });
+//        viettiThread.start();
 
 //        discordBot.setChromeDriverTool(chromeDriverToolFactory);
 //        discordBot.setS3UploaderService(s3UploaderService);

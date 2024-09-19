@@ -357,7 +357,7 @@ public class JulianMonitorCore implements IMonitorService {
             e.printStackTrace();
             log.error("more info 대응 실패");
         }
-        if (sb.toString().equals("")) {
+        if (specificContainer.isEmpty()) {
             defaultBuilder.insert(0, "OTHER BRADNS \n");
             defaultContainer.sort((o1, o2) -> o1.key.compareTo(o2.key));
             for (var data : defaultContainer) {

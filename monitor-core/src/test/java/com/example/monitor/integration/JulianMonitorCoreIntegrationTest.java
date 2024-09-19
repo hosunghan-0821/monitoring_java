@@ -124,10 +124,10 @@ class JulianMonitorCoreIntegrationTest {
 
 
 
-        JulianProduct julianProduct = julianProductList.get(4);
+        JulianProduct julianProduct = julianProductList.get(11);
 
+        julianMonitorCore.getProductMoreInfo(driver, wait, julianProductList.get(15));
 
-        julianMonitorCore.getProductMoreInfo(driver, wait, julianProductList.get(7));
 
         julianProduct = julianProductList.get(7);
         discordBot.sendNewProductInfoCommon(

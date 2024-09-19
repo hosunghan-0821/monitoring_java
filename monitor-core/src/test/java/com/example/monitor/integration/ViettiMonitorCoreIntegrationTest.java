@@ -6,6 +6,7 @@ import com.example.monitor.monitoring.style.StyleMonitorCore;
 import com.example.monitor.monitoring.style.StyleProduct;
 import com.example.monitor.monitoring.vietti.ViettiFindString;
 import com.example.monitor.monitoring.vietti.ViettiMonitorCore;
+import com.example.monitor.monitoring.vietti.ViettiMonitorRetry;
 import com.example.monitor.monitoring.vietti.ViettiProduct;
 import module.discord.DiscordBot;
 import org.junit.jupiter.api.AfterAll;
@@ -40,6 +41,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ViettiMonitorCoreIntegrationTest {
     @Autowired
     private ViettiMonitorCore viettiMonitorCore;
+
+    @Autowired
+    private ViettiMonitorRetry viettiMonitorRetry;
 
 
     private static ChromeDriver driver;
@@ -81,7 +85,7 @@ public class ViettiMonitorCoreIntegrationTest {
         viettiMonitorCore.login(driver, wait);
 
         //when
-        List<ViettiProduct> viettiProducts = viettiMonitorCore.getPageProductData(driver, wait, ViettiFindString.VIETTI_BRAND_URL_LIST[0], ViettiFindString.VIETTI_BRAND_NAME_LIST[0]);
+        List<ViettiProduct> viettiProducts = viettiMonitorRetry.getPageProductData(driver, wait, ViettiFindString.VIETTI_BRAND_URL_LIST[0], ViettiFindString.VIETTI_BRAND_NAME_LIST[0]);
 
         //then
         for (ViettiProduct viettiProduct : viettiProducts) {
