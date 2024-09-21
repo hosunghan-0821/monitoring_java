@@ -80,11 +80,13 @@ public class ViettiMonitorRetry {
                 String productPrice = "";
                 String imageSrc = "";
                 double productDoublePrice = 0;
+                String sku ="";
 
                 //상품 id
                 try {
                     WebElement idElement = product.findElement(By.xpath(".//div[@class='product__code']"));
                     productId = idElement.getText();
+                    sku = idElement.getText();
                 } catch (Exception e) {
                     log.error(VIETTI_LOG_PREFIX + "상품 아이디가 없습니다. \t 상품 누락됩니다. 확인요망");
                     continue;
@@ -126,6 +128,7 @@ public class ViettiMonitorRetry {
                 try {
                     WebElement imageElement = product.findElement(By.xpath(".//img[@class='ng-star-inserted']"));
                     imageSrc = imageElement.getAttribute("src");
+
                     productId = productId + ":::" + imageSrc;
                 } catch (Exception e) {
                     log.error(VIETTI_LOG_PREFIX + "이미지 링크 오류");
@@ -142,7 +145,7 @@ public class ViettiMonitorRetry {
                         .productLink(productLink)
                         .imageSrc(imageSrc)
                         .brandName(brandName)
-                        .sku(productId)
+                        .sku(sku)
                         .build();
 
 

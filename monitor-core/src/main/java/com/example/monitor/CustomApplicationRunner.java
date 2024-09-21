@@ -65,93 +65,94 @@ public class CustomApplicationRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-//        chromeDriverToolFactory.makeChromeDriverTool(STYLE);
-//        chromeDriverToolFactory.makeChromeDriverTool(ALL_CATEGORIES);
-//        chromeDriverToolFactory.makeChromeDriverTool(DOUBLE_F);
-//        chromeDriverToolFactory.makeChromeDriverTool(BIFFI);
-//        chromeDriverToolFactory.makeChromeDriverTool(GEBE);
+        chromeDriverToolFactory.makeChromeDriverTool(STYLE);
+        chromeDriverToolFactory.makeChromeDriverTool(ALL_CATEGORIES);
+        chromeDriverToolFactory.makeChromeDriverTool(DOUBLE_F);
+        chromeDriverToolFactory.makeChromeDriverTool(BIFFI);
+        chromeDriverToolFactory.makeChromeDriverTool(GEBE);
+        chromeDriverToolFactory.makeChromeDriverTool(VIETTI, 60000);
 
-//        chromeDriverToolFactory.makeChromeDriverTool(VIETTI, 60000);
-//
-//        Thread viettiThread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//
-//                log.info(VIETTI_LOG_PREFIX + "============================ Load Vietti Product Start ============================");
-//                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(VIETTI);
-//                viettiMonitorCore.runLoadLogic(chromeDriverTool);
-//                log.info(VIETTI_LOG_PREFIX + "============================ Load Vietti Product Finish ============================");
-//            }
-//        });
-//        viettiThread.start();
+        discordBot.setChromeDriverTool(chromeDriverToolFactory);
+        discordBot.setS3UploaderService(s3UploaderService);
 
-//        discordBot.setChromeDriverTool(chromeDriverToolFactory);
-//        discordBot.setS3UploaderService(s3UploaderService);
-//
-//        Thread styleThread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//
-//                log.info(STYLE_LOG_PREFIX + "============================ Load Style Product Start ============================");
-//                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(STYLE);
-//                styleMonitorCore.runLoadLogic(chromeDriverTool);
-//                log.info(STYLE_LOG_PREFIX + "============================ Load Style Product Finish ============================");
-//            }
-//        });
-//        styleThread.start();
-//
-//        Thread gebeneThread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//
-//                log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE Product Start ============================");
-//                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(GEBE);
-//                gebenegoziMonitorCore.runLoadLogic(chromeDriverTool);
-//                log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE Product Finish ============================");
-//            }
-//        });
-//
-//        gebeneThread.start();
-//
-//        Thread biffiThread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//
-//                log.info(BIFFI_LOG_PREFIX + "============================ Load BIFFI Product Start ============================");
-//                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(BIFFI);
-//                biffiMonitorCore.runLoadLogic(chromeDriverTool);
-//                log.info(BIFFI_LOG_PREFIX + "============================ Load BIFFI Product Finish ============================");
-//            }
-//        });
-//
-//        biffiThread.start();
-//
-//
-//        Thread doubleFThread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F);
-//                log.info(DOUBLE_F_LOG_PREFIX + "============================ Load DOUBLE_F Product Start ============================");
-//                doubleFMonitorCore.runLoadLogic(chromeDriverTool);
-//                log.info(DOUBLE_F_LOG_PREFIX + "============================ Load DOUBLE_F Product Finish ============================");
-//            }
-//        });
-//        doubleFThread.start();
-//
-//
-//        Thread julianThread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//
-//                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES);
-//                log.info(JULIAN_LOG_PREFIX + "============================ Load Julian Product Start ============================");
-//                julianMonitorCore.runLoadLogic(chromeDriverTool);
-//                log.info(JULIAN_LOG_PREFIX + "============================ Load Julian Product Finish ============================");
-//
-//            }
-//        });
-//
-//        julianThread.start();
+
+        Thread viettiThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                log.info(VIETTI_LOG_PREFIX + "============================ Load Vietti Product Start ============================");
+                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(VIETTI);
+                viettiMonitorCore.runLoadLogic(chromeDriverTool);
+                log.info(VIETTI_LOG_PREFIX + "============================ Load Vietti Product Finish ============================");
+            }
+        });
+        viettiThread.start();
+
+
+        Thread styleThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                log.info(STYLE_LOG_PREFIX + "============================ Load Style Product Start ============================");
+                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(STYLE);
+                styleMonitorCore.runLoadLogic(chromeDriverTool);
+                log.info(STYLE_LOG_PREFIX + "============================ Load Style Product Finish ============================");
+            }
+        });
+        styleThread.start();
+
+        Thread gebeneThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE Product Start ============================");
+                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(GEBE);
+                gebenegoziMonitorCore.runLoadLogic(chromeDriverTool);
+                log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE Product Finish ============================");
+            }
+        });
+
+        gebeneThread.start();
+
+        Thread biffiThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                log.info(BIFFI_LOG_PREFIX + "============================ Load BIFFI Product Start ============================");
+                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(BIFFI);
+                biffiMonitorCore.runLoadLogic(chromeDriverTool);
+                log.info(BIFFI_LOG_PREFIX + "============================ Load BIFFI Product Finish ============================");
+            }
+        });
+
+        biffiThread.start();
+
+
+        Thread doubleFThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F);
+                log.info(DOUBLE_F_LOG_PREFIX + "============================ Load DOUBLE_F Product Start ============================");
+                doubleFMonitorCore.runLoadLogic(chromeDriverTool);
+                log.info(DOUBLE_F_LOG_PREFIX + "============================ Load DOUBLE_F Product Finish ============================");
+            }
+        });
+        doubleFThread.start();
+
+
+        Thread julianThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES);
+                log.info(JULIAN_LOG_PREFIX + "============================ Load Julian Product Start ============================");
+                julianMonitorCore.runLoadLogic(chromeDriverTool);
+                log.info(JULIAN_LOG_PREFIX + "============================ Load Julian Product Finish ============================");
+
+            }
+        });
+
+        julianThread.start();
 
 
     }
