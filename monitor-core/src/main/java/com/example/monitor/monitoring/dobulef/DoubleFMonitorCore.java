@@ -113,7 +113,14 @@ public class DoubleFMonitorCore implements IMonitorService {
         }
 
         WebElement cookieElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.id(DF_COOKIE_ID)));
+
         cookieElement.click();
+
+        try {
+            Thread.sleep(5000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
