@@ -30,81 +30,81 @@ import static com.example.monitor.monitoring.vietti.ViettiFindString.VIETTI;
 @Service
 public class MonitorScheduler {
 
-    private final JulianMonitorCore julianMonitorCore;
-
-    private final BiffiMonitorCore biffiMonitorCore;
-
-    private final DoubleFMonitorCore doubleFMonitorCore;
-
-    private final GebenegoziMonitorCore gebenegoziMonitorCore;
-
-    private final ChromeDriverToolFactory chromeDriverToolFactory;
-
-    private final StyleMonitorCore styleMonitorCore;
-
-    private final ViettiMonitorCore viettiMonitorCore;
-
-
-    @Scheduled(initialDelay = 60000 * 2, fixedDelay = 60000)// 1분마다 실행
-    public void monitorJulianAllCategories() {
-        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES);
-        julianMonitorCore.runFindProductLogic(chromeDriverTool);
-
-    }
-
-    @Deprecated
-//    @Scheduled(initialDelay = 60000 * 2, fixedDelay = 60000 * 10)// 10분마다 실행
-    public void monitorJulianPromo() {
-//        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(PROMO);
-//        julianMonitorCore.runFindProductLogic(chromeDriverTool, PROMO_URL, PROMO, PROMO_CHANNEL);
-    }
-
-    @Scheduled(initialDelay = 60000 * 7, fixedDelay = 60000 * 30)// 30분마다 실행
-    public void monitorDoubleF() {
-        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F);
-        doubleFMonitorCore.runFindProductLogic(chromeDriverTool);
-    }
-
-    @Scheduled(initialDelay = 60000 * 5, fixedDelay = 60000 * 20)// 20분마다 실행
-    public void monitorBIFFI() {
-        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(BIFFI);
-        biffiMonitorCore.runFindProductLogic(chromeDriverTool);
-    }
-
-
-    @Scheduled(initialDelay = 60000, fixedDelay = 60000 * 60 * 24 * 3)// 3일마다 실행
-    public void clearKeySet() {
-        //Julian
-        log.info(JULIAN_LOG_PREFIX + "새 등록 상품 풀 초기화 (중복방지용) : All Categories, Promo");
-        julianMonitorCore.getJulianBrandHashData().getProductKeySet().clear();
-
-
-        //DoubleF
-        log.info(DOUBLE_F_LOG_PREFIX + "새 등록 상품 풀 초기화 (중복방지용) : DoubleF ");
-        doubleFMonitorCore.getDoubleFBrandHashData().getProductKeySet().clear();
-
-        //biffi
-        log.info(BIFFI_LOG_PREFIX + "새 등록 상품 풀 초기화 (중복방지용) : biffi ");
-        biffiMonitorCore.getBiffiBrandHashData().getProductKeySet().clear();
-
-    }
-
-    @Scheduled(initialDelay = 60000 * 4, fixedDelay = 60000 * 5)// 30분마다 실행
-    public void monitorGebene() {
-        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(GEBE);
-        gebenegoziMonitorCore.runFindProductLogic(chromeDriverTool);
-    }
-
-    @Scheduled(initialDelay = 60000 * 4, fixedDelay = 60000 * 5)// 5분마다 실행
-    public void monitorStyle() {
-        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(STYLE);
-        styleMonitorCore.runFindProductLogic(chromeDriverTool);
-    }
-
-    @Scheduled(initialDelay = 60000 * 4, fixedDelay = 60000 * 5)// 5분마다 실행
-    public void monitorVietti() {
-        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(VIETTI);
-        viettiMonitorCore.runFindProductLogic(chromeDriverTool);
-    }
+//    private final JulianMonitorCore julianMonitorCore;
+//
+//    private final BiffiMonitorCore biffiMonitorCore;
+//
+//    private final DoubleFMonitorCore doubleFMonitorCore;
+//
+//    private final GebenegoziMonitorCore gebenegoziMonitorCore;
+//
+//    private final ChromeDriverToolFactory chromeDriverToolFactory;
+//
+//    private final StyleMonitorCore styleMonitorCore;
+//
+//    private final ViettiMonitorCore viettiMonitorCore;
+//
+//
+//    @Scheduled(initialDelay = 60000 * 2, fixedDelay = 60000)// 1분마다 실행
+//    public void monitorJulianAllCategories() {
+//        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES);
+//        julianMonitorCore.runFindProductLogic(chromeDriverTool);
+//
+//    }
+//
+//    @Deprecated
+////    @Scheduled(initialDelay = 60000 * 2, fixedDelay = 60000 * 10)// 10분마다 실행
+//    public void monitorJulianPromo() {
+////        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(PROMO);
+////        julianMonitorCore.runFindProductLogic(chromeDriverTool, PROMO_URL, PROMO, PROMO_CHANNEL);
+//    }
+//
+//    @Scheduled(initialDelay = 60000 * 7, fixedDelay = 60000 * 30)// 30분마다 실행
+//    public void monitorDoubleF() {
+//        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F);
+//        doubleFMonitorCore.runFindProductLogic(chromeDriverTool);
+//    }
+//
+//    @Scheduled(initialDelay = 60000 * 5, fixedDelay = 60000 * 20)// 20분마다 실행
+//    public void monitorBIFFI() {
+//        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(BIFFI);
+//        biffiMonitorCore.runFindProductLogic(chromeDriverTool);
+//    }
+//
+//
+//    @Scheduled(initialDelay = 60000, fixedDelay = 60000 * 60 * 24 * 3)// 3일마다 실행
+//    public void clearKeySet() {
+//        //Julian
+//        log.info(JULIAN_LOG_PREFIX + "새 등록 상품 풀 초기화 (중복방지용) : All Categories, Promo");
+//        julianMonitorCore.getJulianBrandHashData().getProductKeySet().clear();
+//
+//
+//        //DoubleF
+//        log.info(DOUBLE_F_LOG_PREFIX + "새 등록 상품 풀 초기화 (중복방지용) : DoubleF ");
+//        doubleFMonitorCore.getDoubleFBrandHashData().getProductKeySet().clear();
+//
+//        //biffi
+//        log.info(BIFFI_LOG_PREFIX + "새 등록 상품 풀 초기화 (중복방지용) : biffi ");
+//        biffiMonitorCore.getBiffiBrandHashData().getProductKeySet().clear();
+//
+//    }
+//
+//    @Scheduled(initialDelay = 60000 * 4, fixedDelay = 60000 * 5)// 30분마다 실행
+//    public void monitorGebene() {
+//        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(GEBE);
+//        gebenegoziMonitorCore.runFindProductLogic(chromeDriverTool);
+//    }
+//
+//    @Scheduled(initialDelay = 60000 * 4, fixedDelay = 60000 * 5)// 5분마다 실행
+//    public void monitorStyle() {
+//        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(STYLE);
+//        styleMonitorCore.runFindProductLogic(chromeDriverTool);
+//    }
+//
+//    @Scheduled(initialDelay = 60000 * 4, fixedDelay = 60000 * 5)// 5분마다 실행
+//    public void monitorVietti() {
+//        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(VIETTI);
+//        viettiMonitorCore.runFindProductLogic(chromeDriverTool);
+//    }
 
 }
