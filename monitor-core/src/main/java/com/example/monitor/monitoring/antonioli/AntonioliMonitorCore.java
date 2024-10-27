@@ -2,6 +2,10 @@ package com.example.monitor.monitoring.antonioli;
 
 import chrome.ChromeDriverTool;
 import com.example.monitor.Util.RandomUtil;
+import com.example.monitor.file.ProductFileWriter;
+import com.example.monitor.monitoring.biffi.BiffiProduct;
+import com.example.monitor.monitoring.dobulef.DoubleFFindString;
+import com.example.monitor.monitoring.dobulef.DoubleFProduct;
 import com.example.monitor.monitoring.global.IMonitorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
@@ -17,14 +21,27 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
+import static com.example.monitor.monitoring.antonioli.AntonioliFindString.ANTONIOLI;
 import static com.example.monitor.monitoring.antonioli.AntonioliFindString.ANTONIOLI_LOG_PREFIX;
 import static com.example.monitor.monitoring.antonioli.AntonioliFindString.MANS_PREFIX;
 import static com.example.monitor.monitoring.antonioli.AntonioliFindString.WOMANS_PREFIX;
 import static com.example.monitor.monitoring.antonioli.AntonioliFindString.manBrandNameList;
 import static com.example.monitor.monitoring.antonioli.AntonioliFindString.womanBrandNameList;
+import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI;
+import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI_LOG_PREFIX;
+import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DISCOUNT_CHANGE;
+import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F;
+import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F_LOG_PREFIX;
+import static com.example.monitor.monitoring.dobulef.DoubleFFindString.NEW_PRODUCT;
+import static module.discord.DiscordString.ANOTONIOLI_DISCOUNT_CHANNEL;
+import static module.discord.DiscordString.ANOTONIOLI_NEW_PRODUCT_CHANNEL;
+import static module.discord.DiscordString.BIFFI_DISCOUNT_CHANNEL;
+import static module.discord.DiscordString.DOUBLE_F_NEW_PRODUCT_CHANNEL;
 
 
 @Slf4j
@@ -39,6 +56,8 @@ public class AntonioliMonitorCore implements IMonitorService {
     @Getter
     private final AntonioliBrandHashData antonioliBrandHashData;
 
+    private final ProductFileWriter productFileWriter;
+
     @Override
     public void runLoadLogic(ChromeDriverTool chromeDriverTool) {
 
@@ -47,8 +66,9 @@ public class AntonioliMonitorCore implements IMonitorService {
         login(driver, wait);
 
         //데이터 로드
-        loadData(driver, wait, manBrandNameList, MANS_PREFIX);
         loadData(driver, wait, womanBrandNameList, WOMANS_PREFIX);
+        loadData(driver, wait, manBrandNameList, MANS_PREFIX);
+
 
         chromeDriverTool.isLoadData(true);
 
@@ -58,13 +78,97 @@ public class AntonioliMonitorCore implements IMonitorService {
     @Override
     public void runFindProductLogic(ChromeDriverTool chromeDriverTool) {
 
+        ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
+        WebDriverWait wait = chromeDriverTool.getWebDriverWait();
+
+        List<AntonioliProduct> antonioliProductList = new ArrayList<>();
+
+        if (!chromeDriverTool.isLoadData() || !chromeDriverTool.isRunning()) {
+            log.error(ANTONIOLI_LOG_PREFIX + "Data Load or isRunning OFF");
+            return;
+        }
+
+        log.info(ANTONIOLI_LOG_PREFIX + "ANTONIOLI FIND NEW PRODUCT START==");
+        List<AntonioliProduct> womanDifferent = findDifferentAndAlarm(chromeDriver, wait, womanBrandNameList, WOMANS_PREFIX);
+        List<AntonioliProduct> manDifferent = findDifferentAndAlarm(chromeDriver, wait, manBrandNameList, MANS_PREFIX);
+
+        log.info(ANTONIOLI_LOG_PREFIX + "ANTONIOLI FIND NEW PRODUCT FINISH ==");
+
     }
+
+    public List<AntonioliProduct> findDifferentAndAlarm(ChromeDriver driver, WebDriverWait wait, String[] brandNameList, String sexPrefix) {
+        List<AntonioliProduct> findAnotonioliProducts = new ArrayList<>();
+
+        for (int i = 0; i < brandNameList.length; i++) {
+
+            //페이지 URL 만들기
+            String brandName = brandNameList[i];
+            String url = makeBrandUrl(brandName, sexPrefix);
+            List<AntonioliProduct> pageProductData = getPageProductDataOrNull(driver, wait, url, brandName);
+
+            if (pageProductData == null) {
+                discordBot.sendMessage(ANOTONIOLI_NEW_PRODUCT_CHANNEL, ANTONIOLI_LOG_PREFIX + " 페이지 로그인 오류 있을 수 있으니 확인 부탁드립니다.");
+                break;
+            }
+
+            //상품 정보 존재할 경우
+            Map<String, AntonioliProduct> eachBrandHashMap = antonioliBrandHashData.getBrandHashMap(sexPrefix, brandName);
+            HashSet<String> productKeySet = antonioliBrandHashData.getProductKeySet();
+
+            for (AntonioliProduct antonioliProduct : pageProductData) {
+                if (!eachBrandHashMap.containsKey(antonioliProduct.getId())) {
+                    //새로운 재품일 경우
+                    if (!productKeySet.contains(antonioliProduct.getId())) {
+                        log.info(ANTONIOLI_LOG_PREFIX + "새로운 제품" + antonioliProduct);
+
+                        getDetailProductInfo(driver, wait, antonioliProduct);
+
+                        discordBot.sendNewProductInfoCommon(
+                                ANOTONIOLI_NEW_PRODUCT_CHANNEL,
+                                antonioliProduct.makeDiscordMessageDescription(),
+                                antonioliProduct.getProductLink(),
+                                null,
+                                Stream.of(antonioliProduct.getSku()).toArray(String[]::new)
+                        );
+
+
+                        findAnotonioliProducts.add(antonioliProduct);
+
+                        productFileWriter.writeProductInfo(antonioliProduct.changeToProductFileInfo(ANTONIOLI, NEW_PRODUCT));
+
+                        //보낸 상품 체크
+                        productKeySet.add(antonioliProduct.getId());
+                    } else {
+                        log.error(ANTONIOLI_LOG_PREFIX + "상품 중복 " + antonioliProduct);
+                    }
+                } else {
+                    AntonioliProduct beforeProduct = eachBrandHashMap.get(antonioliProduct.getId());
+                    if (!beforeProduct.getDiscountPercentage().equals(antonioliProduct.getDiscountPercentage())) {
+                        log.info(ANTONIOLI_LOG_PREFIX + "할인율 변경" + beforeProduct.getDiscountPercentage() + " -> " + antonioliProduct.getDiscountPercentage());
+                        //discord bot 알람
+                        getDetailProductInfo(driver, wait, antonioliProduct);
+                        discordBot.sendDiscountChangeInfoCommon(
+                                ANOTONIOLI_DISCOUNT_CHANNEL,
+                                antonioliProduct.makeDiscordDiscountMessageDescription(beforeProduct.getDiscountPercentage()),
+                                antonioliProduct.getProductLink(),
+                                null,
+                                Stream.of(antonioliProduct.getSku()).toArray(String[]::new)
+                        );
+                        findAnotonioliProducts.add(antonioliProduct);
+                        productFileWriter.writeProductInfo(antonioliProduct.changeToProductFileInfo(ANTONIOLI, DISCOUNT_CHANGE));
+                    }
+                }
+            }
+
+
+        }
+        return findAnotonioliProducts;
+    }
+
 
     @Override
     public void login(ChromeDriver driver, WebDriverWait wait) {
-
         driver.get(AntonioliFindString.ANTONIOLI_MAIN_URL);
-
     }
 
     public void loadData(ChromeDriver driver, WebDriverWait wait, String[] brandNameList, String sexPrefix) {
@@ -77,6 +181,10 @@ public class AntonioliMonitorCore implements IMonitorService {
 
             List<AntonioliProduct> pageProductData = getPageProductDataOrNull(driver, wait, url, brandName);
 
+            if (pageProductData == null) {
+                discordBot.sendMessage(ANOTONIOLI_NEW_PRODUCT_CHANNEL, ANTONIOLI_LOG_PREFIX + " 페이지 로그인 오류 있을 수 있으니 확인 부탁드립니다.");
+                break;
+            }
             //상품 정보 존재할 경우
             Map<String, AntonioliProduct> eachBrandHashMap = antonioliBrandHashData.getBrandHashMap(sexPrefix, brandName);
             for (AntonioliProduct product : pageProductData) {
@@ -89,10 +197,12 @@ public class AntonioliMonitorCore implements IMonitorService {
 
     public List<AntonioliProduct> getPageProductDataOrNull(ChromeDriver driver, WebDriverWait wait, String url, String brandName) {
 
-        try{
+        // 브랜드 검사할 때 봇탐지 및 부하 줄이기 위해 랜덤 초 생성.
+        try {
             int randomSec = RandomUtil.getRandomSec(5, 10);
+            log.debug(brandName + "탐색 전 " + randomSec + "초 대기");
             Thread.sleep(randomSec * 1000);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error(ANTONIOLI_LOG_PREFIX + "랜덤 초 실행 에러");
         }
 
@@ -113,7 +223,7 @@ public class AntonioliMonitorCore implements IMonitorService {
             String text = pageElement.getText();
             int productTotalNum = Integer.parseInt(text.split(" ")[2]);
             totalPages = (int) (Math.ceil(((double) productTotalNum) / productNumPerPage));
-            log.info("totalPages = " + totalPages);
+            log.debug("totalPages = " + totalPages);
         } catch (Exception e) {
             log.error(ANTONIOLI_LOG_PREFIX + "error get page number");
         }
@@ -131,6 +241,7 @@ public class AntonioliMonitorCore implements IMonitorService {
 
             } catch (Exception e) {
 
+                // 페이지 문제 없는지 확인하는 곳
                 try {
                     wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@class='ProductItem  ProductItem--sold-out']")));
                 } catch (Exception e2) {
@@ -138,7 +249,7 @@ public class AntonioliMonitorCore implements IMonitorService {
                     log.error(ANTONIOLI_LOG_PREFIX + "logout Redirection  or FIND PRODUCT ERROR");
                     return null;
                 }
-                log.info("Sold Out 으로 인한 에러 -> 다음페이지로 ");
+                log.debug("Sold Out 으로 인한 에러 -> 다음페이지로 ");
                 continue;
 
             }
@@ -216,10 +327,11 @@ public class AntonioliMonitorCore implements IMonitorService {
                         .discountPercentage(productDiscountPercentage)
                         .productLink(productLink)
                         .brandName(brandName)
+                        .sku(productId)
 //                        .imgUrl(imageUrl)
                         .build();
 
-                log.info(antonioliProduct.toString());
+                log.debug(antonioliProduct.toString());
                 pageProductList.add(antonioliProduct);
             }
 
@@ -227,7 +339,37 @@ public class AntonioliMonitorCore implements IMonitorService {
         return pageProductList;
     }
 
-    private String makeBrandUrl(String brandName, String sexPrefix) {
+    public void getDetailProductInfo(ChromeDriver driver, WebDriverWait wait, AntonioliProduct product) {
+
+        boolean isGetData = false;
+        driver.get(product.getProductLink());
+        try {
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@class='Product__Wrapper']")));
+            WebElement detailElement = driver.findElement(By.xpath("//div[@class='tab']//label[text()='Details']"));
+            detailElement.click();
+
+            List<WebElement> detailElements = detailElement.findElements(By.xpath("..//div[@class='tab-content']//ul//li"));
+            for (WebElement webElement : detailElements) {
+                log.debug(webElement.getText());
+                String text = webElement.getText();
+                isGetData = true;
+                if (text.contains("Made in")) {
+                    String madeBy = text.split(":")[1];
+                    product.updateMadeBy(madeBy);
+                    return;
+                }
+            }
+            if (isGetData) {
+                product.updateMadeBy("원산지 찾지 못함 페이지 확인");
+                log.error(ANTONIOLI_LOG_PREFIX + "원산지 찾지 못함 페이지 확인 / check productlink = " + product.getProductLink());
+            }
+        } catch (Exception e) {
+            log.error(ANTONIOLI_LOG_PREFIX + "get product detail error /  check productlink = " + product.getProductLink());
+        }
+
+    }
+
+    public String makeBrandUrl(String brandName, String sexPrefix) {
 
         return "https://stores.antonioli.eu/collections/designer-" + brandName + "/" + sexPrefix;
     }

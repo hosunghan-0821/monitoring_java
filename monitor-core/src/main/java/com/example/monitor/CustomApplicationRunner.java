@@ -16,6 +16,7 @@ import com.example.monitor.monitoring.julian.JulianMonitorCore;
 import com.example.monitor.monitoring.style.StyleMonitorCore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.formula.functions.T;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -28,6 +29,7 @@ import s3.service.S3UploaderService;
 import java.util.Collections;
 
 import static com.example.monitor.monitoring.antonioli.AntonioliFindString.ANTONIOLI;
+import static com.example.monitor.monitoring.antonioli.AntonioliFindString.ANTONIOLI_LOG_PREFIX;
 import static com.example.monitor.monitoring.antonioli.AntonioliFindString.ANTONIOLI_MAIN_URL;
 import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI;
 import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI_LOG_PREFIX;
@@ -79,30 +81,23 @@ public class CustomApplicationRunner implements ApplicationRunner {
 //        chromeDriverToolFactory.makeChromeDriverTool(BIFFI);
 //        chromeDriverToolFactory.makeChromeDriverTool(GEBE);
 //        chromeDriverToolFactory.makeChromeDriverTool(VIETTI, 60000);
-
-//        ChromeOptions options = new ChromeOptions();
-//        options.addArguments("--user-data-dir=/Users/hanhosung/private/private");
-//
-//        options.addArguments("--no-sandbox");
-//        options.addArguments("window-size=1920x1080");
-//        options.addArguments("start-maximized");
-//        options.setExperimentalOption("excludeSwitches", Collections.singletonList("enable-automation"));
-//        options.setExperimentalOption("useAutomationExtension", false);
-//        options.addArguments("--disable-automation");
-//        options.addArguments("--disable-blink-features=AutomationControlled");
-//        ChromeDriver chromeDriver = new ChromeDriver(options);
-//        chromeDriver.get(ANTONIOLI_MAIN_URL);
-
-
         chromeDriverToolFactory.makePrivateChromeDriverTool(ANTONIOLI,5000);
-        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(ANTONIOLI);
 
         discordBot.setChromeDriverTool(chromeDriverToolFactory);
         discordBot.setS3UploaderService(s3UploaderService);
 
+        Thread AntonioliThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                log.info(ANTONIOLI_LOG_PREFIX + "============================ Load ANTONIOLI Product Start ============================");
+                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(ANTONIOLI);
+                antonioliMonitorCore.runLoadLogic(chromeDriverTool);
+                log.info(ANTONIOLI_LOG_PREFIX + "============================ Load ANTONIOLI Product Finish ============================");
+            }
+        });
+        AntonioliThread.start();
 
-        antonioliMonitorCore.runLoadLogic(chromeDriverTool);
-
+//
 //        Thread viettiThread = new Thread(new Runnable() {
 //            @Override
 //            public void run() {
