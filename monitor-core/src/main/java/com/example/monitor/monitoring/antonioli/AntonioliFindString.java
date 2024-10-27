@@ -2,7 +2,7 @@ package com.example.monitor.monitoring.antonioli;
 
 public class AntonioliFindString {
 
-    public static final String ANTONIOLI = "antionioli";
+    public static final String ANTONIOLI = "antonioli";
     public static final String ANTONIOLI_MAIN_URL = "https://stores.antonioli.eu/collections/woman";
 
 

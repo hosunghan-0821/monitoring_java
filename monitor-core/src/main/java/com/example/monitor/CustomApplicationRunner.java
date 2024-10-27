@@ -81,11 +81,12 @@ public class CustomApplicationRunner implements ApplicationRunner {
 //        chromeDriverToolFactory.makeChromeDriverTool(BIFFI);
 //        chromeDriverToolFactory.makeChromeDriverTool(GEBE);
 //        chromeDriverToolFactory.makeChromeDriverTool(VIETTI, 60000);
-        chromeDriverToolFactory.makePrivateChromeDriverTool(ANTONIOLI,5000);
+        chromeDriverToolFactory.makePrivateChromeDriverTool(ANTONIOLI, 50000, "/private/private");
+
 
         discordBot.setChromeDriverTool(chromeDriverToolFactory);
         discordBot.setS3UploaderService(s3UploaderService);
-
+//
         Thread AntonioliThread = new Thread(new Runnable() {
             @Override
             public void run() {
