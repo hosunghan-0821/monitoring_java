@@ -124,10 +124,4 @@ public class MonitorScheduler {
         viettiMonitorCore.runFindProductLogic(chromeDriverTool);
     }
 
-    @Scheduled(initialDelay = 60000 * 30, fixedDelay = 60000 * 60)// 1시간마다 실행
-    public void monitorAntonioli() {
-        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(ANTONIOLI);
-        antonioliMonitorCore.runFindProductLogic(chromeDriverTool);
-    }
-
 }

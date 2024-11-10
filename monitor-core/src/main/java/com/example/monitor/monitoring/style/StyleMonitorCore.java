@@ -159,7 +159,7 @@ public class StyleMonitorCore implements IMonitorService {
             try {
                 productContainerElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("custom-product-grid")));
             } catch (Exception e) {
-                log.error("페이지 데이터 없음 확인해야함 오류 "+ url);
+                log.error("페이지 데이터 없음 확인해야함 오류 " + url);
                 continue;
             }
 
@@ -284,20 +284,28 @@ public class StyleMonitorCore implements IMonitorService {
                     }
                 } else {
                     StyleProduct beforeProduct = eachBrandHashMap.get(styleProduct.getId());
+
                     if (!beforeProduct.getSalePercent().equals(styleProduct.getSalePercent())) {
-                        log.info(STYLE_LOG_PREFIX + "할인율 변경" + beforeProduct.getSalePercent() + " -> " + styleProduct.getSalePercent());
-                        //discord bot 알람
-                        getProductMoreInfo(chromeDriver, wait, styleProduct);
-                        //discordBot.sendDiscountChangeInfo(STYLE_DISCOUNT_CHANNEL, styleProduct, beforeProduct.getSalePercent());
-                        discordBot.sendDiscountChangeInfoCommon(
-                                STYLE_DISCOUNT_CHANNEL,
-                                styleProduct.makeDiscordDiscountMessageDescription(beforeProduct.getSalePercent()),
-                                styleProduct.getProductLink(),
-                                styleProduct.getImageUrl(),
-                                Stream.of(styleProduct.getSku()).toArray(String[]::new)
-                        );
-                        findStyleProductList.add(styleProduct);
-                        productFileWriter.writeProductInfo(styleProduct.changeToProductFileInfo(STYLE, DISCOUNT_CHANGE));
+
+                        if (styleProduct.getSalePercent().contains("0%")) {
+                            log.info(STYLE_LOG_PREFIX + "할인율 변경이 0% 이므로 알람을 보내지 않습니다." + styleProduct.getSalePercent());
+                            findStyleProductList.add(styleProduct);
+                        } else {
+                            log.info(STYLE_LOG_PREFIX + "할인율 변경" + beforeProduct.getSalePercent() + " -> " + styleProduct.getSalePercent());
+                            //discord bot 알람
+                            getProductMoreInfo(chromeDriver, wait, styleProduct);
+                            //discordBot.sendDiscountChangeInfo(STYLE_DISCOUNT_CHANNEL, styleProduct, beforeProduct.getSalePercent());
+                            discordBot.sendDiscountChangeInfoCommon(
+                                    STYLE_DISCOUNT_CHANNEL,
+                                    styleProduct.makeDiscordDiscountMessageDescription(beforeProduct.getSalePercent()),
+                                    styleProduct.getProductLink(),
+                                    styleProduct.getImageUrl(),
+                                    Stream.of(styleProduct.getSku()).toArray(String[]::new)
+                            );
+                            findStyleProductList.add(styleProduct);
+                            productFileWriter.writeProductInfo(styleProduct.changeToProductFileInfo(STYLE, DISCOUNT_CHANGE));
+                        }
+
                     }
                 }
             }
