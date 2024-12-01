@@ -31,6 +31,7 @@ import static com.example.monitor.monitoring.julian.JulianSaleInfoString.FALL_WI
 import static com.example.monitor.monitoring.julian.JulianSaleInfoString.OUTLET;
 import static com.example.monitor.monitoring.julian.JulianSaleInfoString.SALE;
 import static com.example.monitor.monitoring.julian.JulianSaleInfoString.SPRING_SUMMER_2024;
+import static com.example.monitor.monitoring.julian.JulianSaleInfoString.SPRING_SUMMER_2025;
 
 
 @Slf4j
@@ -203,6 +204,8 @@ public class JulianBrandHashData {
                 return SPRING_SUMMER_2024;
             case "OUTLET":
                 return OUTLET;
+            case"SS25":
+                return SPRING_SUMMER_2025;
             case "SALE":
                 return SALE;
             default:

@@ -96,7 +96,7 @@ public class ViettiMonitorCoreIntegrationTest {
             assertThat(viettiProduct.getName()).isNotNull();
             assertThat(viettiProduct.getPrice()).isNotNull();
         }
-        viettiMonitorCore.getProductMoreInfo(driver, wait, viettiProducts.get(0));
+        viettiMonitorCore.getProductMoreInfo(driver, wait, viettiProducts.get(4));
         assertThat(viettiProducts.get(4).getSku()).isNotNull();
         assertThat(viettiProducts.get(4).getMadeBy()).isNotNull();
         assertThat(brandHashMap.size()).isGreaterThan(1);
