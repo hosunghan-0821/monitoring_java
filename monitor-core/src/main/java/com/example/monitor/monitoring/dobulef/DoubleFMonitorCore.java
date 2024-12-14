@@ -206,7 +206,12 @@ public class DoubleFMonitorCore implements IMonitorService {
                 productList = topDiv.findElements(By.xpath(CHILD_PRODUCT_DIV));
             } catch (Exception e) {
                 log.error(DOUBLE_F_LOG_PREFIX + "logout Redirection  or FIND PRODUCT ERROR");
-                login(driver, wait);
+                try{
+                    login(driver, wait);
+                }catch (Exception e2) {
+                    log.error(DOUBLE_F_LOG_PREFIX + "logout Redirection ERROR");
+                }
+
                 return pageProductList;
             }
 
