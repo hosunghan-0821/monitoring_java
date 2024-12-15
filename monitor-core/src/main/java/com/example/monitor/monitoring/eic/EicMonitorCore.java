@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F_LOG_PREFIX;
 import static com.example.monitor.monitoring.eic.EicFindString.EIC_LOG_PREFIX;
 import static module.discord.DiscordString.EIC_DISCOUNT_CHANNEL;
 import static module.discord.DiscordString.EIC_NEW_PRODUCT_CHANNEL;
@@ -222,7 +223,19 @@ public class EicMonitorCore implements IMonitorService {
                 break;
             }
 
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//article[@class='boxArt']")));
+            try{
+                wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//article[@class='boxArt']")));
+            }catch (Exception e) {
+                log.error(EIC_LOG_PREFIX + "logout Redirection  or FIND PRODUCT ERROR");
+                try{
+                    login(driver, wait);
+                }catch (Exception e2) {
+                    log.error(EIC_LOG_PREFIX + "loginError -> find product");
+                    driver.get(url + "/pag-" + i);
+                    wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//article[@class='boxArt']")));
+                }
+            }
+
 
             List<WebElement> elements = driver.findElements(By.xpath("//article[@class='boxArt']"));
 

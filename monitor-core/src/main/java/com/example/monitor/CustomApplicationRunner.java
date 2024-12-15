@@ -69,8 +69,6 @@ public class CustomApplicationRunner implements ApplicationRunner {
 
     private final ViettiMonitorCore viettiMonitorCore;
 
-    private final AntonioliMonitorCore antonioliMonitorCore;
-
     private final EicMonitorCore eicMonitorCore;
 
     private final DiscordBot discordBot;
