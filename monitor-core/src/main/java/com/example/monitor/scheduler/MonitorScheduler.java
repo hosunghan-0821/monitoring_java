@@ -5,6 +5,8 @@ import chrome.ChromeDriverToolFactory;
 import com.example.monitor.monitoring.antonioli.AntonioliMonitorCore;
 import com.example.monitor.monitoring.biffi.BiffiMonitorCore;
 import com.example.monitor.monitoring.dobulef.DoubleFMonitorCore;
+import com.example.monitor.monitoring.eic.EicFindString;
+import com.example.monitor.monitoring.eic.EicMonitorCore;
 import com.example.monitor.monitoring.gebnegozi.GebenegoziMonitorCore;
 import com.example.monitor.monitoring.julian.JulianMonitorCore;
 import com.example.monitor.monitoring.style.StyleFindString;
@@ -23,6 +25,7 @@ import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI;
 import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI_LOG_PREFIX;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F_LOG_PREFIX;
+import static com.example.monitor.monitoring.eic.EicFindString.EIC;
 import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.GEBE;
 import static com.example.monitor.monitoring.julian.JulianFindString.*;
 import static com.example.monitor.monitoring.style.StyleFindString.STYLE;
@@ -49,7 +52,7 @@ public class MonitorScheduler {
 
     private final ViettiMonitorCore viettiMonitorCore;
 
-    private final AntonioliMonitorCore antonioliMonitorCore;
+    private final EicMonitorCore eicMonitorCore;
 
 
     @Scheduled(initialDelay = 60000 * 2, fixedDelay = 60000)// 1분마다 실행
@@ -100,9 +103,9 @@ public class MonitorScheduler {
         log.info(STYLE_LOG_PREFIX + "새 등록 상품 풀 초기화 (중복방지용) : Style");
         styleMonitorCore.getStyleBrandHashData().getProductKeySet().clear();
 
-        //Antonioli
-        log.info(ANTONIOLI_LOG_PREFIX + "새 등록 상품 풀 초기화 (중복방지용) : antonioli");
-        antonioliMonitorCore.getAntonioliBrandHashData().getProductKeySet().clear();
+        //eic
+        log.info(EicFindString.EIC_LOG_PREFIX + "새 등록 상품 풀 초기화 (중복방지용) : eic");
+        eicMonitorCore.getEicBrandHashData().getProductKeySet().clear();
 
     }
 
@@ -124,4 +127,9 @@ public class MonitorScheduler {
         viettiMonitorCore.runFindProductLogic(chromeDriverTool);
     }
 
+    @Scheduled(initialDelay = 60000 * 10, fixedDelay = 60000 * 30)// 5분마다 실행
+    public void monitorEic() {
+        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(EIC);
+        eicMonitorCore.runFindProductLogic(chromeDriverTool);
+    }
 }

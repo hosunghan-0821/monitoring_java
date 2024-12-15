@@ -3,9 +3,6 @@ package com.example.monitor.monitoring.antonioli;
 import chrome.ChromeDriverTool;
 import com.example.monitor.Util.RandomUtil;
 import com.example.monitor.file.ProductFileWriter;
-import com.example.monitor.monitoring.biffi.BiffiProduct;
-import com.example.monitor.monitoring.dobulef.DoubleFFindString;
-import com.example.monitor.monitoring.dobulef.DoubleFProduct;
 import com.example.monitor.monitoring.global.IMonitorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
@@ -15,7 +12,6 @@ import module.discord.DiscordBot;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Component;
@@ -32,16 +28,10 @@ import static com.example.monitor.monitoring.antonioli.AntonioliFindString.MANS_
 import static com.example.monitor.monitoring.antonioli.AntonioliFindString.WOMANS_PREFIX;
 import static com.example.monitor.monitoring.antonioli.AntonioliFindString.manBrandNameList;
 import static com.example.monitor.monitoring.antonioli.AntonioliFindString.womanBrandNameList;
-import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI;
-import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI_LOG_PREFIX;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DISCOUNT_CHANGE;
-import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F;
-import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F_LOG_PREFIX;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.NEW_PRODUCT;
-import static module.discord.DiscordString.ANOTONIOLI_DISCOUNT_CHANNEL;
-import static module.discord.DiscordString.ANOTONIOLI_NEW_PRODUCT_CHANNEL;
-import static module.discord.DiscordString.BIFFI_DISCOUNT_CHANNEL;
-import static module.discord.DiscordString.DOUBLE_F_NEW_PRODUCT_CHANNEL;
+import static module.discord.DiscordString.EIC_DISCOUNT_CHANNEL;
+import static module.discord.DiscordString.EIC_NEW_PRODUCT_CHANNEL;
 
 
 @Slf4j
@@ -107,7 +97,7 @@ public class AntonioliMonitorCore implements IMonitorService {
             List<AntonioliProduct> pageProductData = getPageProductDataOrNull(driver, wait, url, brandName);
 
             if (pageProductData == null) {
-                discordBot.sendMessage(ANOTONIOLI_NEW_PRODUCT_CHANNEL, ANTONIOLI_LOG_PREFIX + " 페이지 로그인 오류 있을 수 있으니 확인 부탁드립니다.");
+                discordBot.sendMessage(EIC_NEW_PRODUCT_CHANNEL, ANTONIOLI_LOG_PREFIX + " 페이지 로그인 오류 있을 수 있으니 확인 부탁드립니다.");
                 break;
             }
 
@@ -124,7 +114,7 @@ public class AntonioliMonitorCore implements IMonitorService {
                         getDetailProductInfo(driver, wait, antonioliProduct);
 
                         discordBot.sendNewProductInfoCommon(
-                                ANOTONIOLI_NEW_PRODUCT_CHANNEL,
+                                EIC_NEW_PRODUCT_CHANNEL,
                                 antonioliProduct.makeDiscordMessageDescription(),
                                 antonioliProduct.getProductLink(),
                                 null,
@@ -148,7 +138,7 @@ public class AntonioliMonitorCore implements IMonitorService {
                         //discord bot 알람
                         getDetailProductInfo(driver, wait, antonioliProduct);
                         discordBot.sendDiscountChangeInfoCommon(
-                                ANOTONIOLI_DISCOUNT_CHANNEL,
+                                EIC_DISCOUNT_CHANNEL,
                                 antonioliProduct.makeDiscordDiscountMessageDescription(beforeProduct.getDiscountPercentage()),
                                 antonioliProduct.getProductLink(),
                                 null,
@@ -182,7 +172,7 @@ public class AntonioliMonitorCore implements IMonitorService {
             List<AntonioliProduct> pageProductData = getPageProductDataOrNull(driver, wait, url, brandName);
 
             if (pageProductData == null) {
-                discordBot.sendMessage(ANOTONIOLI_NEW_PRODUCT_CHANNEL, ANTONIOLI_LOG_PREFIX + " 페이지 로그인 오류 있을 수 있으니 확인 부탁드립니다.");
+                discordBot.sendMessage(EIC_NEW_PRODUCT_CHANNEL, ANTONIOLI_LOG_PREFIX + " 페이지 로그인 오류 있을 수 있으니 확인 부탁드립니다.");
                 break;
             }
             //상품 정보 존재할 경우

@@ -22,6 +22,7 @@ public class MonitoringProduct {
     protected String price;
     protected String productLink;
     protected String sku;
+    @Setter
     protected String colorCode;
     protected String madeBy;
     @Setter

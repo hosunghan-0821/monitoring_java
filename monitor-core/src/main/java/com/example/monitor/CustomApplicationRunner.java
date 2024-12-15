@@ -3,6 +3,7 @@ package com.example.monitor;
 import chrome.ChromeDriverTool;
 import chrome.ChromeDriverToolFactory;
 import com.example.monitor.monitoring.antonioli.AntonioliMonitorCore;
+import com.example.monitor.monitoring.eic.EicMonitorCore;
 import com.example.monitor.monitoring.style.StyleFindString;
 import com.example.monitor.monitoring.vietti.ViettiFindString;
 import com.example.monitor.monitoring.vietti.ViettiMonitorCore;
@@ -36,6 +37,8 @@ import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI;
 import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI_LOG_PREFIX;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F_LOG_PREFIX;
+import static com.example.monitor.monitoring.eic.EicFindString.EIC;
+import static com.example.monitor.monitoring.eic.EicFindString.EIC_LOG_PREFIX;
 import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.GEBE;
 import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.GEBENE_LOG_PREFIX;
 import static com.example.monitor.monitoring.julian.JulianFindString.ALL_CATEGORIES;
@@ -68,6 +71,8 @@ public class CustomApplicationRunner implements ApplicationRunner {
 
     private final AntonioliMonitorCore antonioliMonitorCore;
 
+    private final EicMonitorCore eicMonitorCore;
+
     private final DiscordBot discordBot;
 
     private final S3UploaderService s3UploaderService;
@@ -82,9 +87,22 @@ public class CustomApplicationRunner implements ApplicationRunner {
         chromeDriverToolFactory.makeChromeDriverTool(BIFFI);
         chromeDriverToolFactory.makeChromeDriverTool(GEBE);
         chromeDriverToolFactory.makeChromeDriverTool(VIETTI, 60000);
+        chromeDriverToolFactory.makeChromeDriverTool(EIC);
 
         discordBot.setChromeDriverTool(chromeDriverToolFactory);
         discordBot.setS3UploaderService(s3UploaderService);
+
+        Thread eicThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                log.info(EIC_LOG_PREFIX + "============================ Load Eic Product Start ============================");
+                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(EIC);
+                eicMonitorCore.runLoadLogic(chromeDriverTool);
+                log.info(EIC_LOG_PREFIX + "============================ Load Eic Product Finish ============================");
+            }
+        });
+        eicThread.start();
 
         Thread viettiThread = new Thread(new Runnable() {
             @Override

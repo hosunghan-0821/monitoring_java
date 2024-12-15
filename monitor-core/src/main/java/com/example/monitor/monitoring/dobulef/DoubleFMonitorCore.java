@@ -341,6 +341,7 @@ public class DoubleFMonitorCore implements IMonitorService {
             //상품 정보 존재할 경우
             Map<String, DoubleFProduct> eachBrandHashMap = doubleFBrandHashData.getBrandHashMap(sexPrefix, brandName);
             HashSet<String> productKeySet = doubleFBrandHashData.getProductKeySet();
+
             for (DoubleFProduct product : pageProductData) {
                 if (!eachBrandHashMap.containsKey(getDoubleFProductKey(product))) {
                     //새로운 재품일 경우
