@@ -103,7 +103,10 @@ public class EicMonitorCore implements IMonitorService {
                                 product.getImageSrc(),
                                 Stream.of(product.getSku(), product.getColorCode()).toArray(String[]::new)
                         );
+
                         findNewProduct.add(product);
+                        //보낸 상품 체크
+                        productKeySet.add(getProductKey(product));
                     } else {
                         log.error(EIC_LOG_PREFIX + "상품 중복 " + product);
                     }
@@ -112,7 +115,7 @@ public class EicMonitorCore implements IMonitorService {
                     EicProduct beforeProduct = eachBrandHashMap.get(getProductKey(product));
 
                     if (!beforeProduct.getDiscountPercentage().equals(product.getDiscountPercentage())) {
-                        log.info(EIC_LOG_PREFIX + "할인율 변경" + beforeProduct.getDiscountPercentage() + " -> " + product.getDiscountPercentage());
+                        log.info(EIC_LOG_PREFIX + "할인율 변경" + beforeProduct.getDiscountPercentage() + " -> " + product.getDiscountPercentage() + "상품내역 : " + product);
                         getDetailProductInfo(driver, wait, product);
 
                         discordBot.sendDiscountChangeInfoCommon(
@@ -223,13 +226,13 @@ public class EicMonitorCore implements IMonitorService {
                 break;
             }
 
-            try{
+            try {
                 wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//article[@class='boxArt']")));
-            }catch (Exception e) {
+            } catch (Exception e) {
                 log.error(EIC_LOG_PREFIX + "logout Redirection  or FIND PRODUCT ERROR");
-                try{
+                try {
                     login(driver, wait);
-                }catch (Exception e2) {
+                } catch (Exception e2) {
                     log.error(EIC_LOG_PREFIX + "loginError -> find product");
                     driver.get(url + "/pag-" + i);
                     wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//article[@class='boxArt']")));
@@ -292,8 +295,8 @@ public class EicMonitorCore implements IMonitorService {
                     log.info("상품정보 없음 + url=" + url + "/pag-" + i);
                 }
 
-                if (eicProductMap.containsKey(sku + productID + variant)) {
-                    log.debug("상품 중복 입니다. url = " + driver.getCurrentUrl() + " And  sku + product +ID +variant(site colorCode) = " + (sku + " " + productID + " " + variant));
+                if (eicProductMap.containsKey(sku + productID + productLink + imageSrc)) {
+                    log.debug("상품 중복 입니다. url = " + driver.getCurrentUrl() + " And  sku + product +ID +productLink() = " + (sku + " " + productID + " " + productLink));
                     continue;
                 }
 
@@ -311,7 +314,7 @@ public class EicMonitorCore implements IMonitorService {
                         .build();
 
                 //log.info(eicProduct.toString());
-                eicProductMap.put(sku + productID + variant, eicProduct);
+                eicProductMap.put(sku + productID + productLink + imageSrc, eicProduct);
                 eicProductList.add(eicProduct);
             }
 
@@ -331,6 +334,6 @@ public class EicMonitorCore implements IMonitorService {
     }
 
     private String getProductKey(EicProduct product) {
-        return product.getSku() + product.getColorCode();
+        return product.getSku() + product.getId() + product.getProductLink() + product.getImageSrc();
     }
 }
