@@ -49,3 +49,5 @@ data.xlsx
 *.yaml
 /private
 /my
+
+/logs/*

@@ -8,6 +8,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.slf4j.MDC;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.GEBE;
+import static com.example.monitor.monitoring.julian.JulianFindString.JULIAN;
 import static com.example.monitor.monitoring.julian.JulianFindString.JULIAN_MONITORING_SITE;
 import static com.example.monitor.monitoring.julian.JulianSaleInfoString.FALL_WINTER_2024_2025;
 import static com.example.monitor.monitoring.julian.JulianSaleInfoString.OUTLET;
@@ -66,7 +69,7 @@ public class JulianBrandHashData {
     @EventListener(ApplicationReadyEvent.class)
     public void initJulianData() {
         List<File> xlsxFiles = findXlsxFiles();
-
+        MDC.put("threadName", JULIAN);
         for (File file : xlsxFiles) {
             String fileName = file.getName();
             log.info(fileName + " sales info 데이터 로드 시작");
@@ -149,6 +152,7 @@ public class JulianBrandHashData {
                 log.error("액셀 데이터 로드 오류");
             }
         }
+        MDC.clear();
 //        System.out.println(julianSaleInfoHashMap);
     }
 
@@ -204,7 +208,7 @@ public class JulianBrandHashData {
                 return SPRING_SUMMER_2024;
             case "OUTLET":
                 return OUTLET;
-            case"SS25":
+            case "SS25":
                 return SPRING_SUMMER_2025;
             case "SALE":
                 return SALE;

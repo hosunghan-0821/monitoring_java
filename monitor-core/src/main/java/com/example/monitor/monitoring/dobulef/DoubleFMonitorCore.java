@@ -125,7 +125,6 @@ public class DoubleFMonitorCore implements IMonitorService {
 
     @Override
     public void login(ChromeDriver driver, WebDriverWait wait) {
-
         driver.get(DOUBLE_F_MAIN_PAGE);
         //로그인
 

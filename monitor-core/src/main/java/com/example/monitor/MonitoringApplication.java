@@ -1,6 +1,7 @@
 package com.example.monitor;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.MDC;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -11,6 +12,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class MonitoringApplication {
 
     public static void main(String[] args) {
+        Thread.currentThread().setName("Main-Thread");
         SpringApplication.run(MonitoringApplication.class, args);
     }
 

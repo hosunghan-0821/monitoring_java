@@ -1,0 +1,167 @@
+<configuration>
+    <!-- 콘솔 로그 출력 (메인 스프링 로그) -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <!-- EIC 쓰레드 로그 -->
+    <appender name="EIC_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/thread-eic.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/thread-eic-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <filter class="com.example.monitor.log.CustomMDCFilter">
+            <mdcKey>threadName</mdcKey>
+            <mdcValue>eic</mdcValue>
+        </filter>
+    </appender>
+
+    <!-- STYLE 쓰레드 로그 -->
+    <appender name="STYLE_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/thread-style.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/thread-style-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <filter class="com.example.monitor.log.CustomMDCFilter">
+            <mdcKey>threadName</mdcKey>
+            <mdcValue>style</mdcValue>
+        </filter>
+    </appender>
+
+
+    <!-- DOUBLEF 쓰레드 로그 -->
+    <appender name="DOUBLEF_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/thread-doublef.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/thread-doublef-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <filter class="com.example.monitor.log.CustomMDCFilter">
+            <mdcKey>threadName</mdcKey>
+            <mdcValue>doublef</mdcValue>
+        </filter>
+    </appender>
+
+    <!-- BIFFI 쓰레드 로그 -->
+    <appender name="BIFFI_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/thread-biffi.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/thread-biffi-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <filter class="com.example.monitor.log.CustomMDCFilter">
+            <mdcKey>threadName</mdcKey>
+            <mdcValue>biffi</mdcValue>
+        </filter>
+    </appender>
+
+    <!-- GEBE 쓰레드 로그 -->
+    <appender name="GEBE_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/thread-gebe.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/thread-gebe-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <filter class="com.example.monitor.log.CustomMDCFilter">
+            <mdcKey>threadName</mdcKey>
+            <mdcValue>gebe</mdcValue>
+        </filter>
+    </appender>
+
+    <!-- JULIAN 쓰레드 로그 -->
+    <appender name="JULIAN_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/thread-julian.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/thread-julian-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <filter class="com.example.monitor.log.CustomMDCFilter">
+            <mdcKey>threadName</mdcKey>
+            <mdcValue>julian</mdcValue>
+        </filter>
+    </appender>
+
+    <!-- VIETTI 쓰레드 로그 -->
+    <appender name="VIETTI_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/thread-vietti.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/thread-vietti-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <filter class="com.example.monitor.log.CustomMDCFilter">
+            <mdcKey>threadName</mdcKey>
+            <mdcValue>vietti</mdcValue>
+        </filter>
+    </appender>
+
+    <!-- Logger 설정 -->
+    <!-- 기본 로그는 콘솔로 출력 -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <!-- 프로파일이 'dev'일 때만 활성화되는 설정 -->
+    <springProfile name="dev">
+        <!-- 특정 쓰레드의 로그는 파일로 출력 -->
+        <logger name="com.example.monitor.monitoring.eic" level="INFO" additivity="false">
+            <appender-ref ref="EIC_FILE"/>
+        </logger>
+
+        <!-- 특정 쓰레드의 로그는 파일로 출력 -->
+        <logger name="com.example.monitor.monitoring.style" level="INFO" additivity="false">
+            <appender-ref ref="STYLE_FILE"/>
+        </logger>
+        <!-- DOUBLEF 쓰레드 로그 -->
+        <logger name="com.example.monitor.monitoring.dobulef" level="INFO" additivity="false">
+            <appender-ref ref="DOUBLEF_FILE"/>
+        </logger>
+
+        <!-- BIFFI 쓰레드 로그 -->
+        <logger name="com.example.monitor.monitoring.biffi" level="INFO" additivity="false">
+            <appender-ref ref="BIFFI_FILE"/>
+        </logger>
+
+        <!-- GEBE 쓰레드 로그 -->
+        <logger name="com.example.monitor.monitoring.gebnegozi" level="INFO" additivity="false">
+            <appender-ref ref="GEBE_FILE"/>
+        </logger>
+
+        <!-- JULIAN 쓰레드 로그 -->
+        <logger name="com.example.monitor.monitoring.julian" level="INFO" additivity="false">
+            <appender-ref ref="JULIAN_FILE"/>
+        </logger>
+
+        <!-- VIETTI 쓰레드 로그 -->
+        <logger name="com.example.monitor.monitoring.vietti" level="INFO" additivity="false">
+            <appender-ref ref="VIETTI_FILE"/>
+        </logger>
+
+    </springProfile>
+
+</configuration>
