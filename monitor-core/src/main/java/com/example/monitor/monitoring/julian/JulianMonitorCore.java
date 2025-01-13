@@ -7,10 +7,8 @@ import com.example.monitor.monitoring.global.IMonitorService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.A;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchWindowException;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -18,13 +16,9 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Recover;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.example.monitor.monitoring.julian.JulianSaleInfoString.FALL_WINTER_2024_2025;
@@ -138,7 +132,7 @@ public class JulianMonitorCore implements IMonitorService {
                             continue;
                         }
 
-                        if (julianProduct.getSeason().equals(FALL_WINTER_2024_2025) && !Arrays.stream(JULIAN_FW_24_25_BRAND_NAME_LIST).toList().contains(julianProduct.getBrandName())) {
+                        if (!Arrays.stream(JULIAN_TARGET_BRAND_NAME_LIST).toList().contains(julianProduct.getBrandName())) {
                             log.info(JULIAN_LOG_PREFIX + "해당하지 않는 시즌의 브랜드 제품 PASS" + julianProduct.getSeason() + "\t" + julianProduct.getSku());
                             continue;
                         }

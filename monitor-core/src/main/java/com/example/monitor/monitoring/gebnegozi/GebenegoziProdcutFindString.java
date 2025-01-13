@@ -147,6 +147,9 @@ public class GebenegoziProdcutFindString {
             {"VIVIENNE WESTWOOD","JEWELS",              "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57&lde=886&is=3&ir=16&ci=0&m=&s=0&n=1", "woman"},
 
             {"WOOYOUNGMI","CLOTHING",                   "http://93.46.41.5:1995/list-items?lsc=&lse=55,56,57,58,59&lde=2694&is=2&ir=6&ci=0&m=&s=0&n=1", "man"},
+
+            {"LONGCHAMP","BAGS",                     "http://93.46.41.5:1995/list-items?lsc=&lse=47,60,58,59&lde=474&is=3&ir=15&ci=1&m=&s=0&n=1&cust=&cg=0", "woman"},
+            {"LONGCHAMP","BAGS",               "http://93.46.41.5:1995/list-items?lsc=&lse=58,47,60,59&lde=474&is=2&ir=15&ci=1&m=&s=0&n=1&cust=&cg=0", "man"},
 //
 
 

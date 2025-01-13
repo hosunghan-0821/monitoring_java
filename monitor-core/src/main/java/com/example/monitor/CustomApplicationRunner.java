@@ -2,26 +2,16 @@ package com.example.monitor;
 
 import chrome.ChromeDriverTool;
 import chrome.ChromeDriverToolFactory;
-import com.example.monitor.monitoring.antonioli.AntonioliMonitorCore;
-import com.example.monitor.monitoring.eic.EicMonitorCore;
-import com.example.monitor.monitoring.style.StyleFindString;
-import com.example.monitor.monitoring.vietti.ViettiFindString;
-import com.example.monitor.monitoring.vietti.ViettiMonitorCore;
-import com.example.monitor.monitoring.vietti.ViettiProduct;
-import module.discord.DiscordBot;
-
 import com.example.monitor.monitoring.biffi.BiffiMonitorCore;
 import com.example.monitor.monitoring.dobulef.DoubleFMonitorCore;
+import com.example.monitor.monitoring.eic.EicMonitorCore;
 import com.example.monitor.monitoring.gebnegozi.GebenegoziMonitorCore;
 import com.example.monitor.monitoring.julian.JulianMonitorCore;
 import com.example.monitor.monitoring.style.StyleMonitorCore;
+import com.example.monitor.monitoring.vietti.ViettiMonitorCore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.formula.functions.T;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import module.discord.DiscordBot;
 import org.slf4j.MDC;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -29,11 +19,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import s3.service.S3UploaderService;
 
-import java.util.Collections;
-
-import static com.example.monitor.monitoring.antonioli.AntonioliFindString.ANTONIOLI;
-import static com.example.monitor.monitoring.antonioli.AntonioliFindString.ANTONIOLI_LOG_PREFIX;
-import static com.example.monitor.monitoring.antonioli.AntonioliFindString.ANTONIOLI_MAIN_URL;
 import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI;
 import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI_LOG_PREFIX;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F;

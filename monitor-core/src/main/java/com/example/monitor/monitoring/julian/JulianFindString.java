@@ -12,7 +12,7 @@ public class JulianFindString {
             PROMO,
     };
 
-    public static final String[] JULIAN_FW_24_25_BRAND_NAME_LIST={
+    public static final String[] JULIAN_TARGET_BRAND_NAME_LIST ={
             "A.P.C",
             "ADIDAS",
             "ALEXANDER MCQUEEN",
@@ -56,7 +56,8 @@ public class JulianFindString {
             "THOM BROWNE",
             "UGG",
             "VIVIENNE WESTWOOD",
-            "WALES BONNER"
+            "WALES BONNER",
+            "LONGCHAMP"
     };
 
     //로그인 관련
