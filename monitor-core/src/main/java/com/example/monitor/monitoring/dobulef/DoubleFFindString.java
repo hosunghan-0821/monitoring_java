@@ -21,6 +21,7 @@ public class DoubleFFindString {
                     "drkshdw",
                     "gucci",
                     "hoka-one-one",
+                    "lemaire",
                     "maison-kitsune",
                     "maison-margiela",
                     "mihara-yasuhiro",
@@ -50,6 +51,7 @@ public class DoubleFFindString {
             "gucci",
             "jacquemus",
             "kenzo",
+            "lemaire",
             "maison-margiela",
             "miu-miu",
             "new-balance",
@@ -58,7 +60,8 @@ public class DoubleFFindString {
             "saintlaurent",
             "the-north-face",
             "thom-browne",
-            "vivienne-westwood"
+            "vivienne-westwood",
+
     };
     public static final String MANS_PREFIX = "man";
     public static final String WOMANS_PREFIX = "woman";
