@@ -3,18 +3,20 @@ package com.example.monitor.monitoring.gebnegozi;
 public class GebenegoziProdcutFindString {
 
     public static final String[][] GEBE_URL_LIST = {
-            {"A.P.C.", "CLOTHING",          "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=65&is=3&ir=6&ci=0&m=&s=0&n=1&cust=", "woman"},
-            {"A.P.C.", "BAGS",              "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=65&is=3&ir=15&ci=0&m=&s=0&n=1", "woman"},
-            {"A.P.C.", "CLOTHING",          "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=65&is=1&ir=6&ci=0&m=&s=0&n=1","unisex"},
-            {"A.P.C.", "BAGS",              "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=65&is=1&ir=15&ci=0&m=&s=0&n=1","unisex"},
-            {"A.P.C.", "CLOTHING",          "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=65&is=2&ir=6&ci=0&m=&s=0&n=1&cust=", "man"},
-            {"A.P.C.", "BAGS",              "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=65&is=2&ir=15&ci=0&m=&s=0&n=1", "man"},
 
+            //2024.02.16 추가 항목 업데이트
+            {"AURAREE", "CLOTHING",             "http://93.46.41.5:1995/list-items?lsc=&lse=60,59,58,47&lde=2297&is=2&ir=6&ci=1&m=&s=0&n=1&cust=&cg=0", "man"},
+
+            {"DIOR HOMME", "SHOES",             "http://93.46.41.5:1995/list-items?lsc=&lse=60,47,59,58&lde=231&is=2&ir=8&ci=1&m=&s=0&n=1&cust=&cg=0", "man"},
+            {"DIOR HOMME", "ACCESSORIES",             "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,60&lde=231&is=2&ir=7&ci=1&m=&s=0&n=1&cust=&cg=0", "man"},
+
+            {"LEMAIRE", "BAGS",             "http://93.46.41.5:1995/list-items?lsc=&lse=47,60,59,58&lde=2691&is=2&ir=15&ci=1&m=&s=0&n=1&cust=&cg=0", "man"},
+            {"LEMAIRE", "BAGS",             "http://93.46.41.5:1995/list-items?lsc=&lse=58,59,60,47&lde=2691&is=3&ir=15&ci=1&m=&s=0&n=1&cust=&cg=0", "woman"},
+
+            {"RED WING", "SHOES",             "http://93.46.41.5:1995/list-items?lsc=&lse=58,59,60,47&lde=2691&is=3&ir=15&ci=1&m=&s=0&n=1&cust=&cg=0", "man"},
+
+            //2024.02.16 제거한 항목 update
             {"ADIDAS", "SHOES",             "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=17&is=2&ir=8&ci=0&m=&s=0&n=1", "man"},
-
-
-            {"ALEXANDER MCQUEEN","SHOES",   "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=35&is=3&ir=8&ci=0&m=&s=0&n=1", "woman"},
-            {"ALEXANDER MCQUEEN","SHOES",   "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=35&is=2&ir=8&ci=0&m=&s=0&n=1", "man"},
 
             {"AMI", "CLOTHING",             "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=51&is=3&ir=-2&ci=0&m=&s=0&n=1", "woman"},
             {"AMI", "CLOTHING",             "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=51&is=1&ir=6&ci=0&m=&s=0&n=1","unisex"},
@@ -65,7 +67,6 @@ public class GebenegoziProdcutFindString {
             {"DIESEL","BAGS",                       "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=228&is=3&ir=15&ci=0&m=&s=0&n=1", "woman"},
             {"DIESEL","CLOTHING",                   "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=228&is=2&ir=6&ci=0&m=&s=0&n=1", "man"},
 
-            {"GOLDEN GOOSE DELUXE BRAND","SHOES",   "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=330&is=2&ir=8&ci=0&m=&s=0&n=1", "man"},
 
             {"GUCCI","ACCESSORIES",                 "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=356&is=3&ir=7&ci=0&m=&s=0&n=1", "woman"},
             {"GUCCI","BAGS",                        "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=356&is=3&ir=15&ci=0&m=&s=0&n=1", "woman"},
@@ -80,11 +81,6 @@ public class GebenegoziProdcutFindString {
             {"ISABEL MARANT","BAGS",            "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=399&is=3&ir=15&ci=0&m=&s=0&n=1", "woman"},
             {"ISABEL MARANT","CLOTHING",        "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=399&is=2&ir=6&ci=0&m=&s=0&n=1", "man"},
 
-            {"JACQUEMUS","ACCESSORIES",         "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=1353&is=3&ir=7&ci=0&m=&s=0&n=1", "woman"},
-            {"JACQUEMUS","BAGS",                "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=1353&is=3&ir=15&ci=0&m=&s=0&n=1", "woman"},
-            {"JACQUEMUS","ACCESSORIES",         "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=1353&is=2&ir=7&ci=0&m=&s=0&n=1", "man"},
-            {"JACQUEMUS","BAGS",                "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=1353&is=2&ir=15&ci=0&m=&s=0&n=1", "man"},
-
             {"KENZO","CLOTHING",                "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=431&is=3&ir=6&ci=0&m=&s=0&n=1", "woman"},
             {"KENZO","CLOTHING",                "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=431&is=2&ir=6&ci=0&m=&s=0&n=1", "man"},
 
@@ -97,7 +93,6 @@ public class GebenegoziProdcutFindString {
             {"MAISON MARGIELA","BAGS",                  "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=561&is=1&ir=15&ci=0&m=&s=0&n=1","unisex"},
             {"MAISON MARGIELA","ACCESSORIES",           "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=561&is=2&ir=7&ci=0&m=&s=0&n=1", "man"},
             {"MAISON MARGIELA","BAGS",                  "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=561&is=2&ir=15&ci=0&m=&s=0&n=1", "man"},
-            {"MAISON MARGIELA","SHOES",                 "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=561&is=2&ir=8&ci=0&m=&s=0&n=1", "man"},
 
             {"MIU MIU","ACCESSORIES",                   "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=554&is=3&ir=7&ci=0&m=&s=0&n=1", "woman"},
             {"MIU MIU","BAGS",                          "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=554&is=3&ir=15&ci=0&m=&s=0&n=1", "woman"},
@@ -140,17 +135,14 @@ public class GebenegoziProdcutFindString {
             {"THOM BROWNE","ACCESSORIES",               "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=813&is=3&ir=7&ci=0&m=&s=0&n=1", "woman"},
             {"THOM BROWNE","CLOTHING",                  "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=813&is=2&ir=6&ci=0&m=&s=0&n=1", "man"},
             {"THOM BROWNE","ACCESSORIES",               "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=813&is=2&ir=7&ci=0&m=&s=0&n=1", "man"},
-            {"THOM BROWNE","BAGS",                      "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=813&is=2&ir=15&ci=0&m=&s=0&n=1", "man"},
 
-            {"VIVIENNE WESTWOOD","CLOTHING",            "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=886&is=3&ir=6&ci=0&m=&s=0&n=1", "woman"},
-            {"VIVIENNE WESTWOOD","ACCESSORIES",         "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=886&is=3&ir=7&ci=0&m=&s=0&n=1", "woman"},
             {"VIVIENNE WESTWOOD","JEWELS",              "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60&lde=886&is=3&ir=16&ci=0&m=&s=0&n=1", "woman"},
 
             {"WOOYOUNGMI","CLOTHING",                   "http://93.46.41.5:1995/list-items?lsc=&lse=55,56,57,58,59,60&lde=2694&is=2&ir=6&ci=0&m=&s=0&n=1", "man"},
 
             {"LONGCHAMP","BAGS",                     "http://93.46.41.5:1995/list-items?lsc=&lse=47,60,58,59&lde=474&is=3&ir=15&ci=1&m=&s=0&n=1&cust=&cg=0", "woman"},
             {"LONGCHAMP","BAGS",               "http://93.46.41.5:1995/list-items?lsc=&lse=58,47,60,59&lde=474&is=2&ir=15&ci=1&m=&s=0&n=1&cust=&cg=0", "man"},
-//
+////
 
 
     };
