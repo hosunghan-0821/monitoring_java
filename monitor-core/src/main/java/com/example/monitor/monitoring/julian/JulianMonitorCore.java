@@ -73,12 +73,31 @@ public class JulianMonitorCore implements IMonitorService {
                 //정보가져오기
                 loadData(brandHashMap, productData);
             }
+
+            try {
+                for (int i = 1; i < 3; i++) {
+                    String url = getUrl(LEMAIRE_BAGS_URL, i);
+                    //페이지 이동
+                    changeUrl(chromeDriver, url);
+
+                    //하위 데이터
+                    List<WebElement> productDataDivs = getInnerProductDivs(wait);
+
+                    //상품 하위 데이터 조회
+                    List<JulianProduct> productData = getProductData(productDataDivs, url);
+
+                    //정보가져오기
+                    loadData(brandHashMap, productData);
+                }
+            } catch (Exception e) {
+                log.info(JULIAN_LOG_PREFIX + "== LEMARIE NO BAGS LOAD DATA FINISH ==");
+            }
+
             //로드체크
             chromeDriverTool.isLoadData(true);
             log.info(JULIAN_LOG_PREFIX + "== ALL CATEGORIES LOAD DATA FINISH ==");
         } catch (Exception e) {
             log.error(JULIAN_LOG_PREFIX + "All Category Data Load Error");
-            e.printStackTrace();
         }
     }
 
@@ -157,6 +176,69 @@ public class JulianMonitorCore implements IMonitorService {
                     }
                 }
             }
+
+
+            try {
+                for (int i = 1; i < 3; i++) {
+                    String url = getUrl(LEMAIRE_BAGS_URL, i);
+                    //페이지 이동
+                    changeUrl(chromeDriver, url);
+
+                    //하위 데이터
+                    List<WebElement> productDataDivs = getInnerProductDivs(wait);
+
+                    //상품 하위 데이터 조회
+                    List<JulianProduct> julianProductData = getProductData(productDataDivs, url);
+
+                    //데이터 누적 HashMap 수정을 위해서
+                    findJulianProductList.addAll(julianProductData);
+
+                    //정보가져오기
+                    List<JulianProduct> newJulianProductList = findNewProduct(dataHashMap, julianProductData);
+
+
+                    if (julianProductData.size() != 48) {
+                        log.info(JULIAN_LOG_PREFIX + "한 페이지에 size 개수 변동 확인요망! 현재사이즈 = " + julianProductData.size());
+                    }
+                    if (!newJulianProductList.isEmpty()) {
+
+                        for (JulianProduct julianProduct : newJulianProductList) {
+
+                            //새 상품 set에 있다면, 알람x 보내면 안됨.
+                            if (dataKeySet.contains(julianProduct.getSku())) {
+                                log.info(JULIAN_LOG_PREFIX + "이전에 알람 보냈던 제품 PASS 상품ID " + julianProduct.getSku());
+                                continue;
+                            }
+
+                            if (!Arrays.stream(JULIAN_TARGET_BRAND_NAME_LIST).toList().contains(julianProduct.getBrandName())) {
+                                log.info(JULIAN_LOG_PREFIX + "해당하지 않는 시즌의 브랜드 제품 PASS" + julianProduct.getSeason() + "\t" + julianProduct.getSku());
+                                continue;
+                            }
+
+                            //새 상품 set에 없다면, 알람 보내고, 보낸걸 기록
+                            dataKeySet.add(julianProduct.getSku());
+
+                            getProductMoreInfo(chromeDriver, wait, julianProduct);
+
+                            //discordBot.sendNewProductInfo(ALL_CATEGORIES_CHANNEL, julianProduct);
+                            discordBot.sendNewProductInfoCommon(
+                                    ALL_CATEGORIES_CHANNEL,
+                                    julianProduct.makeDiscordMessageDescription(),
+                                    julianProduct.getProductLink(),
+                                    julianProduct.getImageUrl(),
+                                    Stream.of(julianProduct.getSku()).toArray(String[]::new)
+                            );
+
+
+                            productFileWriter.writeProductInfo(julianProduct.changeToProductFileInfo(JULIAN + " / " + LEMAIRE_BAGS_URL, NEW_PRODUCT));
+                            log.info(JULIAN_LOG_PREFIX + "New Product = " + julianProduct);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                log.error(JULIAN_LOG_PREFIX + "NO LEMAIRE BAGS");
+            }
+
             // 이후에 HashMap 재 정립
             dataHashMap.clear();
             loadData(dataHashMap, findJulianProductList);

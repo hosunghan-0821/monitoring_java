@@ -72,6 +72,8 @@ public class JulianFindString {
 
     public static final String ALL_CATEGORIES_URL = "https://b2bfashion.online/306-all";
 
+    public static final String LEMAIRE_BAGS_URL = "https://b2bfashion.online/brand/113-lemaire?category=crossbody-bags,hand-bags,shoulder-bags,tote-bag,bag-accessories";
+
     public static final String PROMO_URL = "https://b2bfashion.online/439-promo";
 
     // 상품 내부 데이터 관련
