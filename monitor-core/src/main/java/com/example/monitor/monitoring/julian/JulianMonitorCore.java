@@ -25,6 +25,7 @@ import static com.example.monitor.monitoring.julian.JulianSaleInfoString.FALL_WI
 import static module.discord.DiscordString.ALL_CATEGORIES_CHANNEL;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.NEW_PRODUCT;
 import static com.example.monitor.monitoring.julian.JulianFindString.*;
+import static module.discord.DiscordString.JULIAN_LEMAIRE;
 
 @Slf4j
 @Component
@@ -222,7 +223,7 @@ public class JulianMonitorCore implements IMonitorService {
 
                             //discordBot.sendNewProductInfo(ALL_CATEGORIES_CHANNEL, julianProduct);
                             discordBot.sendNewProductInfoCommon(
-                                    ALL_CATEGORIES_CHANNEL,
+                                    JULIAN_LEMAIRE,
                                     julianProduct.makeDiscordMessageDescription(),
                                     julianProduct.getProductLink(),
                                     julianProduct.getImageUrl(),

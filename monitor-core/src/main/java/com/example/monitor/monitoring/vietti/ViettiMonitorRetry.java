@@ -38,7 +38,7 @@ public class ViettiMonitorRetry {
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@class='products-grid center ng-star-inserted']")));
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@class='product-counter']")));
         WebElement headerElement = driver.findElement(By.xpath("//div[@class='product-counter']"));
-        wait.until(ExpectedConditions.textToBePresentInElement(headerElement, "product"));
+        wait.until(ExpectedConditions.textToBePresentInElement(headerElement, "of"));
 
         String pageInfo = headerElement.getText();
         String totalProducts = pageInfo.split("of")[1].strip().split(" ")[0];
@@ -152,6 +152,8 @@ public class ViettiMonitorRetry {
                 if (productId.isEmpty()) {
                     log.error(VIETTI_LOG_PREFIX + "상품 정보 획득에러 수정필요 !!!");
                 }
+
+                log.info(viettiProduct.toString());
                 pageProductList.add(viettiProduct);
             }
 
