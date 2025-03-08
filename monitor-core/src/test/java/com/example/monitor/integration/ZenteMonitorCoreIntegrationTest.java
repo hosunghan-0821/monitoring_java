@@ -127,7 +127,7 @@ public class ZenteMonitorCoreIntegrationTest {
 
     @Test
     @Order(3)
-    @DisplayName(ZenteFindString.ZENTE_LOG_PREFIX + "상품 원산지 확인 테스트")
+    @DisplayName(ZenteFindString.ZENTE_LOG_PREFIX + "상품 sku 확인 테스트")
     void getDetailProductInfo() {
 
         //given
