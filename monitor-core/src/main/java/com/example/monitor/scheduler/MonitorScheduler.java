@@ -71,7 +71,7 @@ public class MonitorScheduler {
     public void monitorZente() {
         MDC.put("threadName", "ZENTE"); // MDC에 쓰레드 이름 저장
         ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool("ZENTE");
-        zenteMonitorCore.runLoadLogic(chromeDriverTool);
+        zenteMonitorCore.runFindProductLogic(chromeDriverTool);
         MDC.clear(); // MDC 데이터 정리
     }
 

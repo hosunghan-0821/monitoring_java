@@ -10,6 +10,7 @@ import com.example.monitor.monitoring.julian.JulianMonitorCore;
 import com.example.monitor.monitoring.style.StyleMonitorCore;
 import com.example.monitor.monitoring.vietti.ViettiMonitorCore;
 import com.example.monitor.monitoring.zente.ZenteMonitorCore;
+import com.example.monitor.monitoring.zente.ZenteProduct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import module.discord.DiscordBot;
@@ -44,6 +45,8 @@ import static com.example.monitor.monitoring.style.StyleFindString.STYLE;
 import static com.example.monitor.monitoring.style.StyleFindString.STYLE_LOG_PREFIX;
 import static com.example.monitor.monitoring.vietti.ViettiFindString.VIETTI;
 import static com.example.monitor.monitoring.vietti.ViettiFindString.VIETTI_LOG_PREFIX;
+import static com.example.monitor.monitoring.zente.ZenteFindString.ZENTE;
+import static com.example.monitor.monitoring.zente.ZenteFindString.ZENTE_LOG_PREFIX;
 
 @Slf4j
 @Component
@@ -84,14 +87,14 @@ public class CustomApplicationRunner implements ApplicationRunner {
             @Override
             public void run() {
                 MDC.put("threadName", "ZENTE"); // MDC에 쓰레드 이름 저장
-
+                log.info(ZENTE_LOG_PREFIX + "============================ Load zente Product Start ============================");
                 ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool("ZENTE");
                 zenteMonitorCore.runLoadLogic(chromeDriverTool);
-
+                log.info(ZENTE_LOG_PREFIX + "============================ Load zente Product finish ============================");
                 MDC.clear(); // MDC 데이터 정리
             }
         });
-        zenteThread.setName(EIC);
+        zenteThread.setName(ZENTE);
         zenteThread.start();
 
 //        chromeDriverToolFactory.makeChromeDriverTool(STYLE);
@@ -211,28 +214,4 @@ public class CustomApplicationRunner implements ApplicationRunner {
 
     }
 
-    public void doRun(ChromeDriver driver, List<WebElement> elements, int startIndex, int totalSizes) {
-
-        if (totalSizes == startIndex) {
-            return;
-        }
-        for (int i = startIndex; i < elements.size(); i++) {
-            WebElement productElement = elements.get(i);
-
-            try {
-                Thread.sleep(1000);
-            } catch (Exception e) {
-
-            }
-
-            Actions actions = new Actions(driver);
-            actions.moveToElement(productElement);
-            actions.perform();
-        }
-
-        elements = driver.findElements(By.xpath("//div[@id='searchedItemDisplay']//ul//li[@class='jt-goods-list-elem']"));
-
-        doRun(driver, elements, totalSizes, elements.size());
-
-    }
 }

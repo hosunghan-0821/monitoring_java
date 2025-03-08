@@ -24,4 +24,12 @@ public class RandomUtil {
         return ThreadLocalRandom.current().nextInt(startSeconds, endSeconds + 1);
 
     }
+
+
+    //기본 설정
+    public static int getRandomSecDefault(){
+
+        return ThreadLocalRandom.current().nextInt(10, 20 + 1);
+
+    }
 }

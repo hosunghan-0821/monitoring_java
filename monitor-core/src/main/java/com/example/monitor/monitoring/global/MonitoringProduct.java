@@ -21,6 +21,7 @@ public class MonitoringProduct {
     protected String brandName; // converting Rule 사용
     protected String price;
     protected String productLink;
+    @Setter
     protected String sku;
     @Setter
     protected String colorCode;
