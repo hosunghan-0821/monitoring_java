@@ -2,8 +2,6 @@ package com.example.monitor.monitoring.zente;
 
 import chrome.ChromeDriverTool;
 import com.example.monitor.Util.RandomUtil;
-import com.example.monitor.monitoring.dobulef.DoubleFBrandHashData;
-import com.example.monitor.monitoring.dobulef.DoubleFProduct;
 import com.example.monitor.monitoring.global.IMonitorService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -23,16 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DISCOUNT_CHANGE;
-import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F;
-import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F_LOG_PREFIX;
-import static com.example.monitor.monitoring.dobulef.DoubleFFindString.MANS_PREFIX;
-import static com.example.monitor.monitoring.dobulef.DoubleFFindString.WOMANS_PREFIX;
-import static com.example.monitor.monitoring.dobulef.DoubleFFindString.manBrandNameList;
-import static com.example.monitor.monitoring.dobulef.DoubleFFindString.womanBrandNameList;
 import static com.example.monitor.monitoring.zente.ZenteFindString.ZENTE_LOG_PREFIX;
-import static module.discord.DiscordString.DOUBLE_F_DISCOUNT_CHANNEL;
-import static module.discord.DiscordString.DOUBLE_F_NEW_PRODUCT_CHANNEL;
+import static module.discord.DiscordString.ZENTE_DISCOUNT_CHANNEL;
 import static module.discord.DiscordString.ZENTE_NEW_PRODUCT_CHANNEL;
 
 @Slf4j
@@ -99,7 +89,7 @@ public class ZenteMonitorCore implements IMonitorService {
                                 product.makeDiscordMessageDescription(),
                                 product.getProductLink(),
                                 null,
-                                Stream.of(product.getSku(), product.getColorCode()).toArray(String[]::new)
+                                Stream.of(product.getSku()).toArray(String[]::new)
                         );
 
                         productKeySet.add(product.getId());
@@ -116,11 +106,11 @@ public class ZenteMonitorCore implements IMonitorService {
                         getDetailProductInfo(driver, wait, product);
                         //discordBot.sendDiscountChangeInfo(DOUBLE_F_DISCOUNT_CHANNEL, product, url, beforeProduct.getDiscountPercentage());
                         discordBot.sendDiscountChangeInfoCommon(
-                                DOUBLE_F_DISCOUNT_CHANNEL,
+                                ZENTE_DISCOUNT_CHANNEL,
                                 product.makeDiscordDiscountMessageDescription(beforeProduct.getPrice()),
                                 product.getProductLink(),
                                 null,
-                                Stream.of(product.getSku(), product.getColorCode()).toArray(String[]::new)
+                                Stream.of(product.getSku()).toArray(String[]::new)
                         );
                         zenteProducts.add(product);
                     }
@@ -143,7 +133,7 @@ public class ZenteMonitorCore implements IMonitorService {
     public void getDetailProductInfo(ChromeDriver driver, WebDriverWait wait, ZenteProduct product) {
 
         driver.get(product.getProductLink());
-        int randomSec = RandomUtil.getRandomSec(10, 15);
+        int randomSec = RandomUtil.getRandomSecDefault();
         try {
             Thread.sleep(randomSec * 1000L);
             WebElement detailWebElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@class='jt-info-detail-goods-item-content']")));
@@ -169,7 +159,7 @@ public class ZenteMonitorCore implements IMonitorService {
 
 
         List<ZenteProduct> zenteProducts = new ArrayList<>();
-        int randomSec = RandomUtil.getRandomSec(10, 15);
+        int randomSec = RandomUtil.getRandomSecDefault();
 
         try {
             driver.get(url);
@@ -207,7 +197,7 @@ public class ZenteMonitorCore implements IMonitorService {
                         .category(category)
                         .price(priceElement.getText())
                         .name(productElement.getText())
-                        .salesPrevPrice(consumerPriceElement.getText())
+                        .salesPrevPrice(priceElement.getText())
                         .id(siteProductId)
                         .productLink("https://jentestore.com/goods/view?no=" + siteProductId)
                         .build();
@@ -229,7 +219,7 @@ public class ZenteMonitorCore implements IMonitorService {
 
     public void loadData(ChromeDriver driver, WebDriverWait wait, String[][] brandUrlList) {
 
-        int randomSec = RandomUtil.getRandomSec(1, 10);
+        int randomSec = RandomUtil.getRandomSecDefault();
 
         try {
             Thread.sleep(randomSec * 1000L);
