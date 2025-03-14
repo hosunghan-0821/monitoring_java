@@ -29,7 +29,7 @@ public class RandomUtil {
     //기본 설정
     public static int getRandomSecDefault(){
 
-        return ThreadLocalRandom.current().nextInt(5, 20 + 1);
+        return ThreadLocalRandom.current().nextInt(3, 10);
 
     }
 }

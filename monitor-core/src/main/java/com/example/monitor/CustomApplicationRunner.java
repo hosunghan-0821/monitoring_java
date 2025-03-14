@@ -82,7 +82,6 @@ public class CustomApplicationRunner implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
 
         chromeDriverToolFactory.makeChromeDriverTool("ZENTE");
-
         Thread zenteThread = new Thread(new Runnable() {
             @Override
             public void run() {

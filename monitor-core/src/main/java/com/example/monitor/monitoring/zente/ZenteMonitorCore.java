@@ -9,12 +9,15 @@ import lombok.extern.slf4j.Slf4j;
 import module.discord.DiscordBot;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -71,9 +74,17 @@ public class ZenteMonitorCore implements IMonitorService {
             String brandName = zenteUrlInfo[i][0];
             String category = zenteUrlInfo[i][1];
             String url = zenteUrlInfo[i][2];
+            List<ZenteProduct> pageProductData = new ArrayList<>();
+            try {
+                pageProductData = getPageProductData(driver, wait, url, brandName, category);
 
-            List<ZenteProduct> pageProductData = getPageProductData(driver, wait, url, brandName, category);
+            } catch (Exception e) {
+                continue;
+            }
 
+            if (pageProductData.size() == 0) {
+                continue;
+            }
             //상품 정보 존재할 경우
             Map<String, ZenteProduct> eachBrandHashMap = zenteBrandHashData.getBrandHashMap(brandName, category);
             HashSet<String> productKeySet = zenteBrandHashData.getProductKeySet();
@@ -165,8 +176,8 @@ public class ZenteMonitorCore implements IMonitorService {
             driver.get(url);
             Thread.sleep(randomSec * 1000L);
 
-
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@id='searchedItemDisplay']//ul//li")));
+
 
             JavascriptExecutor js = (JavascriptExecutor) driver;
             js.executeScript("window.scrollBy(0, document.body.scrollHeight / 2)", "");
@@ -201,8 +212,7 @@ public class ZenteMonitorCore implements IMonitorService {
                         .id(siteProductId)
                         .productLink("https://jentestore.com/goods/view?no=" + siteProductId)
                         .build();
-
-                System.out.println(zenteProduct.toString());
+                
                 zenteProducts.add(zenteProduct);
             }
 
@@ -229,7 +239,15 @@ public class ZenteMonitorCore implements IMonitorService {
 
 
         for (int i = 0; i < brandUrlList.length; i++) {
-            List<ZenteProduct> pageProductData = getPageProductData(driver, wait, brandUrlList[i][2], brandUrlList[i][0], brandUrlList[i][1]);
+            List<ZenteProduct> pageProductData = new ArrayList<>();
+            try {
+                pageProductData = getPageProductData(driver, wait, brandUrlList[i][2], brandUrlList[i][0], brandUrlList[i][1]);
+            } catch (Exception e) {
+                continue;
+            }
+            if (pageProductData.size() == 0) {
+                continue;
+            }
 
             Map<String, ZenteProduct> eachBrandHashMap = zenteBrandHashData.getBrandHashMap(brandUrlList[i][0], brandUrlList[i][1]);
             for (ZenteProduct product : pageProductData) {
