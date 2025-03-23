@@ -153,7 +153,6 @@ public class ViettiMonitorRetry {
                     log.error(VIETTI_LOG_PREFIX + "상품 정보 획득에러 수정필요 !!!");
                 }
 
-                log.info(viettiProduct.toString());
                 pageProductList.add(viettiProduct);
             }
 

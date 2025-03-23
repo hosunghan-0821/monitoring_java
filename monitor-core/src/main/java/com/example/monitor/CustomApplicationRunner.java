@@ -81,41 +81,41 @@ public class CustomApplicationRunner implements ApplicationRunner {
 //        chromeDriverToolFactory.makeChromeDriverTool(DOUBLE_F);
 //        chromeDriverToolFactory.makeChromeDriverTool(BIFFI);
 //        chromeDriverToolFactory.makeChromeDriverTool(GEBE);
-//        chromeDriverToolFactory.makeChromeDriverTool(VIETTI, 60000);
-        chromeDriverToolFactory.makeChromeDriverTool(EIC);
+        chromeDriverToolFactory.makeChromeDriverTool(VIETTI, 60000);
+//        chromeDriverToolFactory.makeChromeDriverTool(EIC);
 //
         discordBot.setChromeDriverTool(chromeDriverToolFactory);
         discordBot.setS3UploaderService(s3UploaderService);
 
-        Thread eicThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                MDC.put("threadName", EIC); // MDC에 쓰레드 이름 저장
-                log.info(EIC_LOG_PREFIX + "============================ Load Eic Product Start ============================");
-                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(EIC);
-                eicMonitorCore.runLoadLogic(chromeDriverTool);
-                log.info(EIC_LOG_PREFIX + "============================ Load Eic Product Finish ============================");
-
-                MDC.clear(); // MDC 데이터 정리
-            }
-        });
-        eicThread.setName(EIC);
-        eicThread.start();
-
-//        Thread viettiThread = new Thread(new Runnable() {
+//        Thread eicThread = new Thread(new Runnable() {
 //            @Override
 //            public void run() {
-//                MDC.put("threadName", VIETTI); // MDC에 쓰레드 이름 저장
-//                log.info(VIETTI_LOG_PREFIX + "============================ Load Vietti Product Start ============================");
-//                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(VIETTI);
-//                viettiMonitorCore.runLoadLogic(chromeDriverTool);
-//                log.info(VIETTI_LOG_PREFIX + "============================ Load Vietti Product Finish ============================");
-//                MDC.clear(); // MDC 데이터 정리
+//                MDC.put("threadName", EIC); // MDC에 쓰레드 이름 저장
+//                log.info(EIC_LOG_PREFIX + "============================ Load Eic Product Start ============================");
+//                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(EIC);
+//                eicMonitorCore.runLoadLogic(chromeDriverTool);
+//                log.info(EIC_LOG_PREFIX + "============================ Load Eic Product Finish ============================");
 //
+//                MDC.clear(); // MDC 데이터 정리
 //            }
 //        });
-//        viettiThread.setName(VIETTI);
-//        viettiThread.start();
+//        eicThread.setName(EIC);
+//        eicThread.start();
+
+        Thread viettiThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                MDC.put("threadName", VIETTI); // MDC에 쓰레드 이름 저장
+                log.info(VIETTI_LOG_PREFIX + "============================ Load Vietti Product Start ============================");
+                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(VIETTI);
+                viettiMonitorCore.runLoadLogic(chromeDriverTool);
+                log.info(VIETTI_LOG_PREFIX + "============================ Load Vietti Product Finish ============================");
+                MDC.clear(); // MDC 데이터 정리
+
+            }
+        });
+        viettiThread.setName(VIETTI);
+        viettiThread.start();
 //
 //
 //        Thread styleThread = new Thread(new Runnable() {

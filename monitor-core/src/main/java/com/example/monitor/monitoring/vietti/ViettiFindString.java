@@ -54,7 +54,19 @@ public class ViettiFindString {
 
             "THE NORTH FACE",
 
-            "UGG"
+            "UGG",
+
+            //2025-03-23 브랜드추가
+            "AURALEE",
+            "BIRKENSTOCK",
+            "CARHARTT WIP",
+            "DR. MARTENS",
+            "FERRAFAMO",
+            "ON RUNNING",
+            "KAPITAL",
+            "RED WING SHOES"
+
+
     };
     public static final String[] VIETTI_BRAND_URL_LIST =
             {
@@ -104,7 +116,18 @@ public class ViettiFindString {
 
                     "https://it-buyer.viettishop.com/en/brands/the-north-face-1156",
 
-                    "https://it-buyer.viettishop.com/en/brands/ugg-1180"
+                    "https://it-buyer.viettishop.com/en/brands/ugg-1180",
+
+
+                    //2025-03-23 브랜드 추가
+                    "https://it-buyer.viettishop.com/en/brands/auralee-160",
+                    "https://it-buyer.viettishop.com/en/brands/birkenstock-1548",
+                    "https://it-buyer.viettishop.com/en/brands/carhartt-wip-271",
+                    "https://it-buyer.viettishop.com/en/brands/dr-martens-373",
+                    "https://it-buyer.viettishop.com/en/brands/ferragamo-445",
+                    "https://it-buyer.viettishop.com/en/brands/on-running-1511",
+                    "https://it-buyer.viettishop.com/en/brands/kapital-622",
+                    "https://it-buyer.viettishop.com/en/brands/red-wing-shoes-988"
 
             };
 
