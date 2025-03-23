@@ -113,17 +113,23 @@ public class ZenteMonitorCore implements IMonitorService {
                     ZenteProduct beforeProduct = eachBrandHashMap.get(product.getId());
 
                     if (!beforeProduct.getPrice().equals(product.getPrice())) {
-                        log.info(ZENTE_LOG_PREFIX + "가격 변경" + beforeProduct.getPrice() + " -> " + product.getPrice());
-                        getDetailProductInfo(driver, wait, product);
-                        //discordBot.sendDiscountChangeInfo(DOUBLE_F_DISCOUNT_CHANNEL, product, url, beforeProduct.getDiscountPercentage());
-                        discordBot.sendDiscountChangeInfoCommon(
-                                ZENTE_DISCOUNT_CHANNEL,
-                                product.makeDiscordDiscountMessageDescription(beforeProduct.getPrice()),
-                                product.getProductLink(),
-                                null,
-                                Stream.of(product.getSku()).toArray(String[]::new)
-                        );
-                        zenteProducts.add(product);
+
+                        if ((Math.abs(beforeProduct.getDoublePrice() - product.getDoublePrice()) / product.getDoublePrice() * 100) >= 15) {
+                            log.info(ZENTE_LOG_PREFIX + "가격 변경" + beforeProduct.getPrice() + " -> " + product.getPrice());
+                            getDetailProductInfo(driver, wait, product);
+                            //discordBot.sendDiscountChangeInfo(DOUBLE_F_DISCOUNT_CHANNEL, product, url, beforeProduct.getDiscountPercentage());
+                            discordBot.sendDiscountChangeInfoCommon(
+                                    ZENTE_DISCOUNT_CHANNEL,
+                                    product.makeDiscordDiscountMessageDescription(beforeProduct.getPrice()),
+                                    product.getProductLink(),
+                                    null,
+                                    Stream.of(product.getSku()).toArray(String[]::new)
+                            );
+                            zenteProducts.add(product);
+                        } else {
+                            log.info("==========================\n가격 변동은 있으나 15% 이하임\nbefore product: " + beforeProduct + "\nnow product: " + product + "\n=============================");
+                        }
+
                     }
                 }
             }
@@ -203,6 +209,15 @@ public class ZenteMonitorCore implements IMonitorService {
 
                 WebElement priceElement = infoRoot.findElement(By.xpath(".//li[@class='price']"));
 
+                String priceText = priceElement.getText();
+                double price = 0;
+                try {
+                    String tempText = priceText.split(" ")[1].replaceAll(",", "");
+                    price = Double.parseDouble(tempText);
+                } catch (Exception e) {
+                    log.error("stirng to double parse error url : " + url);
+                }
+
                 ZenteProduct zenteProduct = ZenteProduct.builder()
                         .brandName(brandElement.getText())
                         .category(category)
@@ -211,8 +226,9 @@ public class ZenteMonitorCore implements IMonitorService {
                         .salesPrevPrice(priceElement.getText())
                         .id(siteProductId)
                         .productLink("https://jentestore.com/goods/view?no=" + siteProductId)
+                        .doublePrice(price)
                         .build();
-                
+
                 zenteProducts.add(zenteProduct);
             }
 
