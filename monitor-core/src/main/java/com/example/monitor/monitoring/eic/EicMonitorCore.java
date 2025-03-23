@@ -165,7 +165,22 @@ public class EicMonitorCore implements IMonitorService {
     public void login(ChromeDriver driver, WebDriverWait wait) {
 
 
+
         driver.get("https://www.giglio.com/eng/my-account/logon.html");
+
+
+        //accept cookie
+        {
+            try{
+                wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@class='sc-jUCZac caOoFk']")));
+                Thread.sleep(1000);
+                WebElement element = driver.findElement(By.xpath("//button[@class='sc-cXrvCr dCvmxc sc-eUzcTs hsNUtl']"));
+                element.click();
+                Thread.sleep(3000);
+            }catch (Exception e) {
+                log.error(EIC_LOG_PREFIX+ " cookie accept error");
+            }
+        }
 
         WebElement idElement = driver.findElement(By.xpath("//form[@id='login-form']//input[@class='form__input ' and @name='email']"));
         WebElement pwElement = driver.findElement(By.xpath("//form[@id='login-form']//input[@class='form__input ' and @name='password']"));
