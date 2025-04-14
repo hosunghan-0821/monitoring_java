@@ -172,9 +172,9 @@ public class EicMonitorCore implements IMonitorService {
         //accept cookie
         {
             try{
-                wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@class='sc-jUCZac caOoFk']")));
+                wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@class='sc-jPkiSJ eVcJuY']")));
                 Thread.sleep(1000);
-                WebElement element = driver.findElement(By.xpath("//button[@class='sc-cXrvCr dCvmxc sc-eUzcTs hsNUtl']"));
+                WebElement element = driver.findElement(By.xpath("//button[@class='sc-dcKlJK iQJAOG sc-fjUQFl hycjKk']"));
                 element.click();
                 Thread.sleep(3000);
             }catch (Exception e) {

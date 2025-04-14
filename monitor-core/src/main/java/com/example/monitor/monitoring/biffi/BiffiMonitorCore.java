@@ -216,7 +216,6 @@ public class BiffiMonitorCore implements IMonitorService {
                             .build();
 
                     biffiProductList.add(biffiProduct);
-                    System.out.println(biffiProduct);
                 } catch (Exception e) {
                     e.printStackTrace();
                     log.error("상품 데이터 조회 실패 URL" + nextUrlLink + j);
