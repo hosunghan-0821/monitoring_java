@@ -3,6 +3,7 @@ package com.example.monitor.monitoring.eic;
 public class EicFindString {
 
     public static final String EIC ="eic";
+    public static final String EIC_DISCOUNT = "eic_discount";
 
     public static final String EIC_LOG_PREFIX = "[EIC] : \t";
 

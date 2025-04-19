@@ -14,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 @SuperBuilder
 @Getter
 @ToString
+@Setter
 public class MonitoringProduct {
 
     protected String id;
@@ -22,10 +23,8 @@ public class MonitoringProduct {
     protected String price;
     protected String productLink;
     protected String sku;
-    @Setter
     protected String colorCode;
     protected String madeBy;
-    @Setter
     protected String monitoringSite;  // converting Rule 사용
     protected double doublePrice;
 

@@ -83,7 +83,7 @@ public class EicMonitorCoreIntegrationTest {
         //given 페이지 로그인 및 쿠키 확인
         eicMonitorCore.login(driver, wait);
 
-        eicMonitorCore.loadData(driver, wait, brandNameList);
+        eicMonitorCore.loadDataDiscountChange(driver, wait, brandNameList);
 
         Map<String, EicProduct> brandHashMap = eicMonitorCore.getEicBrandHashData().getBrandHashMap(brandNameList[0]);
         assertThat(brandHashMap.size()).isGreaterThan(1);
