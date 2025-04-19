@@ -145,7 +145,7 @@ public class MonitorScheduler {
         MDC.clear(); // MDC 데이터 정리
     }
 
-    @Scheduled(initialDelay = 60000 * 2, fixedDelay = 60000 * 5)// 30분마다 실행
+    @Scheduled(initialDelay = 60000 * 10, fixedDelay = 60000 * 30)// 30분마다 실행
     public void monitorEicDiscount() {
         MDC.put("threadName", EIC_DISCOUNT); // MDC에 쓰레드 이름 저장
         ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(EIC_DISCOUNT);
