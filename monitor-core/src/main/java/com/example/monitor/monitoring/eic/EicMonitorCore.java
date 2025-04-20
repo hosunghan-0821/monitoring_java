@@ -216,7 +216,18 @@ public class EicMonitorCore implements IMonitorService {
 
     public void getDetailProductInfo(ChromeDriver driver, WebDriverWait wait, EicProduct product) {
         driver.get(product.getProductLink());
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@class='infoProdDet']//span[@class='price']")));
+        try{
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@class='infoProdDet']//span[@class='price']")));
+        }catch (Exception e) {
+            try {
+                login(driver, wait);
+            } catch (Exception e2) {
+                log.error(EIC_LOG_PREFIX + "loginError -> find product");
+                //login 짤렷을 경우 방어로직
+                driver.get(product.getProductLink());
+                wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@class='infoProdDet']//span[@class='price']")));
+            }
+        }
 
         try {
             WebElement colorCodeElement = driver.findElement(By.xpath("//table[@class='tableWS']//td"));
