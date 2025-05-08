@@ -1,6 +1,7 @@
 package com.example.monitor.integration;
 
 import chrome.ChromeDriverToolFactory;
+import firefox.FireFoxDriverToolFactory;
 import module.discord.DiscordBot;
 import com.example.monitor.monitoring.dobulef.DoubleFBrandHashData;
 import com.example.monitor.monitoring.dobulef.DoubleFFindString;
@@ -9,6 +10,8 @@ import com.example.monitor.monitoring.dobulef.DoubleFProduct;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,6 +45,8 @@ class DoubleFMonitorCoreIntegrationTest {
     @Autowired
     private ChromeDriverToolFactory chromeDriverToolFactory;
 
+    @Autowired
+    private FireFoxDriverToolFactory fireFoxDriverToolFactory;
 
     @Value("${doublef.user.id}")
     private String userId;
@@ -49,7 +54,7 @@ class DoubleFMonitorCoreIntegrationTest {
     @Value("${doublef.user.pw}")
     private String userPw;
 
-    private static ChromeDriver driver;
+    private static FirefoxDriver driver;
 
     private static WebDriverWait wait;
 
@@ -69,7 +74,17 @@ class DoubleFMonitorCoreIntegrationTest {
         options.addArguments("--disable-blink-features=AutomationControlled");
         options.setExperimentalOption("detach", true);
 
-        driver = new ChromeDriver(options);
+
+        FirefoxOptions options2 = new FirefoxOptions();
+
+        options2.addArguments("--width=1920");
+        options2.addArguments("--height=1080");
+        options2.addPreference("dom.webdriver.enabled", false);
+        options2.addPreference("useAutomationExtension", false);
+
+
+//        driver = new ChromeDriver(options);
+        driver = new FirefoxDriver(options2);
         wait = new WebDriverWait(driver, Duration.ofMillis(5000)); // 최대 5초 대기
         brandNameList = Arrays.copyOfRange(manBrandNameList, 1, 2);
     }

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import module.discord.DiscordBot;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -157,7 +158,7 @@ public class AntonioliMonitorCore implements IMonitorService {
 
 
     @Override
-    public void login(ChromeDriver driver, WebDriverWait wait) {
+    public void login(WebDriver driver, WebDriverWait wait) {
         driver.get(AntonioliFindString.ANTONIOLI_MAIN_URL);
     }
 

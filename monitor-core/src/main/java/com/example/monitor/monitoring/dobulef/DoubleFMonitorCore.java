@@ -5,19 +5,24 @@ import chrome.ChromeDriverTool;
 import com.example.monitor.file.ProductFileWriter;
 import com.example.monitor.infra.converter.controller.IConverterFacade;
 import com.example.monitor.infra.converter.dto.ConvertProduct;
+import firefox.FireFoxDriverTool;
 import module.discord.DiscordBot;
 import com.example.monitor.monitoring.global.IMonitorService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -51,14 +56,13 @@ public class DoubleFMonitorCore implements IMonitorService {
 
     private final ProductFileWriter productFileWriter;
 
-    @Override
-    public void runLoadLogic(ChromeDriverTool chromeDriverTool) {
 
-        ChromeDriver driver = chromeDriverTool.getChromeDriver();
-        WebDriverWait wait = chromeDriverTool.getWebDriverWait();
+    public void runLoadLogic(FireFoxDriverTool fireFoxDriverTool) {
+
+        WebDriver driver = fireFoxDriverTool.getFirefoxDriver();
+        WebDriverWait wait = fireFoxDriverTool.getWebDriverWait();
 
         driver.get(DOUBLE_F_MAIN_PAGE);
-
 
         //쿠키허용
         acceptCookie(wait);
@@ -70,24 +74,34 @@ public class DoubleFMonitorCore implements IMonitorService {
         loadData(driver, wait, womanBrandNameList, WOMANS_PREFIX);
         loadData(driver, wait, manBrandNameList, MANS_PREFIX);
 
-        chromeDriverTool.isLoadData(true);
+        fireFoxDriverTool.isLoadData(true);
 
     }
 
     @Override
-    public void runFindProductLogic(ChromeDriverTool chromeDriverTool) {
+    public void runLoadLogic(ChromeDriverTool chromeDriverTool) {
+        // 각잡고 구조개선 한번 해줄 필요가 있어보인다.
+    }
 
-        ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
-        WebDriverWait wait = chromeDriverTool.getWebDriverWait();
+    @Override
+    public void runFindProductLogic(ChromeDriverTool chromeDriverTool) {
+        //각잡고 구조개선필요.
+    }
+
+
+    public void runFindProductLogic(FireFoxDriverTool fireFoxDriverTool) {
+
+        FirefoxDriver fireFoxDriver = fireFoxDriverTool.getFirefoxDriver();
+        WebDriverWait wait = fireFoxDriverTool.getWebDriverWait();
 
         List<DoubleFProduct> doubleFProductList = new ArrayList<>();
-        if (!chromeDriverTool.isLoadData() || !chromeDriverTool.isRunning()) {
+        if (!fireFoxDriverTool.isLoadData() || !fireFoxDriverTool.isRunning()) {
             log.error(DOUBLE_F_LOG_PREFIX + "Data Load or isRunning OFF");
             return;
         }
         log.info(DOUBLE_F_LOG_PREFIX + "DOUBLE_F FIND NEW PRODUCT START==");
-        List<DoubleFProduct> womanDifferent = findDifferentAndAlarm(chromeDriver, wait, womanBrandNameList, WOMANS_PREFIX);
-        List<DoubleFProduct> manDifferent = findDifferentAndAlarm(chromeDriver, wait, manBrandNameList, MANS_PREFIX);
+        List<DoubleFProduct> womanDifferent = findDifferentAndAlarm(fireFoxDriver, wait, womanBrandNameList, WOMANS_PREFIX);
+        List<DoubleFProduct> manDifferent = findDifferentAndAlarm(fireFoxDriver, wait, manBrandNameList, MANS_PREFIX);
 
         doubleFProductList.addAll(womanDifferent);
         doubleFProductList.addAll(manDifferent);
@@ -124,7 +138,7 @@ public class DoubleFMonitorCore implements IMonitorService {
     }
 
     @Override
-    public void login(ChromeDriver driver, WebDriverWait wait) {
+    public void login(WebDriver driver, WebDriverWait wait) {
         driver.get(DOUBLE_F_MAIN_PAGE);
         //로그인
 
@@ -154,7 +168,7 @@ public class DoubleFMonitorCore implements IMonitorService {
 
     }
 
-    public void loadData(ChromeDriver driver, WebDriverWait wait, String[] brandNameList, String sexPrefix) {
+    public void loadData(WebDriver driver, WebDriverWait wait, String[] brandNameList, String sexPrefix) {
 
         for (int i = 0; i < brandNameList.length; i++) {
 
@@ -173,7 +187,7 @@ public class DoubleFMonitorCore implements IMonitorService {
         }
     }
 
-    public List<DoubleFProduct> getPageProductData(ChromeDriver driver, WebDriverWait wait, String url, String brandName) {
+    public List<DoubleFProduct> getPageProductData(WebDriver driver, WebDriverWait wait, String url, String brandName) {
 
         //페이지로 이동
         driver.get(url);
@@ -205,9 +219,9 @@ public class DoubleFMonitorCore implements IMonitorService {
                 productList = topDiv.findElements(By.xpath(CHILD_PRODUCT_DIV));
             } catch (Exception e) {
                 log.error(DOUBLE_F_LOG_PREFIX + "logout Redirection  or FIND PRODUCT ERROR");
-                try{
+                try {
                     login(driver, wait);
-                }catch (Exception e2) {
+                } catch (Exception e2) {
                     log.error(DOUBLE_F_LOG_PREFIX + "logout Redirection ERROR");
                 }
 
@@ -315,6 +329,7 @@ public class DoubleFMonitorCore implements IMonitorService {
                         .extraSalesPercentage(extraDiscountPercentage)
                         .build();
 
+                log.info(doubleFProduct.toString());
 
                 pageProductList.add(doubleFProduct);
             }
@@ -326,7 +341,7 @@ public class DoubleFMonitorCore implements IMonitorService {
         return pageProductList;
     }
 
-    public List<DoubleFProduct> findDifferentAndAlarm(ChromeDriver driver, WebDriverWait wait, String[] brandNameList, String sexPrefix) {
+    public List<DoubleFProduct> findDifferentAndAlarm(FirefoxDriver driver, WebDriverWait wait, String[] brandNameList, String sexPrefix) {
         List<DoubleFProduct> findDoubleFProduct = new ArrayList<>();
 
         for (int i = 0; i < brandNameList.length; i++) {
@@ -374,7 +389,7 @@ public class DoubleFMonitorCore implements IMonitorService {
                     //포함 되어있고,할인 퍼센테이지가 다를 경우
                     DoubleFProduct beforeProduct = eachBrandHashMap.get(getDoubleFProductKey(product));
 
-                    if(!beforeProduct.getExtraSalesPercentage().equals(product.getExtraSalesPercentage())){
+                    if (!beforeProduct.getExtraSalesPercentage().equals(product.getExtraSalesPercentage())) {
                         log.info(DOUBLE_F_LOG_PREFIX + "Extra 할인율 변경" + beforeProduct.getExtraSalesPercentage() + " -> " + product.getExtraSalesPercentage());
                         getDetailProductInfo(driver, wait, product);
                         discordBot.sendDiscountChangeInfoCommon(
@@ -423,7 +438,7 @@ public class DoubleFMonitorCore implements IMonitorService {
     }
 
 
-    public void getDetailProductInfo(ChromeDriver driver, WebDriverWait wait, DoubleFProduct product) {
+    public void getDetailProductInfo(FirefoxDriver driver, WebDriverWait wait, DoubleFProduct product) {
 
         boolean isGetData = false;
 

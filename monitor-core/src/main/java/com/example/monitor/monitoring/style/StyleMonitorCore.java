@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -86,7 +87,7 @@ public class StyleMonitorCore implements IMonitorService {
 
 
     @Override
-    public void login(ChromeDriver driver, WebDriverWait wait) {
+    public void login(WebDriver driver, WebDriverWait wait) {
 
         driver.get("https://www.styleisnow.com/business/customer/account/login/referer/aHR0cHM6Ly93d3cuc3R5bGVpc25vdy5jb20vYnVzaW5lc3MvY3VzdG9tZXIvYWNjb3VudC9pbmRleC8~/");
 

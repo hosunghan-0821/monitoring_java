@@ -260,7 +260,7 @@ public class JulianMonitorCore implements IMonitorService {
     }
 
     @Override
-    public void login(ChromeDriver driver, WebDriverWait wait) {
+    public void login(WebDriver driver, WebDriverWait wait) {
         assert (driver != null);
 
         try {

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
@@ -185,7 +186,7 @@ public class GebenegoziMonitorCore implements IMonitorService {
 
 
     @Override
-    public void login(ChromeDriver driver, WebDriverWait wait) {
+    public void login(WebDriver driver, WebDriverWait wait) {
         //로그인페이지 로그인
         driver.get(GEBENE_MAIN_URL);
 

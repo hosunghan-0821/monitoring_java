@@ -10,6 +10,8 @@ import com.example.monitor.monitoring.julian.JulianMonitorCore;
 import com.example.monitor.monitoring.style.StyleMonitorCore;
 import com.example.monitor.monitoring.vietti.ViettiMonitorCore;
 import com.example.monitor.monitoring.zente.ZenteMonitorCore;
+import firefox.FireFoxDriverTool;
+import firefox.FireFoxDriverToolFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import module.discord.DiscordBot;
@@ -54,6 +56,8 @@ public class CustomApplicationRunner implements ApplicationRunner {
 
     private final ChromeDriverToolFactory chromeDriverToolFactory;
 
+    private final FireFoxDriverToolFactory fireFoxDriverToolFactory;
+
 
     private final JulianMonitorCore julianMonitorCore;
 
@@ -77,15 +81,17 @@ public class CustomApplicationRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
+        //FIreFOX
+        fireFoxDriverToolFactory.makeFireFoxDriverTool(DOUBLE_F);
+
         chromeDriverToolFactory.makeChromeDriverTool(STYLE);
         chromeDriverToolFactory.makeChromeDriverTool(ALL_CATEGORIES);
-        chromeDriverToolFactory.makeChromeDriverTool(DOUBLE_F);
         chromeDriverToolFactory.makeChromeDriverTool(BIFFI);
         chromeDriverToolFactory.makeChromeDriverTool(GEBE);
         chromeDriverToolFactory.makeChromeDriverTool(VIETTI, 60000);
         chromeDriverToolFactory.makeChromeDriverTool(EIC);
         chromeDriverToolFactory.makeChromeDriverTool(EIC_DISCOUNT);
-//
+
         discordBot.setChromeDriverTool(chromeDriverToolFactory);
         discordBot.setS3UploaderService(s3UploaderService);
 
@@ -182,9 +188,9 @@ public class CustomApplicationRunner implements ApplicationRunner {
             @Override
             public void run() {
                 MDC.put("threadName", DOUBLE_F); // MDC에 쓰레드 이름 저장
-                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F);
+                FireFoxDriverTool fireFoxDriverTool = fireFoxDriverToolFactory.getFireFoxDriverTool(DOUBLE_F);
                 log.info(DOUBLE_F_LOG_PREFIX + "============================ Load DOUBLE_F Product Start ============================");
-                doubleFMonitorCore.runLoadLogic(chromeDriverTool);
+                doubleFMonitorCore.runLoadLogic(fireFoxDriverTool);
                 log.info(DOUBLE_F_LOG_PREFIX + "============================ Load DOUBLE_F Product Finish ============================");
                 MDC.clear(); // MDC 데이터 정리
             }

@@ -15,6 +15,8 @@ import com.example.monitor.monitoring.style.StyleMonitorCore;
 import com.example.monitor.monitoring.vietti.ViettiFindString;
 import com.example.monitor.monitoring.vietti.ViettiMonitorCore;
 import com.example.monitor.monitoring.zente.ZenteMonitorCore;
+import firefox.FireFoxDriverTool;
+import firefox.FireFoxDriverToolFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -52,6 +54,8 @@ public class MonitorScheduler {
 
     private final ChromeDriverToolFactory chromeDriverToolFactory;
 
+    private final FireFoxDriverToolFactory fireFoxDriverToolFactory;
+
     private final StyleMonitorCore styleMonitorCore;
 
     private final ViettiMonitorCore viettiMonitorCore;
@@ -70,7 +74,8 @@ public class MonitorScheduler {
     @Scheduled(initialDelay = 60000 * 7, fixedDelay = 60000 * 30)// 30분마다 실행
     public void monitorDoubleF() {
         MDC.put("threadName", DOUBLE_F); // MDC에 쓰레드 이름 저장
-        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F);
+
+        FireFoxDriverTool chromeDriverTool = fireFoxDriverToolFactory.getFireFoxDriverTool(DOUBLE_F);
         doubleFMonitorCore.runFindProductLogic(chromeDriverTool);
         MDC.clear(); // MDC 데이터 정리
     }

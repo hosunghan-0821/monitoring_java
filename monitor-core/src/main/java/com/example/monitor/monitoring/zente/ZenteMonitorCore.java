@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import module.discord.DiscordBot;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -40,7 +41,7 @@ public class ZenteMonitorCore implements IMonitorService {
     }
 
     @Override
-    public void login(ChromeDriver driver, WebDriverWait wait) {
+    public void login(WebDriver driver, WebDriverWait wait) {
 
         //need not login
     }

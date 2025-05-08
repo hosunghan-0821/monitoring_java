@@ -17,6 +17,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -119,7 +120,7 @@ public class BiffiMonitorCore implements IMonitorService {
     }
 
     @Override
-    public void login(ChromeDriver driver, WebDriverWait wait) {
+    public void login(WebDriver driver, WebDriverWait wait) {
         driver.get(BIFFI_MAIN_URL);
 
         WebElement loginElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.id(BIFFI_LOGIN_FORM_ID)));

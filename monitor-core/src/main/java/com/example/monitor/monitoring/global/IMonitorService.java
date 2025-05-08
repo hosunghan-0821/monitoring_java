@@ -1,6 +1,7 @@
 package com.example.monitor.monitoring.global;
 
 import chrome.ChromeDriverTool;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -10,5 +11,5 @@ public interface IMonitorService {
 
     void runFindProductLogic(ChromeDriverTool chromeDriverTool);
 
-    void login(ChromeDriver driver, WebDriverWait wait);
+    void login(WebDriver driver, WebDriverWait wait);
 }

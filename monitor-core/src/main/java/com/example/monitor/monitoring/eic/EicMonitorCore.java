@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import module.discord.DiscordBot;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -242,7 +243,7 @@ public class EicMonitorCore implements IMonitorService {
     }
 
     @Override
-    public void login(ChromeDriver driver, WebDriverWait wait) {
+    public void login(WebDriver driver, WebDriverWait wait) {
 
         driver.get("https://www.giglio.com/eng/my-account/logon.html");
 
