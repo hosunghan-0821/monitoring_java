@@ -328,9 +328,7 @@ public class DoubleFMonitorCore implements IMonitorService {
                         .doublePrice(productDoublePrice)
                         .extraSalesPercentage(extraDiscountPercentage)
                         .build();
-
-                log.info(doubleFProduct.toString());
-
+                
                 pageProductList.add(doubleFProduct);
             }
 
