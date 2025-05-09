@@ -85,7 +85,7 @@ public class CustomApplicationRunner implements ApplicationRunner {
         chromeDriverToolFactory.makeChromeDriverTool(VIETTI, 60000);
         chromeDriverToolFactory.makeChromeDriverTool(EIC);
         chromeDriverToolFactory.makeChromeDriverTool(EIC_DISCOUNT);
-//
+
         discordBot.setChromeDriverTool(chromeDriverToolFactory);
         discordBot.setS3UploaderService(s3UploaderService);
 
@@ -181,8 +181,16 @@ public class CustomApplicationRunner implements ApplicationRunner {
         Thread doubleFThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                MDC.put("threadName", DOUBLE_F); // MDC에 쓰레드 이름 저장
                 ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F);
+                try{
+                    Thread.sleep(1000);
+                    chromeDriverTool.getChromeDriver().get("https://www.thedoublef.com/kr_en");
+                    Thread.sleep(1000);
+                }catch (Exception e) {
+
+                }
+
+                MDC.put("threadName", DOUBLE_F); // MDC에 쓰레드 이름 저장
                 log.info(DOUBLE_F_LOG_PREFIX + "============================ Load DOUBLE_F Product Start ============================");
                 doubleFMonitorCore.runLoadLogic(chromeDriverTool);
                 log.info(DOUBLE_F_LOG_PREFIX + "============================ Load DOUBLE_F Product Finish ============================");

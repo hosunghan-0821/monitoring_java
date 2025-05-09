@@ -74,7 +74,7 @@ public class DoubleFFindString {
     //
     public static final String DOUBLE_F ="doublef";
 
-    public static final String DOUBLE_F_MAIN_PAGE ="https://www.thedoublef.com/bu_en/customer/account/login/referer/aHR0cHM6Ly93d3cudGhlZG91YmxlZi5jb20vYnVfZW4v/";
+    public static final String DOUBLE_F_MAIN_PAGE ="https://www.thedoublef.com/bu_en/man/";
 
     //로그인 관련
     public static final String DF_ID_ID = "email";
