@@ -1,7 +1,7 @@
-package com.example.monitor.infra.sender;
+package com.example.monitor.infra.sender.dto;
 
+import com.example.monitor.infra.sender.dto.SearchProduct;
 import lombok.*;
-import org.checkerframework.checker.units.qual.A;
 
 import java.util.List;
 

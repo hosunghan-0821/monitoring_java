@@ -9,17 +9,13 @@ import com.example.monitor.monitoring.gebnegozi.GebenegoziMonitorCore;
 import com.example.monitor.monitoring.julian.JulianMonitorCore;
 import com.example.monitor.monitoring.style.StyleMonitorCore;
 import com.example.monitor.monitoring.vietti.ViettiMonitorCore;
-import com.example.monitor.monitoring.zente.ZenteMonitorCore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import module.discord.DiscordBot;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.MDC;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -36,7 +32,7 @@ import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F_
 import static com.example.monitor.monitoring.eic.EicFindString.EIC;
 import static com.example.monitor.monitoring.eic.EicFindString.EIC_DISCOUNT;
 import static com.example.monitor.monitoring.eic.EicFindString.EIC_LOG_PREFIX;
-import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.GEBE;
+import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.GNB;
 import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.GEBENE_LOG_PREFIX;
 import static com.example.monitor.monitoring.julian.JulianFindString.ALL_CATEGORIES;
 import static com.example.monitor.monitoring.julian.JulianFindString.JULIAN;
@@ -81,7 +77,7 @@ public class CustomApplicationRunner implements ApplicationRunner {
         chromeDriverToolFactory.makeChromeDriverTool(ALL_CATEGORIES);
         chromeDriverToolFactory.makeChromeDriverTool(DOUBLE_F);
         chromeDriverToolFactory.makeChromeDriverTool(BIFFI);
-        chromeDriverToolFactory.makeChromeDriverTool(GEBE);
+        chromeDriverToolFactory.makeChromeDriverTool(GNB);
         chromeDriverToolFactory.makeChromeDriverTool(VIETTI, 60000);
         chromeDriverToolFactory.makeChromeDriverTool(EIC);
         chromeDriverToolFactory.makeChromeDriverTool(EIC_DISCOUNT);
@@ -152,15 +148,15 @@ public class CustomApplicationRunner implements ApplicationRunner {
         Thread gebeneThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                MDC.put("threadName", GEBE); // MDC에 쓰레드 이름 저장
+                MDC.put("threadName", GNB); // MDC에 쓰레드 이름 저장
                 log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE Product Start ============================");
-                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(GEBE);
+                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(GNB);
                 gebenegoziMonitorCore.runLoadLogic(chromeDriverTool);
                 log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE Product Finish ============================");
                 MDC.clear(); // MDC 데이터 정리
             }
         });
-        gebeneThread.setName(GEBE);
+        gebeneThread.setName(GNB);
         gebeneThread.start();
 
         Thread biffiThread = new Thread(new Runnable() {
@@ -184,7 +180,7 @@ public class CustomApplicationRunner implements ApplicationRunner {
                 ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F);
                 try{
                     Thread.sleep(1000);
-                    chromeDriverTool.getChromeDriver().get("https://www.thedoublef.com/kr_en");
+                    chromeDriverTool.getChromeDriver().get("https://www.thedoublef.com");
                     Thread.sleep(1000);
                 }catch (Exception e) {
 

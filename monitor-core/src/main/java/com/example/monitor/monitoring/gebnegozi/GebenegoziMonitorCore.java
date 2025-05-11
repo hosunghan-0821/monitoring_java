@@ -158,7 +158,8 @@ public class GebenegoziMonitorCore implements IMonitorService {
                         findGebeneProductList.add(product);
                         productKeySet.add(getGebeneProductKey(product));
 
-                        productFileWriter.writeProductInfo(product.changeToProductFileInfo(GEBE, NEW_PRODUCT));
+                        iConverterFacade.sendToAutoOrderServer(product);
+                        productFileWriter.writeProductInfo(product.changeToProductFileInfo(GNB, NEW_PRODUCT));
 
                     } else {
                         log.error(GEBENE_LOG_PREFIX + "상품 중복 " + product);
@@ -300,6 +301,7 @@ public class GebenegoziMonitorCore implements IMonitorService {
                     String season = dataList.get(2).getText();
                     String finalPrice = priceInfo.getText();
                     String madeBy = madeByList.get(2).getText();
+                    double doubleFinalPrice = 0;
                     boolean isColored = false;
 
                     try {
@@ -325,13 +327,15 @@ public class GebenegoziMonitorCore implements IMonitorService {
                                 wholeSaleOrigin = wholeSaleInfoList.get(i).getText().split("€")[1].strip();
                                 String key = gebenegoziBrandHashData.makeSalesInfoKey(brand, season.toUpperCase(), category, sex);
                                 GebenegoziSaleInfo gebenegoziSaleInfoOrNull = gebenegoziBrandHashData.getGebenegoziSaleMap().getOrDefault(key, null);
-
+                                double wholeSaleAfter = 0;
                                 if (gebenegoziSaleInfoOrNull != null) {
                                     isColored = gebenegoziSaleInfoOrNull.isColored();
                                     wholeSalePercent = gebenegoziSaleInfoOrNull.getSalesPercent();
-                                    double wholeSaleAfter = Double.parseDouble(wholeSaleOrigin) * (wholeSalePercent + 100) / 100;
+                                    wholeSaleAfter = Double.parseDouble(wholeSaleOrigin) * (wholeSalePercent + 100) / 100;
                                     wholeSale = String.valueOf(wholeSaleAfter);
                                 }
+
+                                doubleFinalPrice = Double.parseDouble(wholeSale) != 0 ? Double.parseDouble(wholeSale) : Double.parseDouble(wholeSaleOrigin);
                             }
 
                         }
@@ -363,6 +367,9 @@ public class GebenegoziMonitorCore implements IMonitorService {
                             .originPrice(wholeSaleOrigin)
                             .id(id)
                             .isColored(isColored)
+                            .monitoringSite(GNB)
+                            .boutique(GNB)
+                            .doublePrice(doubleFinalPrice)
                             .build();
 
                     pageProductList.add(product);

@@ -6,10 +6,7 @@ import com.example.monitor.infra.converter.core.ColorCodeConverter;
 import com.example.monitor.infra.converter.core.FinalSkuMaker;
 import com.example.monitor.infra.converter.core.SkuConverter;
 import com.example.monitor.infra.converter.dto.ConvertProduct;
-import com.example.monitor.infra.sender.SearchProduct;
-import com.example.monitor.monitoring.dobulef.DoubleFFindString;
-import org.checkerframework.checker.units.qual.A;
-import org.junit.jupiter.api.Assertions;
+import com.example.monitor.infra.sender.dto.SearchProduct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class ConverterFacadeImplTest {

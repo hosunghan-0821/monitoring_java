@@ -2,19 +2,14 @@ package com.example.monitor.scheduler;
 
 import chrome.ChromeDriverTool;
 import chrome.ChromeDriverToolFactory;
-import com.example.monitor.Util.RandomUtil;
-import com.example.monitor.monitoring.antonioli.AntonioliMonitorCore;
 import com.example.monitor.monitoring.biffi.BiffiMonitorCore;
 import com.example.monitor.monitoring.dobulef.DoubleFMonitorCore;
 import com.example.monitor.monitoring.eic.EicFindString;
 import com.example.monitor.monitoring.eic.EicMonitorCore;
 import com.example.monitor.monitoring.gebnegozi.GebenegoziMonitorCore;
 import com.example.monitor.monitoring.julian.JulianMonitorCore;
-import com.example.monitor.monitoring.style.StyleFindString;
 import com.example.monitor.monitoring.style.StyleMonitorCore;
-import com.example.monitor.monitoring.vietti.ViettiFindString;
 import com.example.monitor.monitoring.vietti.ViettiMonitorCore;
-import com.example.monitor.monitoring.zente.ZenteMonitorCore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -22,15 +17,13 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 
-import static com.example.monitor.monitoring.antonioli.AntonioliFindString.ANTONIOLI;
-import static com.example.monitor.monitoring.antonioli.AntonioliFindString.ANTONIOLI_LOG_PREFIX;
 import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI;
 import static com.example.monitor.monitoring.biffi.BiffiFindString.BIFFI_LOG_PREFIX;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F_LOG_PREFIX;
 import static com.example.monitor.monitoring.eic.EicFindString.EIC;
 import static com.example.monitor.monitoring.eic.EicFindString.EIC_DISCOUNT;
-import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.GEBE;
+import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.GNB;
 import static com.example.monitor.monitoring.julian.JulianFindString.*;
 import static com.example.monitor.monitoring.style.StyleFindString.STYLE;
 import static com.example.monitor.monitoring.style.StyleFindString.STYLE_LOG_PREFIX;
@@ -114,8 +107,8 @@ public class MonitorScheduler {
 
     @Scheduled(initialDelay = 60000 * 4, fixedDelay = 60000 * 5)// 30분마다 실행
     public void monitorGebene() {
-        MDC.put("threadName", GEBE); // MDC에 쓰레드 이름 저장
-        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(GEBE);
+        MDC.put("threadName", GNB); // MDC에 쓰레드 이름 저장
+        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(GNB);
         gebenegoziMonitorCore.runFindProductLogic(chromeDriverTool);
         MDC.clear(); // MDC 데이터 정리
     }

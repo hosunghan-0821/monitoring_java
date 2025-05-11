@@ -6,11 +6,11 @@ import com.example.monitor.infra.converter.core.FinalSkuMaker;
 import com.example.monitor.infra.converter.core.SkuConverter;
 import com.example.monitor.infra.converter.dto.ConvertProduct;
 import com.example.monitor.infra.sender.ProductSender;
-import com.example.monitor.infra.sender.ProductSenderImpl;
-import com.example.monitor.infra.sender.SearchProduct;
+import com.example.monitor.infra.sender.dto.AutoOrderDto;
+import com.example.monitor.infra.sender.dto.SearchProduct;
+import com.example.monitor.monitoring.global.MonitoringProduct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -67,6 +67,15 @@ public class ConverterFacadeImpl implements IConverterFacade {
 
         sender.sendToSearchServer(searchProductList);
     }
+
+    @Override
+    public void sendToAutoOrderServer(MonitoringProduct monitoringProduct) {
+
+        AutoOrderDto autoOrderDto = monitoringProduct.changeToAutoOrderProduct();
+        sender.sendToAutoOrderServer(autoOrderDto);
+
+    }
+
 
     public void changeToSearchProductList(List<ConvertProduct> convertProductList, List<SearchProduct> searchProductList) {
         for (ConvertProduct convertProduct : convertProductList) {

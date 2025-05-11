@@ -20,7 +20,6 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -66,7 +65,7 @@ public class GebenegoziBrandHashData {
     @EventListener(ApplicationReadyEvent.class)
     public void initGebeneData() {
 
-        MDC.put("threadName", GEBE);
+        MDC.put("threadName", GNB);
         List<File> xlsxFiles = findXlsxFiles();
 
         for (File file : xlsxFiles) {

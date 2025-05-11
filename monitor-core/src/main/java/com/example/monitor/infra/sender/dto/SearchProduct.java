@@ -1,4 +1,4 @@
-package com.example.monitor.infra.sender;
+package com.example.monitor.infra.sender.dto;
 
 import lombok.Builder;
 import lombok.Getter;

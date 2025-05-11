@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.GEBE;
 import static com.example.monitor.monitoring.julian.JulianFindString.JULIAN;
 import static com.example.monitor.monitoring.julian.JulianFindString.JULIAN_MONITORING_SITE;
 import static com.example.monitor.monitoring.julian.JulianSaleInfoString.FALL_WINTER_2024_2025;

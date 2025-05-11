@@ -2,6 +2,7 @@ package com.example.monitor.monitoring.global;
 
 import com.example.monitor.file.ProductFileInfo;
 import com.example.monitor.infra.converter.dto.ConvertProduct;
+import com.example.monitor.infra.sender.dto.AutoOrderDto;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -27,6 +28,7 @@ public class MonitoringProduct {
     protected String madeBy;
     protected String monitoringSite;  // converting Rule 사용
     protected double doublePrice;
+    protected String boutique;
 
 
     protected static final String DISCORD_NEW_PRODUCT_MESSAGE_FORMAT =
@@ -85,16 +87,25 @@ public class MonitoringProduct {
                     "Extra 변경 할인 %s\n\n";
 
 
-    public ConvertProduct changeToConvertProduct(String monitoringSite) {
+    public ConvertProduct changeToConvertProduct(String boutique) {
         return ConvertProduct.builder()
                 .sku(this.sku)
                 .brandName(this.brandName)
-                .monitoringSite(monitoringSite)
+                .monitoringSite(boutique)
                 .inputPrice(this.doublePrice)
                 .originPrice(this.price)
                 .madeBy(this.madeBy)
                 .productLink(this.productLink)
                 .colorCode(this.colorCode)
+                .build();
+    }
+
+    public AutoOrderDto changeToAutoOrderProduct() {
+        return AutoOrderDto.builder()
+                .sku(this.sku)
+                .boutique(this.boutique)
+                .price(this.doublePrice)
+                .productLink(this.productLink)
                 .build();
     }
 

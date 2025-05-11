@@ -1,12 +1,16 @@
 package com.example.monitor.infra.sender;
 
 
+import com.example.monitor.infra.sender.dto.AutoOrderDto;
+import com.example.monitor.infra.sender.dto.SearchProduct;
+import com.example.monitor.infra.sender.dto.SearchRequestDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import org.springframework.web.client.RestTemplate;
@@ -21,6 +25,9 @@ public class ProductSenderImpl implements ProductSender {
 
     @Value("${search.api}")
     private String searchUrl;
+
+    @Value("${auto.order.api}")
+    private String autoOrderUrl;
 
 
     private final RestTemplate rt;
@@ -55,4 +62,29 @@ public class ProductSenderImpl implements ProductSender {
         log.info(response.getStatusCode().toString());
 
     }
+
+    @Async
+    @Override
+    public void sendToAutoOrderServer(AutoOrderDto autoOrderDto) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        String body = null;
+        try {
+            body = objectMapper.writeValueAsString(autoOrderDto);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("json parsing Error");
+            return;
+        }
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
+
+        ResponseEntity<String> response = rt
+                .exchange(autoOrderUrl, HttpMethod.POST, requestEntity, String.class);
+
+        log.info(response.getStatusCode().toString());
+    }
+
+
 }

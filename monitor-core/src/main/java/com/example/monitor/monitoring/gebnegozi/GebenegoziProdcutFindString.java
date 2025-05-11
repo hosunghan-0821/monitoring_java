@@ -147,7 +147,7 @@ public class GebenegoziProdcutFindString {
 
     };
 
-    public static final String GEBE = "gebe";
+    public static final String GNB = "GNB";
 
     public static final String SESSION_COOKIE_KEY = "JSESSIONID";
     public static final String COOKIE = "Cookie";
