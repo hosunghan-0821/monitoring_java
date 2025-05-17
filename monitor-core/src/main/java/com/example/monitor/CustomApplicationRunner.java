@@ -178,11 +178,11 @@ public class CustomApplicationRunner implements ApplicationRunner {
             @Override
             public void run() {
                 ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F);
-                try{
+                try {
                     Thread.sleep(1000);
                     chromeDriverTool.getChromeDriver().get("https://www.thedoublef.com");
                     Thread.sleep(1000);
-                }catch (Exception e) {
+                } catch (Exception e) {
 
                 }
 
