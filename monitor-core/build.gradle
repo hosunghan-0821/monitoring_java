@@ -4,9 +4,10 @@ dependencies {
     implementation(project(':modules:chrome'))
     implementation(project(':modules:s3'))
     implementation(project(':modules:discord'))
+    implementation(project(':modules:database'))
 
 
-//    api()
+    //  api()
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

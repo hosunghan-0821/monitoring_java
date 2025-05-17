@@ -3,6 +3,10 @@ package com.example.monitor.monitoring.gebnegozi;
 import chrome.ChromeDriverTool;
 import com.example.monitor.file.ProductFileWriter;
 import com.example.monitor.infra.converter.controller.IConverterFacade;
+import com.example.monitor.monitoring.global.MonitoringProduct;
+import module.database.dto.Boutique;
+import module.database.entity.Product;
+import module.database.repository.ProductRepository;
 import module.discord.DiscordBot;
 
 import com.example.monitor.monitoring.global.IMonitorService;
@@ -32,6 +36,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static module.discord.DiscordString.GEBENE_NEW_PRODUCT_CHANNEL;
@@ -63,6 +68,8 @@ public class GebenegoziMonitorCore implements IMonitorService {
     private final S3UploaderService s3UploaderService;
 
     private final RestTemplate restTemplate;
+
+    private final ProductRepository productRepository;
 
 
     @Override
@@ -126,7 +133,22 @@ public class GebenegoziMonitorCore implements IMonitorService {
                 continue;
             }
 
+            //자동주문  Business Logic
+            List<String> pageProductSku = pageProductDataList.stream().map(v -> {
+                return v.getSku().replaceAll(" ", "").trim();
+            }).toList();
 
+            Map<String, GebenegoziProduct> skuProductMap = pageProductDataList.stream().collect(Collectors.toMap(v -> v.getSku().replaceAll(" ", "").trim(), v -> v));
+
+            List<Product> autoOrderProducts = productRepository.findAutoOrderProducts(pageProductSku, Boutique.GNB.getName());
+            for (Product product : autoOrderProducts) {
+                if (skuProductMap.containsKey(product.getSku())) {
+                    GebenegoziProduct autoOrderProduct = skuProductMap.get(product.getSku());
+                    iConverterFacade.sendToAutoOrderServer(autoOrderProduct);
+                }
+            }
+
+            //신상품 확인 Business Logic
             for (GebenegoziProduct product : pageProductDataList) {
                 if (!eachBrandHashMap.containsKey(getGebeneProductKey(product))) {
                     if (!productKeySet.contains(getGebeneProductKey(product))) {
@@ -158,7 +180,7 @@ public class GebenegoziMonitorCore implements IMonitorService {
                         findGebeneProductList.add(product);
                         productKeySet.add(getGebeneProductKey(product));
 
-                        iConverterFacade.sendToAutoOrderServer(product);
+
                         productFileWriter.writeProductInfo(product.changeToProductFileInfo(GNB, NEW_PRODUCT));
 
                     } else {
