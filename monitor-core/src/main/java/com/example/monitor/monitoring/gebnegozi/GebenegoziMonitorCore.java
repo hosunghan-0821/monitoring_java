@@ -134,19 +134,29 @@ public class GebenegoziMonitorCore implements IMonitorService {
             }
 
             //자동주문  Business Logic
-            List<String> pageProductSku = pageProductDataList.stream().map(v -> {
-                return v.getSku().replaceAll(" ", "").trim();
-            }).toList();
+            try{
+                List<String> pageProductSku = pageProductDataList.stream().map(v -> {
+                    return v.getSku().replaceAll(" ", "").trim();
+                }).toList();
 
-            Map<String, GebenegoziProduct> skuProductMap = pageProductDataList.stream().collect(Collectors.toMap(v -> v.getSku().replaceAll(" ", "").trim(), v -> v));
+                Map<String, GebenegoziProduct> skuProductMap = pageProductDataList.stream().collect(
+                        Collectors.toMap(
+                                v -> v.getSku().replaceAll(" ", "").trim(),
+                                v -> v,
+                                (existing, duplicate) -> existing)
+                );
 
-            List<Product> autoOrderProducts = productRepository.findAutoOrderProducts(pageProductSku, Boutique.GNB.getName());
-            for (Product product : autoOrderProducts) {
-                if (skuProductMap.containsKey(product.getSku())) {
-                    GebenegoziProduct autoOrderProduct = skuProductMap.get(product.getSku());
-                    iConverterFacade.sendToAutoOrderServer(autoOrderProduct);
+                List<Product> autoOrderProducts = productRepository.findAutoOrderProducts(pageProductSku, Boutique.GNB.getName());
+                for (Product product : autoOrderProducts) {
+                    if (skuProductMap.containsKey(product.getSku())) {
+                        GebenegoziProduct autoOrderProduct = skuProductMap.get(product.getSku());
+                        iConverterFacade.sendToAutoOrderServer(autoOrderProduct);
+                    }
                 }
+            } catch (Exception e) {
+                log.error(GEBENE_LOG_PREFIX+ "자동주문 버그 MSG: "+e.getMessage());
             }
+
 
             //신상품 확인 Business Logic
             for (GebenegoziProduct product : pageProductDataList) {

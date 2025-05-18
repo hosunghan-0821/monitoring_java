@@ -79,7 +79,7 @@ class GebenegoziMonitorCoreIntegrationTest {
 
         driver = new ChromeDriver(options);
         wait = new WebDriverWait(driver, Duration.ofMillis(5000)); // 최대 5초 대기
-        brandInfo = Arrays.copyOfRange(GebenegoziProdcutFindString.GEBE_URL_LIST, 0, 1);
+        brandInfo = Arrays.copyOfRange(GebenegoziProdcutFindString.GEBE_URL_LIST, 0, 3);
     }
 
     @AfterAll
