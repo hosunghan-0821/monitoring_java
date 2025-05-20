@@ -115,9 +115,15 @@ public class EicMonitorCore implements IMonitorService {
             String detailLink = entry.getKey();
             //현재 상품의 상태
             EicProduct nowProduct = EicProduct.builder().productLink(detailLink).build();
-            getDetailProductInfo(driver, wait, nowProduct);
-            getDetailForDiscountChange(driver, wait, nowProduct);
 
+            try{
+                getDetailProductInfo(driver, wait, nowProduct);
+                getDetailForDiscountChange(driver, wait, nowProduct);
+
+            }catch (Exception e) {
+                log.error(EIC_LOG_PREFIX + "상품 찾기 에러");
+                continue;
+            }
 
             EicProduct prevProduct = entry.getValue();
 
@@ -303,9 +309,13 @@ public class EicMonitorCore implements IMonitorService {
 
         for (var entry : eicDiscountProductHashMap.entrySet()) {
             EicProduct eicProduct = entry.getValue();
-            getDetailProductInfo(driver, wait, eicProduct);
-            getDetailForDiscountChange(driver, wait, eicProduct);
-            log.info(eicProduct.toString());
+            try{
+                getDetailProductInfo(driver, wait, eicProduct);
+                getDetailForDiscountChange(driver, wait, eicProduct);
+                log.info(eicProduct.toString());
+            }catch (Exception e) {
+                log.error(EIC_LOG_PREFIX + "상품 찾기 에러");
+            }
         }
 
 
@@ -340,6 +350,7 @@ public class EicMonitorCore implements IMonitorService {
             eicProduct.setDiscountPercentage(salesPercent.replace("\n", ""));
         } catch (Exception e) {
             log.error(EIC_LOG_PREFIX + " Discount change find discountChange error");
+            eicProduct.setDiscountPercentage("0");
         }
 
         //품번
