@@ -27,8 +27,13 @@ dependencies {
     implementation 'org.springframework.retry:spring-retry'
     implementation 'org.springframework:spring-aspects'
 
+    testImplementation 'org.ahocorasick:ahocorasick:0.6.3'
+
 }
 
 test {
     useJUnitPlatform()
+}
+tasks.test {
+    jvmArgs '-Xms512m', '-Xmx2g'   // 초기 512 MB, 최대 2 GB
 }
