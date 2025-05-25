@@ -9,4 +9,6 @@ public interface ProductSender {
      void sendToSearchServer(List<SearchProduct> searchProductList);
 
      void sendToAutoOrderServer(AutoOrderDto autoOrderDto);
+
+     void sendToAutoOrderServer(List<AutoOrderDto> autoOrderDtos);
 }

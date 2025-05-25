@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.example.monitor.infra.converter.config.BrandConverterInfoString.FTA_COUNTRY_LIST;
 
@@ -74,6 +75,13 @@ public class ConverterFacadeImpl implements IConverterFacade {
         AutoOrderDto autoOrderDto = monitoringProduct.changeToAutoOrderProduct();
         sender.sendToAutoOrderServer(autoOrderDto);
 
+    }
+
+    @Override
+    public void sendToAutoOrderServerBulk(List<? extends MonitoringProduct>  monitoringProducts) {
+
+        List<AutoOrderDto> autoOrderDto = monitoringProducts.stream().map(MonitoringProduct::changeToAutoOrderProduct).collect(Collectors.toList());
+        sender.sendToAutoOrderServer(autoOrderDto);
     }
 
 

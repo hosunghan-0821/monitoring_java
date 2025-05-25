@@ -29,6 +29,8 @@ public class ProductSenderImpl implements ProductSender {
     @Value("${auto.order.api}")
     private String autoOrderUrl;
 
+    @Value("${auto.order.bulk.api}")
+    private String autoOrderBulkUrl;
 
     private final RestTemplate rt;
 
@@ -82,6 +84,29 @@ public class ProductSenderImpl implements ProductSender {
 
         ResponseEntity<String> response = rt
                 .exchange(autoOrderUrl, HttpMethod.POST, requestEntity, String.class);
+
+        log.info(response.getStatusCode().toString());
+    }
+
+    @Async
+    @Override
+    public void sendToAutoOrderServer(List<AutoOrderDto> autoOrderDtos) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        String body = null;
+        try {
+            body = objectMapper.writeValueAsString(autoOrderDtos);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("json parsing Error");
+            return;
+        }
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
+
+        ResponseEntity<String> response = rt
+                .exchange(autoOrderBulkUrl, HttpMethod.POST, requestEntity, String.class);
 
         log.info(response.getStatusCode().toString());
     }

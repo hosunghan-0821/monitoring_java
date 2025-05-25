@@ -11,4 +11,6 @@ public interface IConverterFacade {
     void sendToSearchServer(List<ConvertProduct> convertProductList);
 
     void sendToAutoOrderServer(MonitoringProduct newProduct);
+
+    void sendToAutoOrderServerBulk(List<? extends MonitoringProduct>  newProducts);
 }

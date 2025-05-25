@@ -134,27 +134,35 @@ public class GebenegoziMonitorCore implements IMonitorService {
             }
 
             //자동주문  Business Logic
-            try{
-                List<String> pageProductSku = pageProductDataList.stream().map(v -> {
-                    return v.getSku().replaceAll(" ", "").trim();
-                }).toList();
+            //검증 없이 전부 API 호출
 
-                Map<String, GebenegoziProduct> skuProductMap = pageProductDataList.stream().collect(
-                        Collectors.toMap(
-                                v -> v.getSku().replaceAll(" ", "").trim(),
-                                v -> v,
-                                (existing, duplicate) -> existing)
-                );
+            try {
+                Set<String> alreadySent = new HashSet<>();  // 한번만 생성해서 루프 전체에서 활용
+                int batchSize = 10;
 
-                List<Product> autoOrderProducts = productRepository.findAutoOrderProducts(pageProductSku, Boutique.GNB.getName());
-                for (Product product : autoOrderProducts) {
-                    if (skuProductMap.containsKey(product.getSku())) {
-                        GebenegoziProduct autoOrderProduct = skuProductMap.get(product.getSku());
-                        iConverterFacade.sendToAutoOrderServer(autoOrderProduct);
+                for (int j = 0; j < pageProductDataList.size(); j += batchSize) {
+                    int end = Math.min(j + batchSize, pageProductDataList.size());
+                    List<GebenegoziProduct> batch = pageProductDataList.subList(j, end);
+
+                    // 중복 걸러내고, 이미 보낸 건은 건너뛰기
+                    List<GebenegoziProduct> toSend = batch.stream()
+                            .filter(p -> {
+                                String sku = p.getSku();
+                                if (alreadySent.contains(sku)) {
+                                    return false;
+                                } else {
+                                    alreadySent.add(sku);
+                                    return true;
+                                }
+                            })
+                            .toList();
+
+                    if (!toSend.isEmpty()) {
+                        iConverterFacade.sendToAutoOrderServerBulk(toSend);
                     }
                 }
             } catch (Exception e) {
-                log.error(GEBENE_LOG_PREFIX+ "자동주문 버그 MSG: "+e.getMessage());
+                log.error(GEBENE_LOG_PREFIX + "자동주문 버그 MSG: " + e.getMessage());
             }
 
 
