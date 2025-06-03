@@ -112,7 +112,7 @@ public class DoubleFMonitorCore implements IMonitorService {
             e.printStackTrace();
         }
 
-        WebElement cookieElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.id(DF_COOKIE_ID)));
+        WebElement cookieElement = wait.until(ExpectedConditions.presenceOfElementLocated(DoubleFLocator.DF_COOKIE.byId()));
 
         cookieElement.click();
 
@@ -128,11 +128,11 @@ public class DoubleFMonitorCore implements IMonitorService {
         driver.get(DOUBLE_F_MAIN_PAGE);
         //로그인
 
-        WebElement loginElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.id(DF_ID_ID)));
+        WebElement loginElement = wait.until(ExpectedConditions.presenceOfElementLocated(DoubleFLocator.DF_ID.byId()));
 
         loginElement.sendKeys(userId);
 
-        WebElement pwElement = driver.findElement(By.id(DF_PASS_ID));
+        WebElement pwElement = driver.findElement(DoubleFLocator.DF_PASS.byId());
         pwElement.sendKeys(userPw);
 
         try {
@@ -205,9 +205,9 @@ public class DoubleFMonitorCore implements IMonitorService {
                 productList = topDiv.findElements(By.xpath(CHILD_PRODUCT_DIV));
             } catch (Exception e) {
                 log.error(DOUBLE_F_LOG_PREFIX + "logout Redirection  or FIND PRODUCT ERROR");
-                try{
+                try {
                     login(driver, wait);
-                }catch (Exception e2) {
+                } catch (Exception e2) {
                     log.error(DOUBLE_F_LOG_PREFIX + "logout Redirection ERROR");
                 }
 
@@ -374,7 +374,7 @@ public class DoubleFMonitorCore implements IMonitorService {
                     //포함 되어있고,할인 퍼센테이지가 다를 경우
                     DoubleFProduct beforeProduct = eachBrandHashMap.get(getDoubleFProductKey(product));
 
-                    if(!beforeProduct.getExtraSalesPercentage().equals(product.getExtraSalesPercentage())){
+                    if (!beforeProduct.getExtraSalesPercentage().equals(product.getExtraSalesPercentage())) {
                         log.info(DOUBLE_F_LOG_PREFIX + "Extra 할인율 변경" + beforeProduct.getExtraSalesPercentage() + " -> " + product.getExtraSalesPercentage());
                         getDetailProductInfo(driver, wait, product);
                         discordBot.sendDiscountChangeInfoCommon(
