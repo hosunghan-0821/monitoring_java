@@ -78,7 +78,7 @@ public class CustomApplicationRunner implements ApplicationRunner {
         chromeDriverToolFactory.makeChromeDriverTool(DOUBLE_F);
         chromeDriverToolFactory.makeChromeDriverTool(BIFFI);
         chromeDriverToolFactory.makeChromeDriverTool(GNB);
-        chromeDriverToolFactory.makeChromeDriverTool(VIETTI, 60000);
+        chromeDriverToolFactory.makeChromeDriverTool(VIETTI);
         chromeDriverToolFactory.makeChromeDriverTool(EIC);
         chromeDriverToolFactory.makeChromeDriverTool(EIC_DISCOUNT);
 

@@ -10,6 +10,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
@@ -80,7 +81,7 @@ public class ViettiMonitorRetry {
                 String productPrice = "";
                 String imageSrc = "";
                 double productDoublePrice = 0;
-                String sku ="";
+                String sku = "";
 
                 //상품 id
                 try {
@@ -159,5 +160,11 @@ public class ViettiMonitorRetry {
         }
 
         return pageProductList;
+    }
+
+    @Recover
+    public List<ViettiProduct> recoverTimeout(TimeoutException ex, ChromeDriver driver, WebDriverWait wait, String url, String brandName) {
+        log.error("{} Timeout Exception Recover Empty Array url : {}", VIETTI_LOG_PREFIX, url);
+        return new ArrayList<>();
     }
 }

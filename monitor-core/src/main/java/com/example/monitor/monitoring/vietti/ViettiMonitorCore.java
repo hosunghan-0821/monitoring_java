@@ -13,6 +13,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -55,6 +56,7 @@ public class ViettiMonitorCore implements IMonitorService {
     private final ProductFileWriter productFileWriter;
 
     @Override
+    @Retryable
     public void runLoadLogic(ChromeDriverTool chromeDriverTool) {
         ChromeDriver driver = chromeDriverTool.getChromeDriver();
         WebDriverWait wait = chromeDriverTool.getWebDriverWait();
