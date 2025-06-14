@@ -34,6 +34,7 @@ import static com.example.monitor.monitoring.eic.EicFindString.EIC_DISCOUNT;
 import static com.example.monitor.monitoring.eic.EicFindString.EIC_LOG_PREFIX;
 import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.GNB;
 import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.GEBENE_LOG_PREFIX;
+import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.GNB_STONE_ISLAND;
 import static com.example.monitor.monitoring.julian.JulianFindString.ALL_CATEGORIES;
 import static com.example.monitor.monitoring.julian.JulianFindString.JULIAN;
 import static com.example.monitor.monitoring.julian.JulianFindString.JULIAN_LOG_PREFIX;
@@ -78,6 +79,7 @@ public class CustomApplicationRunner implements ApplicationRunner {
         chromeDriverToolFactory.makeChromeDriverTool(DOUBLE_F);
         chromeDriverToolFactory.makeChromeDriverTool(BIFFI);
         chromeDriverToolFactory.makeChromeDriverTool(GNB);
+        chromeDriverToolFactory.makeChromeDriverTool(GNB_STONE_ISLAND);
         chromeDriverToolFactory.makeChromeDriverTool(VIETTI);
         chromeDriverToolFactory.makeChromeDriverTool(EIC);
         chromeDriverToolFactory.makeChromeDriverTool(EIC_DISCOUNT);
@@ -158,6 +160,20 @@ public class CustomApplicationRunner implements ApplicationRunner {
         });
         gebeneThread.setName(GNB);
         gebeneThread.start();
+
+        Thread gebeneStoneIslandThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                MDC.put("threadName", GNB); // MDC에 쓰레드 이름 저장
+                log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE STONE ISLAND Product Start ============================");
+                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(GNB_STONE_ISLAND);
+                gebenegoziMonitorCore.runLoadLogicStoneIsland(chromeDriverTool);
+                log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE STONE ISLAND Product Finish ============================");
+                MDC.clear(); // MDC 데이터 정리
+            }
+        });
+        gebeneStoneIslandThread.setName(GNB_STONE_ISLAND);
+        gebeneStoneIslandThread.start();
 
         Thread biffiThread = new Thread(new Runnable() {
             @Override

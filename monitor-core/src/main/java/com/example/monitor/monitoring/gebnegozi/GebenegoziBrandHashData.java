@@ -39,21 +39,39 @@ public class GebenegoziBrandHashData {
 
     private final HashMap<String, HashMap<String, GebenegoziProduct>> gebenegoziHashMap;
 
+
     private final List<String> brandNameList;
+
     @Getter
     private final HashSet<String> productKeySet;
+
+
+    @Getter
+    private final HashMap<String, HashMap<String,GebenegoziProduct>> gnbStoneIslandMap;
+
+    @Getter
+    private final HashSet<String> stoneIslandKeySet;
 
     public GebenegoziBrandHashData() {
 
         gebenegoziSaleMap = new HashMap<>();
         gebenegoziHashMap = new HashMap<>();
+        gnbStoneIslandMap = new HashMap<>();
         productKeySet = new HashSet<>();
+        stoneIslandKeySet = new HashSet<>();
         brandNameList = new ArrayList<>();
         for (String[] list : GEBE_URL_LIST) {
             String key = list[2];
             String brandName = list[0];
             brandNameList.add(brandName);
             gebenegoziHashMap.put(key, new HashMap<>());
+        }
+
+        for(String[] list: STONE_ISLAND_URL_LIST) {
+            String key = list[2];
+            String brandName = list[0];
+            brandNameList.add(brandName);
+            gnbStoneIslandMap.put(key, new HashMap<>());
         }
 
     }

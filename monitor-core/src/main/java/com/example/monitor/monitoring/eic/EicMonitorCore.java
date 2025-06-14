@@ -392,12 +392,12 @@ public class EicMonitorCore implements IMonitorService {
         List<EicProduct> eicProductList = new ArrayList<>();
         Map<String, EicProduct> eicProductMap = new HashMap<>();
 
-        for (int i = 1; i < 50; i++) {
+        for (int i = 1; i < 60; i++) {
             driver.get(url + "/pag-" + i);
             if (i != 1 && driver.getCurrentUrl().equals(url)) {
                 log.info(driver.getCurrentUrl() + " and Final Page = " + (i - 1));
-                if (i >= 40) {
-                    discordBot.sendMessage(EIC_NEW_PRODUCT_CHANNEL, "url page 가 40쪽이 넘었습니다. 유효한지 확인해주세요 " + url);
+                if (i >= 50) {
+                    discordBot.sendMessage(EIC_NEW_PRODUCT_CHANNEL, "url page 가 50쪽이 넘었습니다. 유효한지 확인해주세요 " + url);
                 }
                 break;
             }

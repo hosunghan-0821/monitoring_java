@@ -24,6 +24,7 @@ import static com.example.monitor.monitoring.dobulef.DoubleFFindString.DOUBLE_F_
 import static com.example.monitor.monitoring.eic.EicFindString.EIC;
 import static com.example.monitor.monitoring.eic.EicFindString.EIC_DISCOUNT;
 import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.GNB;
+import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.GNB_STONE_ISLAND;
 import static com.example.monitor.monitoring.julian.JulianFindString.*;
 import static com.example.monitor.monitoring.style.StyleFindString.STYLE;
 import static com.example.monitor.monitoring.style.StyleFindString.STYLE_LOG_PREFIX;
@@ -110,6 +111,14 @@ public class MonitorScheduler {
         MDC.put("threadName", GNB); // MDC에 쓰레드 이름 저장
         ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(GNB);
         gebenegoziMonitorCore.runFindProductLogic(chromeDriverTool);
+        MDC.clear(); // MDC 데이터 정리
+    }
+
+    @Scheduled(initialDelay = 60000 * 4, fixedDelay = 60000 )// 30분마다 실행
+    public void monitorGebeneStoneIsland() {
+        MDC.put("threadName", GNB_STONE_ISLAND); // MDC에 쓰레드 이름 저장
+        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(GNB_STONE_ISLAND);
+        gebenegoziMonitorCore.runFindStoneIslandProductLogic(chromeDriverTool);
         MDC.clear(); // MDC 데이터 정리
     }
 

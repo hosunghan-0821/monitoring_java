@@ -3,9 +3,6 @@ package com.example.monitor.monitoring.gebnegozi;
 import chrome.ChromeDriverTool;
 import com.example.monitor.file.ProductFileWriter;
 import com.example.monitor.infra.converter.controller.IConverterFacade;
-import com.example.monitor.monitoring.global.MonitoringProduct;
-import module.database.dto.Boutique;
-import module.database.entity.Product;
 import module.database.repository.ProductRepository;
 import module.discord.DiscordBot;
 
@@ -36,12 +33,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.example.monitor.monitoring.eic.EicFindString.EIC_LOG_PREFIX;
 import static module.discord.DiscordString.GEBENE_NEW_PRODUCT_CHANNEL;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.*;
 import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.*;
+import static module.discord.DiscordString.GNB_STONE_ISLAND_NEW_PRODUCT_CHANNEL;
 
 @Slf4j
 @Component
@@ -87,6 +85,53 @@ public class GebenegoziMonitorCore implements IMonitorService {
     }
 
 
+    public void runLoadLogicStoneIsland(ChromeDriverTool chromeDriverTool) {
+        ChromeDriver driver = chromeDriverTool.getChromeDriver();
+        WebDriverWait wait = chromeDriverTool.getWebDriverWait();
+
+        try {
+            login(driver, wait);
+        } catch (Exception e) {
+            log.error(EIC_LOG_PREFIX + "Discount Change login Error");
+        }
+        loadStoneIsland(driver, wait, STONE_ISLAND_URL_LIST);
+
+        chromeDriverTool.isLoadData(true);
+    }
+
+    private void loadStoneIsland(ChromeDriver driver, WebDriverWait wait, String[][] urlList) {
+        //데이터 정보조회
+        for (String[] data : urlList) {
+            String brand = data[0];
+            String url = data[2];
+            String category = data[1];
+            String sex = data[3];
+
+            if (!brand.equals("STONE ISLAND")) {
+                continue;
+            }
+
+            Map<String, GebenegoziProduct> stoneIslandHashMap = gebenegoziBrandHashData.getGnbStoneIslandMap().get(url);
+            HashSet<String> stoneIslandKeySet = gebenegoziBrandHashData.getStoneIslandKeySet();
+
+            List<GebenegoziProduct> pageProductDataList = getPageProductDataOrNull(driver, wait, url, category, sex);
+
+            if (pageProductDataList != null && !pageProductDataList.isEmpty()) {
+
+                for (var product : pageProductDataList) {
+                    if (stoneIslandHashMap.containsKey(getGebeneProductKey(product))) {
+                        log.info(GEBENE_LOG_PREFIX + "id 중복 " + product);
+                        continue;
+                    }
+                    stoneIslandHashMap.put(getGebeneProductKey(product), product);
+                    stoneIslandKeySet.add(getGebeneProductKey(product));
+                }
+
+            }
+
+        }
+    }
+
     @Override
     public void runFindProductLogic(ChromeDriverTool chromeDriverTool) {
 
@@ -103,16 +148,135 @@ public class GebenegoziMonitorCore implements IMonitorService {
         List<GebenegoziProduct> gebenegoziProductList = findDifferentAndAlarm(chromeDriver, wait, GEBE_URL_LIST);
 
         log.info(GEBENE_LOG_PREFIX + "GEBENE FIND NEW PRODUCT FINISH");
+    }
 
-        //검색 모듈로 전달은 나중에..
-//        if (!gebenegoziProductList.isEmpty()) {
-//            List<ConvertProduct> convertProductList = doubleFProductList.stream()
-//                    .map(v -> v.changeToConvertProduct(DOUBLE_F))
-//                    .collect(Collectors.toList());
-//            iConverterFacade.convertProduct(convertProductList);
-//            iConverterFacade.sendToSearchServer(convertProductList);
-//        }
+    public void runFindStoneIslandProductLogic(ChromeDriverTool chromeDriverTool) {
+        ChromeDriver chromeDriver = chromeDriverTool.getChromeDriver();
+        WebDriverWait wait = chromeDriverTool.getWebDriverWait();
 
+
+        if (!chromeDriverTool.isLoadData() || !chromeDriverTool.isRunning()) {
+            log.error(GEBENE_LOG_PREFIX + "Data Load or isRunning OFF");
+            return;
+        }
+        log.info(GEBENE_LOG_PREFIX + "GEBENE-STONEISLAND FIND NEW PRODUCT START");
+
+        List<GebenegoziProduct> gebenegoziProductList = findDifferentAndAlarmSpecificBrand(chromeDriver, wait, STONE_ISLAND_URL_LIST, "STONE ISLAND");
+
+        log.info(GEBENE_LOG_PREFIX + "GEBENE-STONEISLAND FIND NEW PRODUCT FINISH");
+    }
+
+    public List<GebenegoziProduct> findDifferentAndAlarmSpecificBrand(ChromeDriver driver, WebDriverWait wait, String[][] brandDataList, String specific) {
+        List<GebenegoziProduct> findGebeneProductList = new ArrayList<>();
+        HashSet<String> stoneIslandKeySet = gebenegoziBrandHashData.getStoneIslandKeySet();
+
+
+        for (int i = 0; i < brandDataList.length; i++) {
+            String brand = brandDataList[i][0];
+            String url = brandDataList[i][2];
+            String category = brandDataList[i][1];
+            String sex = brandDataList[i][3];
+
+            if (!specific.equals(brand)) {
+                continue;
+            }
+            Map<String, GebenegoziProduct> gnbStoneIslandMap = gebenegoziBrandHashData.getGnbStoneIslandMap().get(url);
+
+
+            List<GebenegoziProduct> pageProductDataList = getPageProductDataOrNull(driver, wait, url, category, sex);
+
+            if (pageProductDataList == null) {
+                continue;
+            }
+
+            //자동주문  Business Logic
+            //검증 없이 전부 API 호출
+
+            try {
+                Set<String> alreadySent = new HashSet<>();  // 한번만 생성해서 루프 전체에서 활용
+                int batchSize = 10;
+
+                for (int j = 0; j < pageProductDataList.size(); j += batchSize) {
+                    int end = Math.min(j + batchSize, pageProductDataList.size());
+                    List<GebenegoziProduct> batch = pageProductDataList.subList(j, end);
+
+                    // 중복 걸러내고, 이미 보낸 건은 건너뛰기
+                    List<GebenegoziProduct> toSend = batch.stream()
+                            .filter(p -> {
+                                String sku = p.getSku();
+                                if (alreadySent.contains(sku)) {
+                                    return false;
+                                } else {
+                                    alreadySent.add(sku);
+                                    return true;
+                                }
+                            })
+                            .toList();
+
+                    if (!toSend.isEmpty()) {
+                        iConverterFacade.sendToAutoOrderServerBulk(toSend);
+                    }
+                }
+            } catch (Exception e) {
+                log.error(GEBENE_LOG_PREFIX + "자동주문 버그 MSG: " + e.getMessage());
+            }
+
+
+            //신상품 확인 Business Logic
+            for (GebenegoziProduct product : pageProductDataList) {
+                if (!gnbStoneIslandMap.containsKey(getGebeneProductKey(product))) {
+                    if (!stoneIslandKeySet.contains(getGebeneProductKey(product))) {
+                        log.info(GEBENE_LOG_PREFIX + "새로운 제품" + product);
+
+                        //이미지 다운로드 내 S3 대입 상태확인
+                        if (s3UploaderService.isAllowedUpload()) {
+                            String cookie = driver.manage().getCookieNamed("JSESSIONID").getValue();
+                            File file = downloadImageOrNull(product.getImageSrc(), cookie);
+
+                            if (file != null) {
+                                String fileName = getGebeneProductKey(product) + ".jpg";
+                                String uploadUrl = s3UploaderService.uploadImageOrNull(file, fileName);
+                                product.updateImageUrl(uploadUrl);
+                            }
+                        } else {
+                            product.updateImageUrl(null);
+                        }
+
+
+                        discordBot.sendNewProductInfoCommon(
+                                GNB_STONE_ISLAND_NEW_PRODUCT_CHANNEL,
+                                product.makeDiscordMessageDescription(),
+                                product.getProductLink(),
+                                product.getImageSrc(),
+                                Stream.of(product.getSku()).toArray(String[]::new)
+                        );
+
+                        findGebeneProductList.add(product);
+                        stoneIslandKeySet.add(getGebeneProductKey(product));
+
+
+                        productFileWriter.writeProductInfo(product.changeToProductFileInfo(GNB, NEW_PRODUCT));
+
+                    } else {
+                        log.error(GEBENE_LOG_PREFIX + "상품 중복 " + product);
+                    }
+
+                }
+            }
+
+            if (pageProductDataList.size() > 0) {
+                gnbStoneIslandMap.clear();
+                for (var product : pageProductDataList) {
+                    if (gnbStoneIslandMap.containsKey(getGebeneProductKey(product))) {
+                        continue;
+                    }
+                    stoneIslandKeySet.add(getGebeneProductKey(product));
+                    gnbStoneIslandMap.put(getGebeneProductKey(product), product);
+                }
+            }
+
+        }
+        return findGebeneProductList;
     }
 
     public List<GebenegoziProduct> findDifferentAndAlarm(ChromeDriver driver, WebDriverWait wait, String[][] brandDataList) {
@@ -212,7 +376,6 @@ public class GebenegoziMonitorCore implements IMonitorService {
                 eachBrandHashMap.clear();
                 for (var product : pageProductDataList) {
                     if (eachBrandHashMap.containsKey(getGebeneProductKey(product))) {
-                        // log.info(GEBENE_LOG_PREFIX + "id 중복 " + product);
                         continue;
                     }
                     productKeySet.add(getGebeneProductKey(product));

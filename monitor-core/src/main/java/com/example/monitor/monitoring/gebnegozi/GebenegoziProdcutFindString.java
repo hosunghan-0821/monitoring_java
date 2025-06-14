@@ -2,6 +2,10 @@ package com.example.monitor.monitoring.gebnegozi;
 
 public class GebenegoziProdcutFindString {
 
+    public static final String[][] STONE_ISLAND_URL_LIST = {
+            {"STONE ISLAND","CLOTHING",                 "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60,61&lde=791&is=2&ir=6&ci=0&m=&s=0&n=1", "man"},
+
+    };
     public static final String[][] GEBE_URL_LIST = {
 
             //2024.02.16 추가 항목 업데이트
@@ -122,7 +126,6 @@ public class GebenegoziProdcutFindString {
             {"SAINT LAURENT","BAGS",                    "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60,61&lde=908&is=2&ir=15&ci=0&m=&s=0&n=1", "man"},
 
 
-            {"STONE ISLAND","CLOTHING",                 "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60,61&lde=791&is=2&ir=6&ci=0&m=&s=0&n=1", "man"},
 
             {"STUSSY","CLOTHING",                       "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,57,60,61&lde=2171&is=2&ir=6&ci=0&m=&s=0&n=1", "man"},
 
@@ -149,6 +152,7 @@ public class GebenegoziProdcutFindString {
 
     public static final String GNB = "GNB";
 
+    public static final String GNB_STONE_ISLAND = "GNB_STONE_ISLAND";
     public static final String SESSION_COOKIE_KEY = "JSESSIONID";
     public static final String COOKIE = "Cookie";
 
