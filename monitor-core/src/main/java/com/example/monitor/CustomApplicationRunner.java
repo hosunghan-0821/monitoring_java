@@ -78,8 +78,8 @@ public class CustomApplicationRunner implements ApplicationRunner {
         chromeDriverToolFactory.makeChromeDriverTool(ALL_CATEGORIES);
         chromeDriverToolFactory.makeChromeDriverTool(DOUBLE_F);
         chromeDriverToolFactory.makeChromeDriverTool(BIFFI);
-        chromeDriverToolFactory.makeChromeDriverTool(GNB);
-        chromeDriverToolFactory.makeChromeDriverTool(GNB_STONE_ISLAND);
+        chromeDriverToolFactory.makeChromeDriverTool(GNB,1500);
+        chromeDriverToolFactory.makeChromeDriverTool(GNB_STONE_ISLAND,3000);
         chromeDriverToolFactory.makeChromeDriverTool(VIETTI);
         chromeDriverToolFactory.makeChromeDriverTool(EIC);
         chromeDriverToolFactory.makeChromeDriverTool(EIC_DISCOUNT);
@@ -150,6 +150,13 @@ public class CustomApplicationRunner implements ApplicationRunner {
         Thread gebeneThread = new Thread(new Runnable() {
             @Override
             public void run() {
+                //Load만 동일하게
+                log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE STONE ISLAND Product Start ============================");
+                ChromeDriverTool chromeDriverToolStone = chromeDriverToolFactory.getChromeDriverTool(GNB_STONE_ISLAND);
+                gebenegoziMonitorCore.runLoadLogicStoneIsland(chromeDriverToolStone);
+                log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE STONE ISLAND Product Finish ============================");
+
+
                 MDC.put("threadName", GNB); // MDC에 쓰레드 이름 저장
                 log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE Product Start ============================");
                 ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(GNB);
@@ -160,20 +167,6 @@ public class CustomApplicationRunner implements ApplicationRunner {
         });
         gebeneThread.setName(GNB);
         gebeneThread.start();
-
-        Thread gebeneStoneIslandThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                MDC.put("threadName", GNB); // MDC에 쓰레드 이름 저장
-                log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE STONE ISLAND Product Start ============================");
-                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(GNB_STONE_ISLAND);
-                gebenegoziMonitorCore.runLoadLogicStoneIsland(chromeDriverTool);
-                log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE STONE ISLAND Product Finish ============================");
-                MDC.clear(); // MDC 데이터 정리
-            }
-        });
-        gebeneStoneIslandThread.setName(GNB_STONE_ISLAND);
-        gebeneStoneIslandThread.start();
 
         Thread biffiThread = new Thread(new Runnable() {
             @Override

@@ -106,7 +106,7 @@ public class MonitorScheduler {
 
     }
 
-    @Scheduled(initialDelay = 60000 * 4, fixedDelay = 60000 * 5)// 30분마다 실행
+    @Scheduled(initialDelay = 60000 * 4, fixedDelay = 60000 * 15)// 30분마다 실행
     public void monitorGebene() {
         MDC.put("threadName", GNB); // MDC에 쓰레드 이름 저장
         ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(GNB);
@@ -114,7 +114,7 @@ public class MonitorScheduler {
         MDC.clear(); // MDC 데이터 정리
     }
 
-    @Scheduled(initialDelay = 60000 * 4, fixedDelay = 60000 )// 30분마다 실행
+    @Scheduled(initialDelay = 60000 * 4, fixedDelay = 60000 * 5)// 30분마다 실행
     public void monitorGebeneStoneIsland() {
         MDC.put("threadName", GNB_STONE_ISLAND); // MDC에 쓰레드 이름 저장
         ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(GNB_STONE_ISLAND);

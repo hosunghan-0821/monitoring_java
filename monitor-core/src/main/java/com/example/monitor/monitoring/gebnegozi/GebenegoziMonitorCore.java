@@ -114,7 +114,19 @@ public class GebenegoziMonitorCore implements IMonitorService {
             Map<String, GebenegoziProduct> stoneIslandHashMap = gebenegoziBrandHashData.getGnbStoneIslandMap().get(url);
             HashSet<String> stoneIslandKeySet = gebenegoziBrandHashData.getStoneIslandKeySet();
 
-            List<GebenegoziProduct> pageProductDataList = getPageProductDataOrNull(driver, wait, url, category, sex);
+
+            List<GebenegoziProduct> pageProductDataList = new ArrayList<>();
+            int count = 0;
+            do {
+                pageProductDataList = getPageProductDataOrNull(driver, wait, url, category, sex, brand);
+                if (count > 2) {
+                    log.error(GEBENE_LOG_PREFIX + "GNB Load Data 3번 이상 돌아도, 제대로 된 상품이 안나옴. URL : {}", url);
+                    break;
+                }
+                count++;
+            }
+            while (pageProductDataList == null || pageProductDataList.isEmpty());
+
 
             if (pageProductDataList != null && !pageProductDataList.isEmpty()) {
 
@@ -183,7 +195,7 @@ public class GebenegoziMonitorCore implements IMonitorService {
             Map<String, GebenegoziProduct> gnbStoneIslandMap = gebenegoziBrandHashData.getGnbStoneIslandMap().get(url);
 
 
-            List<GebenegoziProduct> pageProductDataList = getPageProductDataOrNull(driver, wait, url, category, sex);
+            List<GebenegoziProduct> pageProductDataList = getPageProductDataOrNull(driver, wait, url, category, sex, brand);
 
             if (pageProductDataList == null) {
                 continue;
@@ -285,13 +297,14 @@ public class GebenegoziMonitorCore implements IMonitorService {
         HashSet<String> productKeySet = gebenegoziBrandHashData.getProductKeySet();
 
         for (int i = 0; i < brandDataList.length; i++) {
+            String brand = brandDataList[i][0];
             String url = brandDataList[i][2];
             String category = brandDataList[i][1];
             String sex = brandDataList[i][3];
 
             Map<String, GebenegoziProduct> eachBrandHashMap = gebenegoziBrandHashData.getBrandHashMap(url);
 
-            List<GebenegoziProduct> pageProductDataList = getPageProductDataOrNull(driver, wait, url, category, sex);
+            List<GebenegoziProduct> pageProductDataList = getPageProductDataOrNull(driver, wait, url, category, sex, brand);
 
             if (pageProductDataList == null) {
                 continue;
@@ -424,7 +437,19 @@ public class GebenegoziMonitorCore implements IMonitorService {
             Map<String, GebenegoziProduct> eachBrandHashMap = gebenegoziBrandHashData.getBrandHashMap(url);
             HashSet<String> productKeySet = gebenegoziBrandHashData.getProductKeySet();
 
-            List<GebenegoziProduct> pageProductDataList = getPageProductDataOrNull(driver, wait, url, category, sex);
+            List<GebenegoziProduct> pageProductDataList = new ArrayList<>();
+
+            int count = 0;
+            do {
+                pageProductDataList = getPageProductDataOrNull(driver, wait, url, category, sex, brand);
+                if (count > 2) {
+                    log.error(GEBENE_LOG_PREFIX + "GNB Load Data 3번 이상 돌아도, 제대로 된 상품이 안나옴. URL : {}", url);
+                    break;
+                }
+                count++;
+            }
+            while (pageProductDataList == null || pageProductDataList.isEmpty());
+
 
             if (pageProductDataList != null && !pageProductDataList.isEmpty()) {
 
@@ -443,7 +468,7 @@ public class GebenegoziMonitorCore implements IMonitorService {
 
     }
 
-    public List<GebenegoziProduct> getPageProductDataOrNull(ChromeDriver driver, WebDriverWait wait, String url, String category, String sex) {
+    public List<GebenegoziProduct> getPageProductDataOrNull(ChromeDriver driver, WebDriverWait wait, String url, String category, String sex, String searchBrand) {
 
         List<GebenegoziProduct> pageProductList = new ArrayList<>();
         String pattern = "\\S";
@@ -477,6 +502,7 @@ public class GebenegoziMonitorCore implements IMonitorService {
 
             isValidPage = false;
             isValidPage = isValidPage(driver, wait, p, url);
+
             if (!isValidPage) {
                 log.error("**확인요망** 페이지 오류 확인 url" + url);
                 return null;
@@ -484,6 +510,8 @@ public class GebenegoziMonitorCore implements IMonitorService {
 
             List<WebElement> elements = driver.findElements(By.xpath("//div[@class='shopping-cart mb-3']"));
 
+            List<GebenegoziProduct> pageUrlProduct = new ArrayList<>();
+            boolean isValidBrand = true;
             for (WebElement productElement : elements) {
 
                 try {
@@ -507,6 +535,7 @@ public class GebenegoziMonitorCore implements IMonitorService {
                     double doubleFinalPrice = 0;
                     boolean isColored = false;
 
+
                     try {
                         WebElement idInfo = productElement.findElement(By.xpath(".//div[@class='artCod']"));
                         id = idInfo.getAttribute("id");
@@ -514,6 +543,7 @@ public class GebenegoziMonitorCore implements IMonitorService {
                         log.error(GEBENE_LOG_PREFIX + "id 검색 오류 url=" + url);
                         continue;
                     }
+
 
                     //page 버그 수정..
                     pageElement = driver.findElement(By.xpath("//a[@class='page-link']"));
@@ -550,11 +580,12 @@ public class GebenegoziMonitorCore implements IMonitorService {
 
                     //이미지 정보
                     String imageSrc = null;
-                    try {
-                        imageSrc = findImageSrc(driver, wait, productElement);
-                    } catch (Exception e) {
-                        log.error(GEBENE_LOG_PREFIX + "이미지 경로 찾기 실패 sku" + sku + " url" + url);
-                    }
+//                    try {
+//                        imageSrc = findImageSrc(driver, wait, productElement);
+//                    } catch (Exception e) {
+//                        log.error(GEBENE_LOG_PREFIX + "이미지 경로 찾기 실패 sku" + sku + " url" + url);
+//                    }
+
 
                     GebenegoziProduct product = GebenegoziProduct.builder()
                             .brandName(brand)
@@ -575,7 +606,16 @@ public class GebenegoziMonitorCore implements IMonitorService {
                             .doublePrice(doubleFinalPrice)
                             .build();
 
-                    pageProductList.add(product);
+                    //TODO 고민해보자
+//                    gebenegoziBrandHashData.getProductKeySet().add(getGebeneProductKey(product));
+                    if (brand == null || !brand.equals(searchBrand)) {
+                        log.error("{} 브랜드 일치하지 않음 URL : {}, SEARCH BRAND : {}, URL PRODUCT BRAND : {}", GEBENE_LOG_PREFIX, url, searchBrand, brand);
+                        isValidBrand = false;
+                        break;
+                    }
+                    pageUrlProduct.add(product);
+
+
                     //log.info("id = {},\t sku = {}\t \t brand = {}\t  season = {}\t finalPrice ={}\t madeBy = {}\t product link = {}", id, sku, brand, season, finalPrice, madeBy, url);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -583,6 +623,15 @@ public class GebenegoziMonitorCore implements IMonitorService {
                 }
 
             }
+
+            if (!isValidBrand) {
+                log.error("브랜드 일치하지 않아서 재탐색 합니다. url : {}", url);
+                j--;
+                continue;
+            }
+
+            pageProductList.addAll(pageUrlProduct);
+
             //url 변경
             url = url.replace("n=" + j, "n=" + (j + 1));
         }
@@ -601,7 +650,7 @@ public class GebenegoziMonitorCore implements IMonitorService {
             } catch (Exception e) {
                 //페이지 오류땜에..
                 driver.get(url);
-                if (k == 4) {
+                if (k == 2) {
                     break;
                 }
             }
