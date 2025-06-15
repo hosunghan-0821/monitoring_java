@@ -497,6 +497,8 @@ public class GebenegoziMonitorCore implements IMonitorService {
         WebElement pageElement = driver.findElement(By.xpath("//a[@class='page-link']"));
         int finalPage = Integer.parseInt(pageElement.getText().split("of")[1].strip());
 
+
+        int brandRetryCount = 0;
         for (int j = 1; j <= finalPage; j++) {
             driver.get(url);
 
@@ -512,6 +514,8 @@ public class GebenegoziMonitorCore implements IMonitorService {
 
             List<GebenegoziProduct> pageUrlProduct = new ArrayList<>();
             boolean isValidBrand = true;
+
+
             for (WebElement productElement : elements) {
 
                 try {
@@ -611,6 +615,12 @@ public class GebenegoziMonitorCore implements IMonitorService {
                     if (brand == null || !brand.equals(searchBrand)) {
                         log.error("{} 브랜드 일치하지 않음 URL : {}, SEARCH BRAND : {}, URL PRODUCT BRAND : {}", GEBENE_LOG_PREFIX, url, searchBrand, brand);
                         isValidBrand = false;
+                        brandRetryCount++;
+                        if (brandRetryCount > 3) {
+                            discordBot.sendMessage(GEBENE_NEW_PRODUCT_CHANNEL,String.format("%s 브랜드 일치하지 않음 URL : %s, SEARCH BRAND : %s, URL PRODUCT BRAND : %s", GEBENE_LOG_PREFIX, url, searchBrand, brand));
+                            return new ArrayList<>();
+                        }
+                        Thread.sleep(500);
                         break;
                     }
                     pageUrlProduct.add(product);
@@ -623,6 +633,7 @@ public class GebenegoziMonitorCore implements IMonitorService {
                 }
 
             }
+
 
             if (!isValidBrand) {
                 log.error("브랜드 일치하지 않아서 재탐색 합니다. url : {}", url);

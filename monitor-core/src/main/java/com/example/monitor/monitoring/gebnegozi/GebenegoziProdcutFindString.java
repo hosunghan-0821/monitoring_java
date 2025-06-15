@@ -9,7 +9,7 @@ public class GebenegoziProdcutFindString {
     public static final String[][] GEBE_URL_LIST = {
 
             //2024.02.16 추가 항목 업데이트
-            {"AURAREE", "CLOTHING",             "http://93.46.41.5:1995/list-items?lsc=&lse=60,59,58,47,61&lde=2297&is=2&ir=6&ci=1&m=&s=0&n=1&cust=&cg=0", "man"},
+            {"AURALEE", "CLOTHING",             "http://93.46.41.5:1995/list-items?lsc=&lse=60,59,58,47,61&lde=2297&is=2&ir=6&ci=1&m=&s=0&n=1&cust=&cg=0", "man"},
 
             {"DIOR HOMME", "SHOES",             "http://93.46.41.5:1995/list-items?lsc=&lse=60,47,59,58,61&lde=231&is=2&ir=8&ci=1&m=&s=0&n=1&cust=&cg=0", "man"},
             {"DIOR HOMME", "ACCESSORIES",             "http://93.46.41.5:1995/list-items?lsc=&lse=47,59,58,60,61&lde=231&is=2&ir=7&ci=1&m=&s=0&n=1&cust=&cg=0", "man"},
