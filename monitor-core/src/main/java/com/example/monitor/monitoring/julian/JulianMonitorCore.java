@@ -60,7 +60,7 @@ public class JulianMonitorCore implements IMonitorService {
 
             login(chromeDriver, wait);
 
-            for (int i = 1; i < 3; i++) {
+            for (int i = 1; i < 5; i++) {
                 String url = getUrl(ALL_CATEGORIES_URL, i);
                 //페이지 이동
                 changeUrl(chromeDriver, url);
@@ -120,7 +120,7 @@ public class JulianMonitorCore implements IMonitorService {
         List<JulianProduct> findJulianProductList = new ArrayList<>();
 
         try {
-            for (int i = 1; i < 3; i++) {
+            for (int i = 1; i < 5; i++) {
                 String url = getUrl(ALL_CATEGORIES_URL, i);
 
                 //페이지 이동
