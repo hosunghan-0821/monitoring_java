@@ -42,9 +42,11 @@ public class JulianProduct extends MonitoringProduct {
         this.finalPrice = finalPrice;
         this.salePercent = salePercent;
         this.excelKeyInfo = keyInfo;
+        this.doublePrice = Double.parseDouble(finalPrice);
+
     }
 
-    public void setKeyInfo(String exceptKeyInfo){
+    public void setKeyInfo(String exceptKeyInfo) {
         this.excelKeyInfo = exceptKeyInfo;
     }
 

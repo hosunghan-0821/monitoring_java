@@ -2,6 +2,9 @@ package com.example.monitor.monitoring.julian;
 
 import chrome.ChromeDriverTool;
 import com.example.monitor.file.ProductFileWriter;
+import com.example.monitor.infra.converter.controller.IConverterFacade;
+import com.example.monitor.monitoring.gebnegozi.GebenegoziProduct;
+import module.database.dto.Boutique;
 import module.discord.DiscordBot;
 import com.example.monitor.monitoring.global.IMonitorService;
 import lombok.Getter;
@@ -21,6 +24,8 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.GEBENE_LOG_PREFIX;
+import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindString.GNB;
 import static com.example.monitor.monitoring.julian.JulianSaleInfoString.FALL_WINTER_2024_2025;
 import static module.discord.DiscordString.ALL_CATEGORIES_CHANNEL;
 import static com.example.monitor.monitoring.dobulef.DoubleFFindString.NEW_PRODUCT;
@@ -39,6 +44,8 @@ public class JulianMonitorCore implements IMonitorService {
 
     @Getter
     private final JulianBrandHashData julianBrandHashData;
+
+    private final IConverterFacade iConverterFacade;
     @Value("${julian.user.id}")
     private String userId;
 
@@ -132,6 +139,14 @@ public class JulianMonitorCore implements IMonitorService {
                 //상품 하위 데이터 조회
                 List<JulianProduct> julianProductData = getProductData(productDataDivs, url);
 
+
+                //Send Auto Order Server
+                try {
+                    sendAutoOrderServer(julianProductData);
+                } catch (Exception e) {
+                    log.error(GEBENE_LOG_PREFIX + "자동주문 버그 MSG: " + e.getMessage());
+                }
+
                 //데이터 누적 HashMap 수정을 위해서
                 findJulianProductList.addAll(julianProductData);
 
@@ -190,6 +205,13 @@ public class JulianMonitorCore implements IMonitorService {
 
                     //상품 하위 데이터 조회
                     List<JulianProduct> julianProductData = getProductData(productDataDivs, url);
+
+                    //Send Auto Order Server
+                    try {
+                        sendAutoOrderServer(julianProductData);
+                    } catch (Exception e) {
+                        log.error(GEBENE_LOG_PREFIX + "자동주문 버그 MSG: " + e.getMessage());
+                    }
 
                     //데이터 누적 HashMap 수정을 위해서
                     findJulianProductList.addAll(julianProductData);
@@ -259,6 +281,7 @@ public class JulianMonitorCore implements IMonitorService {
 
     }
 
+
     @Override
     public void login(ChromeDriver driver, WebDriverWait wait) {
         assert (driver != null);
@@ -315,6 +338,7 @@ public class JulianMonitorCore implements IMonitorService {
                     .productLink(findUrl)
                     .originPrice(priceString)
                     .season(season.getText().toUpperCase())
+                    .boutique(Boutique.JULIAN.getName())
                     .build();
             julianProductList.add(julianProduct);
 
@@ -486,6 +510,36 @@ public class JulianMonitorCore implements IMonitorService {
         return findUrl;
     }
 
+
+    private void sendAutoOrderServer(List<JulianProduct> julianProductData) {
+
+        Set<String> alreadySent = new HashSet<>();  // 한번만 생성해서 루프 전체에서 활용
+        int batchSize = 10;
+
+        for (int j = 0; j < julianProductData.size(); j += batchSize) {
+            int end = Math.min(j + batchSize, julianProductData.size());
+            List<JulianProduct> batch = julianProductData.subList(j, end);
+
+            // 중복 걸러내고, 이미 보낸 건은 건너뛰기
+            List<JulianProduct> toSend = batch.stream()
+                    .filter(p -> {
+                        String sku = p.getSku();
+                        if (alreadySent.contains(sku)) {
+                            return false;
+                        } else {
+                            alreadySent.add(sku);
+                            return true;
+                        }
+                    })
+                    .toList();
+
+            if (!toSend.isEmpty()) {
+                iConverterFacade.sendToAutoOrderServerBulk(toSend);
+            }
+        }
+    }
+
+
     private static class InnerSortingContainer {
         String key;
         String resultString;
@@ -495,4 +549,6 @@ public class JulianMonitorCore implements IMonitorService {
             this.resultString = resultString;
         }
     }
+
+
 }
