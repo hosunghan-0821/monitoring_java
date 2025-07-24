@@ -1,7 +1,7 @@
 # Monitoring Application
 
 # Intro
-- 위 어플리케이션은 2개의 프로젝트로 구성되었습니다. 
+- 위 어플리케이션은 3개의 Repo로 구성되었습니다. 
   - 모니터링 Application - 현재 레포 
   - 검색 및 주문 Application - [github link](https://github.com/hosunghan-0821/search_java)
   - 관리자 페이지 Application - [github link](https://github.com/hosunghan-0821/Monitoring_Admin)
