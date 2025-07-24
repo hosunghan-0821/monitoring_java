@@ -4,7 +4,7 @@
 - 위 어플리케이션은 2개의 프로젝트로 구성되었습니다. 
   - 모니터링 Application - 현재 레포 
   - 검색 및 주문 Application - [github link](https://github.com/hosunghan-0821/search_java)
-  - 관리자 페이지 Application - [github link](https://github.com/hosunghan-0821/search_java)
+  - 관리자 페이지 Application - [github link](https://github.com/hosunghan-0821/Monitoring_Admin)
 
 # 서비스 전체 아키텍처
 <img width="3840" height="2639" alt="Mermaid Chart - Create complex, visual diagrams with text  A smarter way of creating diagrams -2025-07-24-014041" src="https://github.com/user-attachments/assets/49d3e37d-663b-4049-9336-b561b0b798bb" />
