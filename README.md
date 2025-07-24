@@ -3,7 +3,11 @@
 # Intro
 - 위 어플리케이션은 2개의 프로젝트로 구성되었습니다. 
   - 모니터링 Application - 현재 레포 
-  - 검색 Application - [github link](https://github.com/hosunghan-0821/search_java)
+  - 검색 및 주문 Application - [github link](https://github.com/hosunghan-0821/search_java)
+  - 관리자 페이지 Application - [github link](https://github.com/hosunghan-0821/search_java)
+
+# 서비스 전체 아키텍처
+<img width="3840" height="2637" alt="Mermaid Chart - Create complex, visual diagrams with text  A smarter way of creating diagrams -2025-07-24-013432" src="https://github.com/user-attachments/assets/d03812c6-114f-41d1-940a-60796fd1e583" />
 
 
 # 📅 기간 및 인원
@@ -23,7 +27,7 @@
 <img width="934" alt="image" src="https://github.com/hosunghan-0821/monitoring_java/assets/79980357/0290427f-29a0-489b-bf58-bed27fff2a1c">
 <img width="949" alt="image" src="https://github.com/hosunghan-0821/monitoring_java/assets/79980357/a448bf6d-463b-4627-b29a-00d01edebb74">
 
-# Application 구조 
+# Monitor-Core-Application 구조 
 <img width="1355" alt="image" src="https://github.com/hosunghan-0821/monitoring_java/assets/79980357/6b371a3b-0c0e-4149-a24f-5daab6e02de2">
 
 
