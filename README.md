@@ -1,47 +1,89 @@
-# Monitoring, Auto-Order Application
+# Monitoring & Auto-Order Application
 
-# Intro
-- 위 어플리케이션은 3개의 Repo로 구성되었습니다. 
-  - 모니터링 Application - 현재 레포 
-  - 검색 및 주문 Application - [github link](https://github.com/hosunghan-0821/search_java)
-  - 관리자 페이지 Application - [github link](https://github.com/hosunghan-0821/Monitoring_Admin)
- 
+> 해외 부띠끄 상품 **가격/할인율 모니터링 → 수익성 검증 → 자동 주문**까지 처리하는 개인 프로젝트
 
-# 📅 기간 및 인원
+---
 
-- 개인프로젝트
-- 2024/04/21 ~ ing
+## 📦 Repository 구성
 
-# 📚 기술스택
-- [Java / SpringBoot / Selenium / Discord Bot API]
+| 역할 | 저장소 | 주요 기술 | 비고 |
+| --- | --- | --- | --- |
+| 모니터링 앱 (현재 Repo) | **monitoring_java** | Java, Spring Boot, Selenium | 가격/할인율 모니터링, 자동 주문 트리거 |
+| 검색 · 주문 서버 | [search_java](https://github.com/hosunghan-0821/search_java) | Java, Spring Boot | 품번 검색, 주문 API |
+| 관리자 페이지 | [Monitoring_Admin](https://github.com/hosunghan-0821/Monitoring_Admin) | React, Spring | 품번/설정 관리, 리포트 조회 |
 
-# 🎬 서비스 설명
+---
 
-- 해외의 여러 부띠끄 사이트의 상품 가격 및 할인율 모니터링 및 자동주문 하는 프로그램입니다. 
-- 가격 및 할인율이 변경될 경우, 디스코드 봇을 통해 알림을 보냅니다.
-- 가격 및 할인율이 변동되었을 떄, 크림(국내 리셀 플랫폼)에 품번을 검색해 설정한 마진율이 높을 경우 디스코드 알람을 보냅니다.
-- 특정 품번이 업로드 되었을 때, admin에서 관리 된 품번일 경우 해당 부띠끄에 주문을 넣습니다.
-- 하위 그림들은 모니터링 결과와 비교리포트 입니다.
-<img width="934" alt="image" src="https://github.com/hosunghan-0821/monitoring_java/assets/79980357/0290427f-29a0-489b-bf58-bed27fff2a1c">
-<img width="949" alt="image" src="https://github.com/hosunghan-0821/monitoring_java/assets/79980357/a448bf6d-463b-4627-b29a-00d01edebb74">
+## 📅 기간 & 인원
+- **개인 프로젝트**
+- **2024.04.21 ~ 진행 중**
 
-# 서비스 전체 아키텍처
-<img width="3840" height="2639" alt="Mermaid Chart - Create complex, visual diagrams with text  A smarter way of creating diagrams -2025-07-24-014041" src="https://github.com/user-attachments/assets/49d3e37d-663b-4049-9336-b561b0b798bb" />
+---
 
-# Monitor-Core-Application 구조 
-<img width="1355" alt="image" src="https://github.com/hosunghan-0821/monitoring_java/assets/79980357/6b371a3b-0c0e-4149-a24f-5daab6e02de2">
+## 🛠 기술 스택
+- **Backend**: Java, Spring Boot
+- **FronetEnd**: React
+- **Crawling**: Selenium, ChromeDriver
+- **Infra / 기타**: Discord Bot API, Scouter APM, VPN/Proxy
 
-# 기술적 고민 및 구현
-0. 크롤링의 특성상 외부 사이트의 UI에 로직들이 의존하고 있기 때문에, 테스트 코드를 통해서 해당 사이트에서 html을 snapshot을 찍고, 내부 service 로직에서 오류가 없는지 unit test를 진행하였고, 주기적으로 통합테스트를 통해 품질에 신경을 썼습니다. 
-1. 여러 사이트를 주기적으로 동시에 모니터링 해야하는 상황을 Spring에서 지원하는 스케줄러와 자바에서 지원하는 Thread를 통해 멀티스레딩으로 풀어냈습니다. <br><br>
-2. 각 모니터링 사이트마다, 상품의 품번을 다양한 방식으로 제공해서, 검색 API로 보낼 때 각 사이트마다 알맞게 Converting 할 수 있도록 설정파일을 설정하고 프로그램 시작시 로드하여 동작하도록 하였습니다.   <br><br>
-3. 해외 사이트의 봇 차단을 할 때를 고려하여, 여러 방법을 통해 문제를 대비하였습니다.
-   - 데이터 스크래핑할 때 필요한 사이트 요청간의 Think Time을 주었습니다. 
-   - HTTP Client의 User-Agent, Cookie를 다양하게 설정하여 시도하였습니다.
-   - ChromeClient의 Settings을 일반 유저처럼 세팅하였습니다.
-   - 유료 솔루션인 VPN을 활용하여 IP를 우회하여, 탐색을 시도하였습니다. 
-   - 유료 솔루션인 Bright Data를 통해 Proxy Server 와 Remote Chrome Driver를 활용하여 데이터 스크래핑을 시도하였습니다.<br><br>
-4. 외부 사이트에 의존을 많이 하는 어플리케이션이여서, 의존하는 부분을 최소화하여 로직적으로 중요한 유닛테스트를 실시하였습니다. <br>외부 사이트에 의존하는 부분은 통합테스트로 동작을 검증하였습니다.<br><br>
-5. 주기적으로 모니터링 하는 어플리케이션이다 보니, 외부 DB 작업은 최소화하였고, In-Memory를 통해 기본적인 가격,할인율 비교 로직을 수행하였습니다.
-   - 모니터링할 사이트가 많아짐에 따라, 어플리케이션의 안전성을 확인하기 위해 Scouter APM을 통해 heap-memory 사용량과 JVM Young GC작동을 확인하였습니다.
-   - 중간에 최소한의 DB 작업이 필요한 내용들이 있었습니다. 이 때 File을 DB로써 활용하여 처리하였습니다.
+---
+
+## 🎯 서비스 설명
+
+- 여러 해외 부띠끄 사이트의 **상품 가격 및 할인율을 주기적으로 모니터링**  
+- 가격/할인율 변동 발생 시 **Discord 봇으로 알림 전송**  
+- 변동된 상품을 크림(국내 리셀 플랫폼)에서 검색해 **설정한 마진율 이상이면 추가 알림**  
+- **특정 품번 업로드 시**, Admin에서 관리 중인 품번이면 **해당 부띠끄에 자동 주문**
+
+### 🖼 모니터링 결과/비교 리포트 예시
+![monitoring-report-1](https://github.com/hosunghan-0821/monitoring_java/assets/79980357/0290427f-29a0-489b-bf58-bed27fff2a1c)
+![monitoring-report-2](https://github.com/hosunghan-0821/monitoring_java/assets/79980357/a448bf6d-463b-4627-b29a-00d01edebb74)
+
+---
+
+## 🏗 전체 아키텍처
+
+![architecture](https://github.com/user-attachments/assets/49d3e37d-663b-4049-9336-b561b0b798bb)
+
+---
+
+## 🔍 Monitor-Core Application 구조
+
+![monitor-core-structure](https://github.com/hosunghan-0821/monitoring_java/assets/79980357/6b371a3b-0c0e-4149-a24f-5daab6e02de2)
+
+---
+
+## 🧠 기술적 고민 & 구현
+
+### 0. UI 의존성 높은 크롤링 로직의 안정성
+- 외부 사이트 HTML 스냅샷을 저장해 **회귀 테스트** 수행  
+- Service 레이어는 **Unit Test**, 실제 사이트 연동은 **통합 테스트**로 분리
+
+### 1. 다수 사이트 동시 모니터링
+- Spring `@Scheduled` + Java Thread Pool로 **병렬 실행**  
+
+### 2. 사이트별 품번 포맷 변환
+- 사이트마다 다른 품번 포맷을 **Converting Layer**로 통합 처리  
+- 설정파일을 기동 시 로드해 런타임에서 매핑
+
+### 3. 봇 차단 대응
+- 요청 간 **Think Time** 적용  
+- **User-Agent / Cookie 로테이션**  
+- ChromeDriver 환경을 일반 사용자처럼 세팅  
+- VPN/Proxy(Bright Data) 및 Remote Chrome Driver 활용
+
+### 4. 테스트 전략 분리
+- **핵심 로직**: 외부 의존 제거 후 단위 테스트로 커버  
+- **외부 연동부**: 실제 상호작용은 통합 테스트로 검증
+
+### 5. 리소스/성능 최적화
+- **DB 접근 최소화**, In-Memory 비교 로직 우선  
+- 필요한 데이터만 **파일 기반 저장(DB 대체)**  
+- Scouter APM으로 **Heap / Young GC 모니터링**
+
+---
+
+## ✅ 품질 보증 & 안정성
+- **Snapshot 기반 회귀 테스트**로 UI 변경 감지  
+- **Smoke Test**로 파이프라인 정상 동작 확인  
+- Discord 알림 채널을 **운영 모니터링**에도 활용
