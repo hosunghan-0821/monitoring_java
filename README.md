@@ -1,14 +1,11 @@
-# Monitoring Application
+# Monitoring, Auto-Order Application
 
 # Intro
 - 위 어플리케이션은 3개의 Repo로 구성되었습니다. 
   - 모니터링 Application - 현재 레포 
   - 검색 및 주문 Application - [github link](https://github.com/hosunghan-0821/search_java)
   - 관리자 페이지 Application - [github link](https://github.com/hosunghan-0821/Monitoring_Admin)
-
-# 서비스 전체 아키텍처
-<img width="3840" height="2639" alt="Mermaid Chart - Create complex, visual diagrams with text  A smarter way of creating diagrams -2025-07-24-014041" src="https://github.com/user-attachments/assets/49d3e37d-663b-4049-9336-b561b0b798bb" />
-
+ 
 
 # 📅 기간 및 인원
 
@@ -28,9 +25,11 @@
 <img width="934" alt="image" src="https://github.com/hosunghan-0821/monitoring_java/assets/79980357/0290427f-29a0-489b-bf58-bed27fff2a1c">
 <img width="949" alt="image" src="https://github.com/hosunghan-0821/monitoring_java/assets/79980357/a448bf6d-463b-4627-b29a-00d01edebb74">
 
+# 서비스 전체 아키텍처
+<img width="3840" height="2639" alt="Mermaid Chart - Create complex, visual diagrams with text  A smarter way of creating diagrams -2025-07-24-014041" src="https://github.com/user-attachments/assets/49d3e37d-663b-4049-9336-b561b0b798bb" />
+
 # Monitor-Core-Application 구조 
 <img width="1355" alt="image" src="https://github.com/hosunghan-0821/monitoring_java/assets/79980357/6b371a3b-0c0e-4149-a24f-5daab6e02de2">
-
 
 # 기술적 고민 및 구현
 0. 크롤링의 특성상 외부 사이트의 UI에 로직들이 의존하고 있기 때문에, 테스트 코드를 통해서 해당 사이트에서 html을 snapshot을 찍고, 내부 service 로직에서 오류가 없는지 unit test를 진행하였고, 주기적으로 통합테스트를 통해 품질에 신경을 썼습니다. 
