@@ -81,41 +81,9 @@ public class CustomApplicationRunner implements ApplicationRunner {
         chromeDriverToolFactory.makeChromeDriverTool(GNB,1500);
         chromeDriverToolFactory.makeChromeDriverTool(GNB_STONE_ISLAND,3000);
         chromeDriverToolFactory.makeChromeDriverTool(VIETTI);
-        chromeDriverToolFactory.makeChromeDriverTool(EIC);
-        chromeDriverToolFactory.makeChromeDriverTool(EIC_DISCOUNT);
 
         discordBot.setChromeDriverTool(chromeDriverToolFactory);
         discordBot.setS3UploaderService(s3UploaderService);
-
-        Thread eicThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                MDC.put("threadName", EIC); // MDC에 쓰레드 이름 저장
-                log.info(EIC_LOG_PREFIX + "============================ Load Eic Product Start ============================");
-                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(EIC);
-                eicMonitorCore.runLoadLogic(chromeDriverTool);
-                log.info(EIC_LOG_PREFIX + "============================ Load Eic Product Finish ============================");
-
-                MDC.clear(); // MDC 데이터 정리
-            }
-        });
-        eicThread.setName(EIC);
-        eicThread.start();
-
-        Thread eicDiscountThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                MDC.put("threadName", EIC_DISCOUNT); // MDC에 쓰레드 이름 저장
-                log.info(EIC_LOG_PREFIX + "============================ Load Eic DISCOUNT Product Start ============================");
-                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(EIC_DISCOUNT);
-                eicMonitorCore.runLoadLogicDiscountChange(chromeDriverTool);
-                log.info(EIC_LOG_PREFIX + "============================ Load Eic DISCOUNT Product Finish ============================");
-
-                MDC.clear(); // MDC 데이터 정리
-            }
-        });
-        eicDiscountThread.setName(EIC_DISCOUNT);
-        eicDiscountThread.start();
 
         Thread viettiThread = new Thread(new Runnable() {
             @Override
