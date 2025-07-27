@@ -6,6 +6,7 @@ public class JulianSaleInfoString {
 
     }
 
+    public static final String FALL_WINTER_2025_2026 = "FALL WINTER 2025/2026";
     public static final String FALL_WINTER_2024_2025 = "FALL WINTER 2024/2025";
     public static final String SPRING_SUMMER_2024 = "SPRING SUMMER 2024";
     public static final String SPRING_SUMMER_2025 ="SPRING SUMMER 2025";

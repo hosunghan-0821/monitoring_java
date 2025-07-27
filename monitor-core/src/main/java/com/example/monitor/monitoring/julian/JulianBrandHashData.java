@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import static com.example.monitor.monitoring.julian.JulianFindString.JULIAN;
 import static com.example.monitor.monitoring.julian.JulianFindString.JULIAN_MONITORING_SITE;
 import static com.example.monitor.monitoring.julian.JulianSaleInfoString.FALL_WINTER_2024_2025;
+import static com.example.monitor.monitoring.julian.JulianSaleInfoString.FALL_WINTER_2025_2026;
 import static com.example.monitor.monitoring.julian.JulianSaleInfoString.OUTLET;
 import static com.example.monitor.monitoring.julian.JulianSaleInfoString.SALE;
 import static com.example.monitor.monitoring.julian.JulianSaleInfoString.SPRING_SUMMER_2024;
@@ -157,8 +158,24 @@ public class JulianBrandHashData {
 
     private String getHighPercentSexOrNull(String woman_category, String man_category) {
         String unisex_clothes = null;
+
         if (!woman_category.isBlank() && !man_category.isBlank()) {
-            if (Integer.parseInt(woman_category) > Integer.parseInt(man_category)) {
+
+            woman_category = woman_category.replaceAll(" ", "");
+            man_category = man_category.replaceAll(" ", "");
+            int woman_category_int = 0;
+            int man_category_int = 0;
+            try {
+                woman_category_int = Integer.parseInt(woman_category);
+            } catch (Exception e) {
+            }
+            try {
+                man_category_int = Integer.parseInt(man_category);
+            } catch (Exception e) {
+            }
+
+
+            if (woman_category_int > man_category_int) {
                 unisex_clothes = woman_category;
             } else {
                 unisex_clothes = man_category;
@@ -186,21 +203,29 @@ public class JulianBrandHashData {
     }
 
     private JulianSaleInfo getJulianSaleInfo(String season, String categorySalesPercent, String brandName, String category) {
+        int salesPercent = 0;
 
-
-        if (categorySalesPercent.isBlank()) {
-            categorySalesPercent = "0";
+        if (!categorySalesPercent.isBlank()) {
+            try {
+                salesPercent = Integer.parseInt(categorySalesPercent);
+            } catch (Exception e) {
+            }
         }
+
+
+
         return JulianSaleInfo.builder()
                 .brandName(brandName)
                 .season(season)
-                .salesPercent(Integer.parseInt(categorySalesPercent))
+                .salesPercent(salesPercent)
                 .category(category)
                 .build();
     }
 
     private String changeSeasonToWebSignature(String season) {
         switch (season) {
+            case "FW25-26":
+                return FALL_WINTER_2025_2026;
             case "FW24-25":
                 return FALL_WINTER_2024_2025;
             case "SS24":
@@ -248,11 +273,11 @@ public class JulianBrandHashData {
             case STRING:
                 return cell.getStringCellValue().trim();
             case NUMERIC:
-                return String.valueOf((int) cell.getNumericCellValue());
+                return String.valueOf((int) cell.getNumericCellValue()).trim();
             case BOOLEAN:
-                return String.valueOf(cell.getBooleanCellValue());
+                return String.valueOf(cell.getBooleanCellValue()).trim();
             case FORMULA:
-                return cell.getCellFormula();
+                return cell.getCellFormula().trim();
             default:
                 return ""; // 다른 타입의 셀은 빈 문자열 반환
         }
