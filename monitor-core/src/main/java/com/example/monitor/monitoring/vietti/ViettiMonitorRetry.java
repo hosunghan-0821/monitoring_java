@@ -85,7 +85,7 @@ public class ViettiMonitorRetry {
 
                 //상품 id
                 try {
-                    WebElement idElement = product.findElement(By.xpath(".//div[@class='product__code']"));
+                    WebElement idElement = product.findElement(By.xpath(".//div[@class='product__code ng-star-inserted']"));
                     productId = idElement.getText();
                     sku = idElement.getText();
                 } catch (Exception e) {
