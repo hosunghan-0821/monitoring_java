@@ -70,7 +70,7 @@
 - 요청 간 **Think Time** 적용  
 - **User-Agent / Cookie 로테이션**  
 - ChromeDriver 환경을 일반 사용자처럼 세팅  
-- VPN/Proxy(Bright Data) 및 Remote Chrome Driver 활용
+- VPN/Proxy 활용
 
 ### 4. 테스트 전략 분리
 - **핵심 로직**: 외부 의존 제거 후 단위 테스트로 커버  
