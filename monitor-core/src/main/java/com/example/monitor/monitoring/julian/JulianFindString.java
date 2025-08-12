@@ -3,16 +3,16 @@ package com.example.monitor.monitoring.julian;
 public class JulianFindString {
 
     //Category 작업단위
-    public static final String JULIAN ="julian";
-    public static final String ALL_CATEGORIES ="all_categories";
-    public static final String PROMO= "promo";
+    public static final String JULIAN = "julian";
+    public static final String ALL_CATEGORIES = "all_categories";
+    public static final String PROMO = "promo";
 
     public static final String[] JULIAN_MONITORING_SITE = {
             ALL_CATEGORIES,
             PROMO,
     };
 
-    public static final String[] JULIAN_TARGET_BRAND_NAME_LIST ={
+    public static final String[] JULIAN_TARGET_BRAND_NAME_LIST = {
             "A.P.C",
             "ADIDAS",
             "ALEXANDER MCQUEEN",
@@ -57,7 +57,8 @@ public class JulianFindString {
             "UGG",
             "VIVIENNE WESTWOOD",
             "WALES BONNER",
-            "LONGCHAMP"
+            "LONGCHAMP",
+            "DRAGON DIFFUSION"
     };
 
     //로그인 관련
@@ -86,7 +87,6 @@ public class JulianFindString {
     public static final String PRODUCT_NAME = ".//div[@class='product_name']";
 
     public static final String PRODUCT_SKU = ".//div[@class='produt_reference']";
-
 
 
     //생성자 생성 금지
