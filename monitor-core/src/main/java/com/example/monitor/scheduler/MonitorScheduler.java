@@ -9,6 +9,7 @@ import com.example.monitor.monitoring.eic.EicMonitorCore;
 import com.example.monitor.monitoring.gebnegozi.GebenegoziMonitorCore;
 import com.example.monitor.monitoring.julian.JulianMonitorCore;
 import com.example.monitor.monitoring.style.StyleMonitorCore;
+import com.example.monitor.monitoring.theclub.TheClubMonitorCore;
 import com.example.monitor.monitoring.vietti.ViettiMonitorCore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,8 @@ import static com.example.monitor.monitoring.gebnegozi.GebenegoziProdcutFindStri
 import static com.example.monitor.monitoring.julian.JulianFindString.*;
 import static com.example.monitor.monitoring.style.StyleFindString.STYLE;
 import static com.example.monitor.monitoring.style.StyleFindString.STYLE_LOG_PREFIX;
+import static com.example.monitor.monitoring.theclub.TheClubFindString.THE_CLUB;
+import static com.example.monitor.monitoring.theclub.TheClubFindString.THE_CLUB_LOG_PREFIX;
 import static com.example.monitor.monitoring.vietti.ViettiFindString.VIETTI;
 import static com.example.monitor.monitoring.vietti.ViettiFindString.VIETTI_LOG_PREFIX;
 
@@ -47,6 +50,8 @@ public class MonitorScheduler {
     private final ChromeDriverToolFactory chromeDriverToolFactory;
 
     private final StyleMonitorCore styleMonitorCore;
+
+    private final TheClubMonitorCore theClubMonitorCore;
 
     private final ViettiMonitorCore viettiMonitorCore;
 
@@ -104,6 +109,10 @@ public class MonitorScheduler {
         log.info(EicFindString.EIC_LOG_PREFIX + "새 등록 상품 풀 초기화 (중복방지용) : eic");
         eicMonitorCore.getEicBrandHashData().getProductKeySet().clear();
 
+        //TheClub
+        log.info(THE_CLUB_LOG_PREFIX + "새 등록 상품 풀 초기화 (중복방지용) : TheClub");
+        theClubMonitorCore.getTheClubBrandHashData().getProductKeySet().clear();
+
     }
 
     @Scheduled(initialDelay = 60000 * 4, fixedDelay = 60000 * 15)// 30분마다 실행
@@ -152,6 +161,14 @@ public class MonitorScheduler {
         MDC.put("threadName", EIC_DISCOUNT); // MDC에 쓰레드 이름 저장
         ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(EIC_DISCOUNT);
         eicMonitorCore.runFindProductLogicForDiscountChange(chromeDriverTool);
+        MDC.clear(); // MDC 데이터 정리
+    }
+
+    @Scheduled(initialDelay = 60000 * 8, fixedDelay = 60000 * 60)// 60분마다 실행
+    public void monitorTheClub() {
+        MDC.put("threadName", THE_CLUB); // MDC에 쓰레드 이름 저장
+        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(THE_CLUB);
+        theClubMonitorCore.runFindProductLogic(chromeDriverTool);
         MDC.clear(); // MDC 데이터 정리
     }
 }
