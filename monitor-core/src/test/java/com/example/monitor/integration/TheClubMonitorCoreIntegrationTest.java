@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-//@Import({TestConfiguration.class})
+@Import({TestConfiguration.class})
 class TheClubMonitorCoreIntegrationTest {
 
     @Autowired
