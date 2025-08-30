@@ -98,6 +98,7 @@ public class ViettiMonitorRetry {
                     WebElement nameElement = product.findElement(By.xpath(".//a[@class='product__name']"));
                     productName = nameElement.getText();
                     productLink = nameElement.getAttribute("href");
+                    productId = productId + ":::" + productLink;
                 } catch (Exception e) {
                     log.error(VIETTI_LOG_PREFIX + "상품 이름과 상품 상세링크가 없습니다. \t. 확인요망");
 
@@ -138,16 +139,7 @@ public class ViettiMonitorRetry {
 
                 ViettiProduct viettiProduct = ViettiProduct.builder()
 
-                        .id(productId)
-                        .name(productName)
-                        .price(productPrice)
-                        .originPrice(productOriginPrice)
-                        .discountPercentage(productDiscountPercentage)
-                        .productLink(productLink)
-                        .imageSrc(imageSrc)
-                        .brandName(brandName)
-                        .sku(sku)
-                        .build();
+                        .id(productId).name(productName).price(productPrice).originPrice(productOriginPrice).discountPercentage(productDiscountPercentage).productLink(productLink).imageSrc(imageSrc).brandName(brandName).sku(sku).build();
 
 
                 if (productId.isEmpty()) {

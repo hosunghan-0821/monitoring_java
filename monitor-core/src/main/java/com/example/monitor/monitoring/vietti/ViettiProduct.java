@@ -23,6 +23,10 @@ public class ViettiProduct extends MonitoringProduct {
         this.madeBy = madeBy;
     }
 
+    public void updateDiscountPercentage(String discountPercentage) {
+        this.discountPercentage = discountPercentage;
+    }
+
     public String makeDiscordMessageDescription() {
 
         return String.format(DISCORD_NEW_PRODUCT_MESSAGE_FORMAT,
