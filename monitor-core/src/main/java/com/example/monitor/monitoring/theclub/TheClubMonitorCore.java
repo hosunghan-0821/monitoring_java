@@ -177,6 +177,10 @@ public class TheClubMonitorCore implements IMonitorService {
                             }
                         }
 
+                        //id 보정
+                        {
+                            id = id + productLink;
+                        }
 
                         TheClubProduct product = TheClubProduct.builder()
                                 .name(productName)
@@ -216,10 +220,10 @@ public class TheClubMonitorCore implements IMonitorService {
             List<TheClubProduct> currentProducts = getPageProductData(chromeDriver, wait, brandUrlList[i], brandName);
 
             for (TheClubProduct product : currentProducts) {
-                if (!brandHashMap.containsKey(product.getId()) && !productKeySet.contains(product.getSku())) {
+                if (!brandHashMap.containsKey(product.getId()) && !productKeySet.contains(product.getId())) {
                     // 새로운 상품 발견
                     newProductList.add(product);
-                    productKeySet.add(product.getSku());
+                    productKeySet.add(product.getId());
 
                     // 상품 상세 정보 수집 (SKU, 컬러코드)
                     getProductMoreInfo(chromeDriver, wait, product);
