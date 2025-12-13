@@ -35,6 +35,7 @@ import static com.example.monitor.monitoring.julian.JulianSaleInfoString.OUTLET;
 import static com.example.monitor.monitoring.julian.JulianSaleInfoString.SALE;
 import static com.example.monitor.monitoring.julian.JulianSaleInfoString.SPRING_SUMMER_2024;
 import static com.example.monitor.monitoring.julian.JulianSaleInfoString.SPRING_SUMMER_2025;
+import static com.example.monitor.monitoring.julian.JulianSaleInfoString.SPRING_SUMMER_2026;
 
 
 @Slf4j
@@ -213,7 +214,6 @@ public class JulianBrandHashData {
         }
 
 
-
         return JulianSaleInfo.builder()
                 .brandName(brandName)
                 .season(season)
@@ -224,6 +224,8 @@ public class JulianBrandHashData {
 
     private String changeSeasonToWebSignature(String season) {
         switch (season) {
+            case "SS26":
+                return SPRING_SUMMER_2026;
             case "FW25-26":
                 return FALL_WINTER_2025_2026;
             case "FW24-25":
