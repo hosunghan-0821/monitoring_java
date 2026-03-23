@@ -81,12 +81,12 @@ public class CustomApplicationRunner implements ApplicationRunner {
 
         chromeDriverToolFactory.makeChromeDriverTool(THE_CLUB);
 //        chromeDriverToolFactory.makeChromeDriverTool(STYLE);
-//        chromeDriverToolFactory.makeChromeDriverTool(ALL_CATEGORIES);
+        chromeDriverToolFactory.makeChromeDriverTool(ALL_CATEGORIES);
 //        chromeDriverToolFactory.makeChromeDriverTool(DOUBLE_F);
-//        chromeDriverToolFactory.makeChromeDriverTool(BIFFI);
-//        chromeDriverToolFactory.makeChromeDriverTool(GNB, 1500);
-//        chromeDriverToolFactory.makeChromeDriverTool(GNB_STONE_ISLAND, 3000);
-//        chromeDriverToolFactory.makeChromeDriverTool(VIETTI);
+        chromeDriverToolFactory.makeChromeDriverTool(BIFFI);
+        chromeDriverToolFactory.makeChromeDriverTool(GNB, 1500);
+        chromeDriverToolFactory.makeChromeDriverTool(GNB_STONE_ISLAND, 3000);
+        chromeDriverToolFactory.makeChromeDriverTool(VIETTI);
 
         discordBot.setChromeDriverTool(chromeDriverToolFactory);
         discordBot.setS3UploaderService(s3UploaderService);
@@ -107,20 +107,20 @@ public class CustomApplicationRunner implements ApplicationRunner {
         theClubThread.start();
 
 
-//        Thread viettiThread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                MDC.put("threadName", VIETTI); // MDC에 쓰레드 이름 저장
-//                log.info(VIETTI_LOG_PREFIX + "============================ Load Vietti Product Start ============================");
-//                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(VIETTI);
-//                viettiMonitorCore.runLoadLogic(chromeDriverTool);
-//                log.info(VIETTI_LOG_PREFIX + "============================ Load Vietti Product Finish ============================");
-//                MDC.clear(); // MDC 데이터 정리
-//
-//            }
-//        });
-//        viettiThread.setName(VIETTI);
-//        viettiThread.start();
+        Thread viettiThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                MDC.put("threadName", VIETTI); // MDC에 쓰레드 이름 저장
+                log.info(VIETTI_LOG_PREFIX + "============================ Load Vietti Product Start ============================");
+                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(VIETTI);
+                viettiMonitorCore.runLoadLogic(chromeDriverTool);
+                log.info(VIETTI_LOG_PREFIX + "============================ Load Vietti Product Finish ============================");
+                MDC.clear(); // MDC 데이터 정리
+
+            }
+        });
+        viettiThread.setName(VIETTI);
+        viettiThread.start();
 
 
 //        Thread styleThread = new Thread(new Runnable() {
@@ -137,40 +137,40 @@ public class CustomApplicationRunner implements ApplicationRunner {
 //        styleThread.setName(STYLE);
 //        styleThread.start();
 
-//        Thread gebeneThread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                //Load만 동일하게
-//                log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE STONE ISLAND Product Start ============================");
-//                ChromeDriverTool chromeDriverToolStone = chromeDriverToolFactory.getChromeDriverTool(GNB_STONE_ISLAND);
-//                gebenegoziMonitorCore.runLoadLogicStoneIsland(chromeDriverToolStone);
-//                log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE STONE ISLAND Product Finish ============================");
-//
-//
-//                MDC.put("threadName", GNB); // MDC에 쓰레드 이름 저장
-//                log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE Product Start ============================");
-//                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(GNB);
-//                gebenegoziMonitorCore.runLoadLogic(chromeDriverTool);
-//                log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE Product Finish ============================");
-//                MDC.clear(); // MDC 데이터 정리
-//            }
-//        });
-//        gebeneThread.setName(GNB);
-//        gebeneThread.start();
+        Thread gebeneThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //Load만 동일하게
+                log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE STONE ISLAND Product Start ============================");
+                ChromeDriverTool chromeDriverToolStone = chromeDriverToolFactory.getChromeDriverTool(GNB_STONE_ISLAND);
+                gebenegoziMonitorCore.runLoadLogicStoneIsland(chromeDriverToolStone);
+                log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE STONE ISLAND Product Finish ============================");
 
-//        Thread biffiThread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                MDC.put("threadName", BIFFI); // MDC에 쓰레드 이름 저장
-//                log.info(BIFFI_LOG_PREFIX + "============================ Load BIFFI Product Start ============================");
-//                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(BIFFI);
-//                biffiMonitorCore.runLoadLogic(chromeDriverTool);
-//                log.info(BIFFI_LOG_PREFIX + "============================ Load BIFFI Product Finish ============================");
-//                MDC.clear(); // MDC 데이터 정리
-//            }
-//        });
-//        biffiThread.setName(BIFFI);
-//        biffiThread.start();
+
+                MDC.put("threadName", GNB); // MDC에 쓰레드 이름 저장
+                log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE Product Start ============================");
+                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(GNB);
+                gebenegoziMonitorCore.runLoadLogic(chromeDriverTool);
+                log.info(GEBENE_LOG_PREFIX + "============================ Load GEBENE Product Finish ============================");
+                MDC.clear(); // MDC 데이터 정리
+            }
+        });
+        gebeneThread.setName(GNB);
+        gebeneThread.start();
+
+        Thread biffiThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                MDC.put("threadName", BIFFI); // MDC에 쓰레드 이름 저장
+                log.info(BIFFI_LOG_PREFIX + "============================ Load BIFFI Product Start ============================");
+                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(BIFFI);
+                biffiMonitorCore.runLoadLogic(chromeDriverTool);
+                log.info(BIFFI_LOG_PREFIX + "============================ Load BIFFI Product Finish ============================");
+                MDC.clear(); // MDC 데이터 정리
+            }
+        });
+        biffiThread.setName(BIFFI);
+        biffiThread.start();
 
 
 //        Thread doubleFThread = new Thread(new Runnable() {
@@ -196,20 +196,20 @@ public class CustomApplicationRunner implements ApplicationRunner {
 //        doubleFThread.start();
 
 
-//        Thread julianThread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                MDC.put("threadName", JULIAN); // MDC에 쓰레드 이름 저장
-//                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES);
-//                log.info(JULIAN_LOG_PREFIX + "============================ Load Julian Product Start ============================");
-//                julianMonitorCore.runLoadLogic(chromeDriverTool);
-//                log.info(JULIAN_LOG_PREFIX + "============================ Load Julian Product Finish ============================");
-//                MDC.clear(); // MDC 데이터 정리
-//
-//            }
-//        });
-//        julianThread.setName(JULIAN);
-//        julianThread.start();
+        Thread julianThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                MDC.put("threadName", JULIAN); // MDC에 쓰레드 이름 저장
+                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES);
+                log.info(JULIAN_LOG_PREFIX + "============================ Load Julian Product Start ============================");
+                julianMonitorCore.runLoadLogic(chromeDriverTool);
+                log.info(JULIAN_LOG_PREFIX + "============================ Load Julian Product Finish ============================");
+                MDC.clear(); // MDC 데이터 정리
+
+            }
+        });
+        julianThread.setName(JULIAN);
+        julianThread.start();
 
     }
 
