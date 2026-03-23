@@ -83,41 +83,9 @@ public class TheClubMonitorCore implements IMonitorService {
     public void login(ChromeDriver driver, WebDriverWait wait) {
         try {
             driver.get(THE_CLUB_MAIN_PAGE);
-
-            WebElement loginElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.id(TC_ID_ID)));
-            loginElement.sendKeys(userId);
-
-            Thread.sleep(1500);
-
-            // Shop 팝업이 뜨면 Shadow DOM 뚫고 X 버튼 클릭
-            try {
-                List<WebElement> modals = driver.findElements(By.xpath("//*[@data-nametag='shop-portal-provider']"));
-                if (!modals.isEmpty()) {
-                    log.info(THE_CLUB_LOG_PREFIX + "Shop 팝업 감지 - X 버튼 클릭 시도");
-                    ((JavascriptExecutor) driver).executeScript(
-                        "var host = arguments[0];" +
-                        "var root = host.shadowRoot || host;" +
-                        "var btn = root.querySelector('[data-testid=\"authorize-modal-close-button\"]');" +
-                        "if (btn) btn.click();",
-                        modals.get(0)
-                    );
-                    Thread.sleep(500);
-                    log.info(THE_CLUB_LOG_PREFIX + "Shop 팝업 닫기 완료");
-                }
-            } catch (Exception e) {
-                log.debug(THE_CLUB_LOG_PREFIX + "팝업 없음 또는 닫기 실패: " + e.getMessage());
-            }
-
-            WebElement pwElement = driver.findElement(By.id(TC_PASS_ID));
-            pwElement.sendKeys(userPw);
-
-            Thread.sleep(1500);
-
-            WebElement button = driver.findElement(By.xpath(TC_LOGIN_BUTTON_XPATH));
-            button.click();
-
-            Thread.sleep(3000);
-            log.info(THE_CLUB_LOG_PREFIX + "로그인 완료");
+            log.info(THE_CLUB_LOG_PREFIX + "로그인 페이지 이동 완료 - 2분 후 자동 진행");
+            Thread.sleep(1000 * 60 * 2);
+            log.info(THE_CLUB_LOG_PREFIX + "로그인 완료 (수동)");
         } catch (Exception e) {
             log.error(THE_CLUB_LOG_PREFIX + "로그인 에러: " + e.getMessage());
         }
