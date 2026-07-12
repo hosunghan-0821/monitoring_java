@@ -1,6 +1,7 @@
 package com.example.monitor.monitoring.julian;
 
 import chrome.ChromeDriverTool;
+import chrome.ChromeDriverToolFactory;
 import com.example.monitor.file.ProductFileWriter;
 import com.example.monitor.infra.converter.controller.IConverterFacade;
 import com.example.monitor.monitoring.gebnegozi.GebenegoziProduct;
@@ -11,7 +12,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchWindowException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -46,6 +46,9 @@ public class JulianMonitorCore implements IMonitorService {
     private final JulianBrandHashData julianBrandHashData;
 
     private final IConverterFacade iConverterFacade;
+
+    private final ChromeDriverToolFactory chromeDriverToolFactory;
+
     @Value("${julian.user.id}")
     private String userId;
 
@@ -123,6 +126,12 @@ public class JulianMonitorCore implements IMonitorService {
             log.error(JULIAN_LOG_PREFIX + "Data Load or isRunning OFF");
             return;
         }
+
+        if (!chromeDriverTool.isAlive()) {
+            recoverFromCrash();
+            return;
+        }
+
         log.info(JULIAN_LOG_PREFIX + "START: " + ALL_CATEGORIES + " FIND NEW PRODUCT ");
         List<JulianProduct> findJulianProductList = new ArrayList<>();
 
@@ -266,19 +275,40 @@ public class JulianMonitorCore implements IMonitorService {
             dataHashMap.clear();
             loadData(dataHashMap, findJulianProductList);
 
-        } catch (NoSuchWindowException e) {
-
-            log.error(JULIAN_LOG_PREFIX + "Chrome Driver Down!!");
-            return;
         } catch (Exception e) {
-            log.error(e.getMessage());
-            log.error(JULIAN_LOG_PREFIX + "자동 로그아웃");
-            // 모니터링 다시 시작
-            login(chromeDriver, wait);
+            log.error(JULIAN_LOG_PREFIX + "예외 발생: " + e.getMessage());
+
+            if (!chromeDriverTool.isAlive()) {
+                recoverFromCrash();
+            } else {
+                log.error(JULIAN_LOG_PREFIX + "자동 로그아웃 - 재로그인 시도");
+                login(chromeDriver, wait);
+            }
         }
 
         log.info(JULIAN_LOG_PREFIX + "END:  FIND NEW PRODUCT FINISH");
 
+    }
+
+    private void recoverFromCrash() {
+        log.error(JULIAN_LOG_PREFIX + "크롬 드라이버 다운 감지 - 재시작 시도");
+        discordBot.sendMessage(ALL_CATEGORIES_CHANNEL, "[JULIAN] 크롬 드라이버 다운 감지, 재시작 시도합니다.");
+
+        try {
+            chromeDriverToolFactory.recreateChromeDriverTool(ALL_CATEGORIES);
+            ChromeDriverTool newTool = chromeDriverToolFactory.getChromeDriverTool(ALL_CATEGORIES);
+
+            runLoadLogic(newTool);
+
+            if (newTool.isLoadData()) {
+                discordBot.sendMessage(ALL_CATEGORIES_CHANNEL, "[JULIAN] 재시작 완료, 정상 복귀했습니다.");
+            } else {
+                discordBot.sendMessage(ALL_CATEGORIES_CHANNEL, "[JULIAN] 자동 재시작 실패! 확인 필요합니다.");
+            }
+        } catch (Exception e) {
+            log.error(JULIAN_LOG_PREFIX + "재시작 로직 실패: " + e.getMessage());
+            discordBot.sendMessage(ALL_CATEGORIES_CHANNEL, "[JULIAN] 자동 재시작 실패! 확인 필요합니다. (" + e.getMessage() + ")");
+        }
     }
 
 

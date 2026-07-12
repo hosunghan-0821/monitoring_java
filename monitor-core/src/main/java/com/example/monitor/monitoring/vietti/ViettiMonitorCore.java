@@ -1,6 +1,7 @@
 package com.example.monitor.monitoring.vietti;
 
 import chrome.ChromeDriverTool;
+import chrome.ChromeDriverToolFactory;
 import com.example.monitor.file.ProductFileWriter;
 import com.example.monitor.monitoring.global.IMonitorService;
 import lombok.Getter;
@@ -43,6 +44,8 @@ public class ViettiMonitorCore implements IMonitorService {
     private final ViettiMonitorRetry viettiMonitorRetry;
 
     private final DiscordBot discordBot;
+
+    private final ChromeDriverToolFactory chromeDriverToolFactory;
 
     @Getter
     private final ViettiBrandHashData viettiBrandHashData;
@@ -96,10 +99,49 @@ public class ViettiMonitorCore implements IMonitorService {
             return;
         }
 
+        if (!chromeDriverTool.isAlive()) {
+            recoverFromCrash();
+            return;
+        }
+
         log.info(VIETTI_LOG_PREFIX + "VIETTI FIND NEW PRODUCT START==");
-        List<ViettiProduct> viettiProductList = findDifferentAndAlarm(chromeDriver, wait, VIETTI_BRAND_URL_LIST, VIETTI_BRAND_NAME_LIST);
+
+        try {
+            List<ViettiProduct> viettiProductList = findDifferentAndAlarm(chromeDriver, wait, VIETTI_BRAND_URL_LIST, VIETTI_BRAND_NAME_LIST);
+        } catch (Exception e) {
+            log.error(VIETTI_LOG_PREFIX + "예외 발생: " + e.getMessage());
+
+            if (!chromeDriverTool.isAlive()) {
+                recoverFromCrash();
+            } else {
+                log.error(VIETTI_LOG_PREFIX + "자동 로그아웃 - 재로그인 시도");
+                login(chromeDriver, wait);
+            }
+            return;
+        }
 
         log.info(VIETTI_LOG_PREFIX + "VIETTI FIND NEW PRODUCT FINISH==");
+    }
+
+    private void recoverFromCrash() {
+        log.error(VIETTI_LOG_PREFIX + "크롬 드라이버 다운 감지 - 재시작 시도");
+        discordBot.sendMessage(VIETTI_NEW_PRODUCT_CHANNEL, "[VIETTI] 크롬 드라이버 다운 감지, 재시작 시도합니다.");
+
+        try {
+            chromeDriverToolFactory.recreateChromeDriverTool(VIETTI);
+            ChromeDriverTool newTool = chromeDriverToolFactory.getChromeDriverTool(VIETTI);
+
+            runLoadLogic(newTool);
+
+            if (newTool.isLoadData()) {
+                discordBot.sendMessage(VIETTI_NEW_PRODUCT_CHANNEL, "[VIETTI] 재시작 완료, 정상 복귀했습니다.");
+            } else {
+                discordBot.sendMessage(VIETTI_NEW_PRODUCT_CHANNEL, "[VIETTI] 자동 재시작 실패! 확인 필요합니다.");
+            }
+        } catch (Exception e) {
+            log.error(VIETTI_LOG_PREFIX + "재시작 로직 실패: " + e.getMessage());
+            discordBot.sendMessage(VIETTI_NEW_PRODUCT_CHANNEL, "[VIETTI] 자동 재시작 실패! 확인 필요합니다. (" + e.getMessage() + ")");
+        }
     }
 
 
