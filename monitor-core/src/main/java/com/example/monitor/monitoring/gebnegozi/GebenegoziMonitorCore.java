@@ -617,7 +617,6 @@ public class GebenegoziMonitorCore implements IMonitorService {
                         isValidBrand = false;
                         brandRetryCount++;
                         if (brandRetryCount > 3) {
-                            discordBot.sendMessage(GEBENE_NEW_PRODUCT_CHANNEL,String.format("%s 브랜드 일치하지 않음 URL : %s, SEARCH BRAND : %s, URL PRODUCT BRAND : %s", GEBENE_LOG_PREFIX, url, searchBrand, brand));
                             return new ArrayList<>();
                         }
                         Thread.sleep(500);
