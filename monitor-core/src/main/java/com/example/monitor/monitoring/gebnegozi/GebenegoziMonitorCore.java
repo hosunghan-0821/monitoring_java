@@ -613,7 +613,7 @@ public class GebenegoziMonitorCore implements IMonitorService {
                     //TODO 고민해보자
 //                    gebenegoziBrandHashData.getProductKeySet().add(getGebeneProductKey(product));
                     if (brand == null || !brand.equals(searchBrand)) {
-                        log.error("{} 브랜드 일치하지 않음 URL : {}, SEARCH BRAND : {}, URL PRODUCT BRAND : {}", GEBENE_LOG_PREFIX, url, searchBrand, brand);
+//                        log.error("{} 브랜드 일치하지 않음 URL : {}, SEARCH BRAND : {}, URL PRODUCT BRAND : {}", GEBENE_LOG_PREFIX, url, searchBrand, brand);
                         isValidBrand = false;
                         brandRetryCount++;
                         if (brandRetryCount > 3) {
@@ -635,7 +635,7 @@ public class GebenegoziMonitorCore implements IMonitorService {
 
 
             if (!isValidBrand) {
-                log.error("브랜드 일치하지 않아서 재탐색 합니다. url : {}", url);
+//                log.error("브랜드 일치하지 않아서 재탐색 합니다. url : {}", url);
                 j--;
                 continue;
             }
