@@ -79,7 +79,7 @@ public class CustomApplicationRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-        chromeDriverToolFactory.makeChromeDriverTool(THE_CLUB);
+//        chromeDriverToolFactory.makeChromeDriverTool(THE_CLUB);
 //        chromeDriverToolFactory.makeChromeDriverTool(STYLE);
         chromeDriverToolFactory.makeChromeDriverTool(ALL_CATEGORIES);
 //        chromeDriverToolFactory.makeChromeDriverTool(DOUBLE_F);
@@ -91,20 +91,20 @@ public class CustomApplicationRunner implements ApplicationRunner {
         discordBot.setChromeDriverTool(chromeDriverToolFactory);
         discordBot.setS3UploaderService(s3UploaderService);
 
-        Thread theClubThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                MDC.put("threadName", THE_CLUB); // MDC에 쓰레드 이름 저장
-                log.info(THE_CLUB_LOG_PREFIX + "============================ Load THE_CLUB Product Start ============================");
-                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(THE_CLUB);
-                theClubMonitorCore.runLoadLogic(chromeDriverTool);
-                log.info(THE_CLUB_LOG_PREFIX + "============================ Load THE_CLUB Product Finish ============================");
-                MDC.clear(); // MDC 데이터 정리
-
-            }
-        });
-        theClubThread.setName(THE_CLUB);
-        theClubThread.start();
+//        Thread theClubThread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                MDC.put("threadName", THE_CLUB); // MDC에 쓰레드 이름 저장
+//                log.info(THE_CLUB_LOG_PREFIX + "============================ Load THE_CLUB Product Start ============================");
+//                ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(THE_CLUB);
+//                theClubMonitorCore.runLoadLogic(chromeDriverTool);
+//                log.info(THE_CLUB_LOG_PREFIX + "============================ Load THE_CLUB Product Finish ============================");
+//                MDC.clear(); // MDC 데이터 정리
+//
+//            }
+//        });
+//        theClubThread.setName(THE_CLUB);
+//        theClubThread.start();
 
 
         Thread viettiThread = new Thread(new Runnable() {

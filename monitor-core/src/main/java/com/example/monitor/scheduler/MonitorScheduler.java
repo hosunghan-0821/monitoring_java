@@ -66,13 +66,13 @@ public class MonitorScheduler {
         MDC.clear(); // MDC 데이터 정리
     }
 
-    @Scheduled(initialDelay = 60000 * 7, fixedDelay = 60000 * 30)// 30분마다 실행
-    public void monitorDoubleF() {
-        MDC.put("threadName", DOUBLE_F); // MDC에 쓰레드 이름 저장
-        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F);
-        doubleFMonitorCore.runFindProductLogic(chromeDriverTool);
-        MDC.clear(); // MDC 데이터 정리
-    }
+//    @Scheduled(initialDelay = 60000 * 7, fixedDelay = 60000 * 30)// 30분마다 실행
+//    public void monitorDoubleF() {
+//        MDC.put("threadName", DOUBLE_F); // MDC에 쓰레드 이름 저장
+//        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(DOUBLE_F);
+//        doubleFMonitorCore.runFindProductLogic(chromeDriverTool);
+//        MDC.clear(); // MDC 데이터 정리
+//    }
 
     @Scheduled(initialDelay = 60000 * 5, fixedDelay = 60000 * 20)// 20분마다 실행
     public void monitorBIFFI() {
@@ -131,13 +131,13 @@ public class MonitorScheduler {
         MDC.clear(); // MDC 데이터 정리
     }
 
-    @Scheduled(initialDelay = 60000 * 4, fixedDelay = 60000 * 5)// 5분마다 실행
-    public void monitorStyle() {
-        MDC.put("threadName", STYLE); // MDC에 쓰레드 이름 저장
-        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(STYLE);
-        styleMonitorCore.runFindProductLogic(chromeDriverTool);
-        MDC.clear(); // MDC 데이터 정리
-    }
+//    @Scheduled(initialDelay = 60000 * 4, fixedDelay = 60000 * 5)// 5분마다 실행
+//    public void monitorStyle() {
+//        MDC.put("threadName", STYLE); // MDC에 쓰레드 이름 저장
+//        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(STYLE);
+//        styleMonitorCore.runFindProductLogic(chromeDriverTool);
+//        MDC.clear(); // MDC 데이터 정리
+//    }
 
     @Scheduled(initialDelay = 60000 * 4, fixedDelay = 60000 * 5)// 5분마다 실행
     public void monitorVietti() {
@@ -148,27 +148,27 @@ public class MonitorScheduler {
 
     }
 
-    @Scheduled(initialDelay = 60000 * 10, fixedDelay = 60000 * 30)// 30분마다 실행
-    public void monitorEic() {
-        MDC.put("threadName", EIC); // MDC에 쓰레드 이름 저장
-        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(EIC);
-        eicMonitorCore.runFindProductLogic(chromeDriverTool);
-        MDC.clear(); // MDC 데이터 정리
-    }
+//    @Scheduled(initialDelay = 60000 * 10, fixedDelay = 60000 * 30)// 30분마다 실행
+//    public void monitorEic() {
+//        MDC.put("threadName", EIC); // MDC에 쓰레드 이름 저장
+//        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(EIC);
+//        eicMonitorCore.runFindProductLogic(chromeDriverTool);
+//        MDC.clear(); // MDC 데이터 정리
+//    }
 
-    @Scheduled(initialDelay = 60000 * 10, fixedDelay = 60000 * 30)// 30분마다 실행
-    public void monitorEicDiscount() {
-        MDC.put("threadName", EIC_DISCOUNT); // MDC에 쓰레드 이름 저장
-        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(EIC_DISCOUNT);
-        eicMonitorCore.runFindProductLogicForDiscountChange(chromeDriverTool);
-        MDC.clear(); // MDC 데이터 정리
-    }
+//    @Scheduled(initialDelay = 60000 * 10, fixedDelay = 60000 * 30)// 30분마다 실행
+//    public void monitorEicDiscount() {
+//        MDC.put("threadName", EIC_DISCOUNT); // MDC에 쓰레드 이름 저장
+//        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(EIC_DISCOUNT);
+//        eicMonitorCore.runFindProductLogicForDiscountChange(chromeDriverTool);
+//        MDC.clear(); // MDC 데이터 정리
+//    }
 
-    @Scheduled(initialDelay = 60000 * 8, fixedDelay = 60000 * 60)// 60분마다 실행
-    public void monitorTheClub() {
-        MDC.put("threadName", THE_CLUB); // MDC에 쓰레드 이름 저장
-        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(THE_CLUB);
-        theClubMonitorCore.runFindProductLogic(chromeDriverTool);
-        MDC.clear(); // MDC 데이터 정리
-    }
+//    @Scheduled(initialDelay = 60000 * 8, fixedDelay = 60000 * 60)// 60분마다 실행
+//    public void monitorTheClub() {
+//        MDC.put("threadName", THE_CLUB); // MDC에 쓰레드 이름 저장
+//        ChromeDriverTool chromeDriverTool = chromeDriverToolFactory.getChromeDriverTool(THE_CLUB);
+//        theClubMonitorCore.runFindProductLogic(chromeDriverTool);
+//        MDC.clear(); // MDC 데이터 정리
+//    }
 }
